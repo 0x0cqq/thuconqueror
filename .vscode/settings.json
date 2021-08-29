@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "*.cjson": "jsonc",
+        "*.wxss": "css",
+        "*.wxs": "javascript",
+        "qgraphicsobject": "cpp",
+        "qgraphicsscene": "cpp",
+        "qgraphicsview": "cpp",
+        "qhboxlayout": "cpp",
+        "qboxlayout": "cpp",
+        "new": "cpp",
+        "qobject": "cpp"
+    }
+}
