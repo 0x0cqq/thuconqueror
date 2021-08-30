@@ -3,12 +3,16 @@
 
 GraphField::GraphField() : QGraphicsScene() {
     width = 24, height = 16;
-    this->setSceneRect(QRectF(-1 * GraphInfo::blockSize, -qSqrt(3)/2 * GraphInfo::blockSize,
-                              (1.5 * width + 0.5) * GraphInfo::blockSize,
-                              (qSqrt(3) * (height + 0.5)) * GraphInfo::blockSize));
+    this->setSceneRect(
+        QRectF(-1 * GraphInfo::blockSize, -qSqrt(3) / 2 * GraphInfo::blockSize,
+               (1.5 * width + 0.5) * GraphInfo::blockSize,
+               (qSqrt(3) * (height + 0.5)) * GraphInfo::blockSize));
+    blocks.resize(width + 2);
     for(int i = 1; i <= width; i++) {
+        blocks[i].resize(height + 2);        
         for(int j = 1; j <= height; j++) {
-            this->addItem(new GraphBlock(getBlockCenter(i,j)));
+            blocks[i][j] = new GraphBlock(QPoint{i,j},getBlockCenter(i, j));
+            this->addItem(blocks[i][j]);
         }
     }
 }
@@ -22,7 +26,12 @@ QPointF GraphField::getBlockCenter(qint32 r, qint32 c) const {
 }
 
 void GraphField::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    qDebug() << "event: " << event->pos() << Qt::endl;
     qDebug() << "scene: " << event->scenePos() << Qt::endl;
     QGraphicsScene::mousePressEvent(event);
 }
+
+void GraphField::moveUnit(qint32 uid, QVector<QPoint> path) {}
+
+void GraphField::checkUnit(qint32 uid) {}
+
+void GraphField::uncheckUnit(qint32 uid) {}

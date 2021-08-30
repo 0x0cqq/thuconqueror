@@ -8,8 +8,11 @@
 class GraphUnit : public QGraphicsObject {
     Q_OBJECT
   public:
+    qint32 uid;
+    QPoint m_nowCoord;
     GraphUnit() : QGraphicsObject() { this->setFlag(ItemIsSelectable, true); }
-    GraphUnit(const QPointF &pos) : QGraphicsObject() {
+    GraphUnit(const QPoint &nowCoord, const QPointF &pos)
+        : m_nowCoord(nowCoord), QGraphicsObject() {
         this->setPos(pos);
         this->setFlag(ItemIsSelectable, true);
     }
@@ -18,6 +21,11 @@ class GraphUnit : public QGraphicsObject {
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+  signals:
+    void checked(qint32 uid);
+    void unChecked(qint32 uid);
+
+  public slots:
 };
 
 #endif  // GRAPHUNIT_H

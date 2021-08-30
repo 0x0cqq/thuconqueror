@@ -54,10 +54,12 @@ class Unit : public QObject {
     void       attack(Unit *enemyUnit);
     Block *    nowBlock;
     QPair<qreal, qreal> calculateAttack(Unit *target);
-    qint32              id;
+    qint32              uid;
     bool                isAlive() const;
   signals:
     void unitDead();
+  public slots:
+    
 };
 
 #endif
