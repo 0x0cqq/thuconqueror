@@ -1,6 +1,7 @@
 #ifndef UNIT_H
 #define UNIT_H
 
+#include "graphunit.h"
 #include <QObject>
 
 class UnitInfo {
@@ -14,7 +15,7 @@ class UnitInfo {
     // movePoint
     qint32 MPfull;
 
-    UnitInfo() = delete;
+    UnitInfo();
     UnitInfo(qint32, qint32, qint32);
 };
 
@@ -47,8 +48,9 @@ class Unit : public QObject {
     bool       isPeopleUnit() const { return uType & peopleUnit; }
     bool       isSameType(Unit *target) const { return uType & target->uType; }
     void       attack(Unit *enemyUnit);
-    
+
     QPair<qreal, qreal> calculateAttack(Unit *target);
+    qint32 id;
 };
 
 #endif
