@@ -1,7 +1,7 @@
 #ifndef GRAPHFIELD_H
 #define GRAPHFIELD_H
 
-#include "graphinfo.h"
+#include "info.h"
 #include "graphblock.h"
 
 #include <QDebug>

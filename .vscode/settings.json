@@ -15,6 +15,7 @@
         "qpolygon": "cpp",
         "qpolygonf": "cpp",
         "qgraphicsscenemouseevent": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "qstring": "cpp"
     }
 }

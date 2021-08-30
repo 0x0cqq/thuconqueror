@@ -1,5 +1,5 @@
-#ifndef GRAPHINFO_H
-#define GRAPHINFO_H
+#ifndef INFO_H
+#define INFO_H
 
 #include <QPolygon>
 #include <QtGlobal>

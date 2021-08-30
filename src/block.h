@@ -25,11 +25,16 @@ class Field;
 
 class Block : public QObject {
     Q_OBJECT
-    BlockStatus blockStatus;
-    Unit *      unit;
-    QPoint      pos;
-    Field *     field;
-    bool canContainUnit() const { return blockStatus.blockType | yesUnitBlock; }
+    BlockStatus m_blockStatus;
+    Unit *      m_unit;
+    QPoint      m_pos;
+    Field *     m_field;
+
+  public:
+    Block(QPoint pos = QPoint(0, 0), Field *field = nullptr,
+          QObject *parent = nullptr)
+        : m_unit(nullptr), m_pos(pos), m_field(field), QObject(parent) {}
+    bool canContainUnit() const { return m_blockStatus.blockType | yesUnitBlock; }
 };
 
 #endif

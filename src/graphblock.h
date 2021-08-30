@@ -1,7 +1,7 @@
 #ifndef GRAPHBLOCK_H
 #define GRAPHBLOCK_H
 
-#include "graphinfo.h"
+#include "info.h"
 #include <QGraphicsObject>
 #include <QPainter>
 

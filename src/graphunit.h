@@ -1,7 +1,7 @@
 #ifndef GRAPHUNIT_H
 #define GRAPHUNIT_H
 
-#include "graphinfo.h"
+#include "info.h"
 #include <QGraphicsObject>
 #include <QPainter>
 
