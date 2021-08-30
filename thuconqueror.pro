@@ -16,7 +16,9 @@ SOURCES += \
     src/block.cpp \
     src/field.cpp \
     src/graphunit.cpp \
-    src/graphblock.cpp
+    src/graphblock.cpp \
+    src/graphfield.cpp \
+
     
 
 HEADERS += \

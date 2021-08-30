@@ -13,6 +13,8 @@
         "qtglobal": "cpp",
         "qtmath": "cpp",
         "qpolygon": "cpp",
-        "qpolygonf": "cpp"
+        "qpolygonf": "cpp",
+        "qgraphicsscenemouseevent": "cpp",
+        "ostream": "cpp"
     }
 }

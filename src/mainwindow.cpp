@@ -2,6 +2,7 @@
 #include "graphunit.h"
 
 #include <QPushButton>
+#include <QDebug>
 
 Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     this->setCentralWidget(new QWidget(this));
@@ -31,10 +32,17 @@ Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     // add scene
     graphField = new GraphField;
     auto it = new GraphBlock;
-    it->setPos(100,200);
-    graphField->addItem(it);
+    // it->setPos(100,200);
+    // graphField->addItem(it);
     graphField->addItem(new GraphUnit);
+    auto itt = new GraphUnit;
+    itt->setPos(100,200);
+    graphField->addItem(itt);
     graphView->setScene(graphField);
+    graphField->addRect(graphField->sceneRect());
+    
+
+    // qDebug() << graphField->itemAt(80,80,QTransform())->pos() << Qt::endl;
 }
 
 Mainwindow::~Mainwindow() {}

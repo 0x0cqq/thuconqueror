@@ -6,8 +6,8 @@
 #include <QtMath>
 
 namespace GraphInfo {
-const qreal     blockSize = 100.0;
-const qreal     unitSize  = qSqrt(3) / 2 * blockSize;
+const static qreal     blockSize = 100.0;
+const static qreal     unitSize  = qSqrt(3) / 2 * blockSize;
 const QPolygonF blockPoly =
     QVector<QPointF>{QPointF{-0.5, qSqrt(3) / 2} * blockSize,
                      QPointF{0.5, qSqrt(3) / 2} * blockSize,
@@ -15,6 +15,7 @@ const QPolygonF blockPoly =
                      QPointF{0.5, -qSqrt(3) / 2} * blockSize,
                      QPointF{-0.5, -qSqrt(3) / 2} * blockSize,
                      QPointF{-1.0, 0.0} * blockSize};
+const qreal penWidth = 5;
 
 }  // namespace GraphInfo
 

@@ -1,16 +1,23 @@
 #ifndef GRAPHBLOCK_H
 #define GRAPHBLOCK_H
 
-
 #include "graphinfo.h"
-#include <QPainter>
 #include <QGraphicsObject>
+#include <QPainter>
 
 class GraphBlock : public QGraphicsObject {
     Q_OBJECT
-    QRectF boundingRect() const override;
-    void   paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                 QWidget *widget) override;
+  public:
+    GraphBlock() : QGraphicsObject() {}
+    GraphBlock(const QPointF &pos) : QGraphicsObject() { this->setPos(pos); }
+    QRectF       boundingRect() const override;
+    QPainterPath shape() const override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) {
+        
+        QGraphicsObject::mousePressEvent(event);
+    }
 };
 
 #endif  // FIELDBLOCK_H
