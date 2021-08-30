@@ -18,3 +18,11 @@ bool UnitStatus::changeHP(qreal delta) {
     HPnow -= delta / (uInfo.HPfull * uInfo.HPratio);
     return HPnow < 0;
 }
+
+QPair<qreal,qreal> Unit::calculateAttack(Unit *target) {
+
+}
+
+void Unit::attack(Unit *enemyUnit) {
+    
+}
