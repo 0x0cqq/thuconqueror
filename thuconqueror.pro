@@ -8,13 +8,15 @@ CONFIG += c++11
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+
 SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/unit.cpp \
     src/block.cpp \
     src/field.cpp \
-    src/graphunit.cpp
+    src/graphunit.cpp \
+    src/graphblock.cpp
     
 
 HEADERS += \

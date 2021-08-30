@@ -4,7 +4,7 @@
 #include <QGraphicsScene>
 
 
-class Graphfield : public QGraphicsScene {
+class GraphField : public QGraphicsScene {
     Q_OBJECT
 
 };

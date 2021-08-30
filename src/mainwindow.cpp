@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "graphunit.h"
 
 #include <QPushButton>
 
@@ -26,6 +27,14 @@ Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     nextTurnButton = new QPushButton("下一回合");
     hvBox->addWidget(nextTurnButton);
     this->resize(1000, 800);
+
+    // add scene
+    graphField = new GraphField;
+    auto it = new GraphBlock;
+    it->setPos(100,200);
+    graphField->addItem(it);
+    graphField->addItem(new GraphUnit);
+    graphView->setScene(graphField);
 }
 
 Mainwindow::~Mainwindow() {}

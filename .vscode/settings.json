@@ -10,6 +10,9 @@
         "qboxlayout": "cpp",
         "new": "cpp",
         "qobject": "cpp",
-        "qtglobal": "cpp"
+        "qtglobal": "cpp",
+        "qtmath": "cpp",
+        "qpolygon": "cpp",
+        "qpolygonf": "cpp"
     }
 }

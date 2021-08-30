@@ -26,5 +26,6 @@ class Mainwindow : public QMainWindow {
     QLabel *     policyTreeLabel;
     QPushButton *nextTurnButton;
     GraphView *  graphView;
+    GraphField * graphField;
 };
 #endif  // MAINWINDOW_H

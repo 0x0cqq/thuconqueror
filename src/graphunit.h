@@ -1,18 +1,19 @@
 #ifndef GRAPHUNIT_H
 #define GRAPHUNIT_H
 
+
+#include "graphinfo.h"
 #include <QGraphicsObject>
+#include <QPainter>
 
-class Unit : public QGraphicsObject {
+class GraphUnit : public QGraphicsObject {
     Q_OBJECT
+  public:
+    QRectF boundingRect() const override;
+    void   paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                 QWidget *widget) override;
+
+    
 };
 
-class PersonUnit : public Unit {
-    Q_OBJECT
-};
-
-class VirusUnit : public Unit {
-    Q_OBJECT
-};
-
-#endif  // UNIT_H
+#endif  // GRAPHUNIT_H
