@@ -9,6 +9,7 @@
         "qhboxlayout": "cpp",
         "qboxlayout": "cpp",
         "new": "cpp",
-        "qobject": "cpp"
+        "qobject": "cpp",
+        "qtglobal": "cpp"
     }
 }

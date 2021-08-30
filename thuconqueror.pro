@@ -10,8 +10,11 @@ CONFIG += c++11
 
 SOURCES += \
     src/main.cpp \
-    src/mainwindow.cpp
-    src/
+    src/mainwindow.cpp \
+    src/unit.cpp \
+    src/block.cpp \
+    src/field.cpp \
+    src/graphunit.cpp
     
 
 HEADERS += \
@@ -20,7 +23,10 @@ HEADERS += \
     src/graphview.h \
     src/graphfield.h \
     src/graphunit.h \
-    src/unit.h 
+    src/graphinfo.h \
+    src/unit.h \
+    src/block.h \ 
+    src/field.h 
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
