@@ -16,6 +16,8 @@
         "qpolygonf": "cpp",
         "qgraphicsscenemouseevent": "cpp",
         "ostream": "cpp",
-        "qstring": "cpp"
+        "qstring": "cpp",
+        "qdebug": "cpp",
+        "qmessagebox": "cpp"
     }
 }

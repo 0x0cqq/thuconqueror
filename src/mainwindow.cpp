@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "graphunit.h"
 
-#include <QPushButton>
 #include <QDebug>
+#include <QPushButton>
 
 Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     this->setCentralWidget(new QWidget(this));
@@ -15,10 +15,17 @@ Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     hvBox->addLayout(buttonBox);
     exitButton = new QPushButton();
     exitButton->setText("退出");
+
     saveButton = new QPushButton();
     saveButton->setText("保存");
+
+    newButton = new QPushButton();
+    newButton->setText("新建单元");
+
     buttonBox->addWidget(saveButton);
     buttonBox->addWidget(exitButton);
+    buttonBox->addWidget(newButton);
+
     detailLabel = new QLabel();
     detailLabel->setText("详细信息占位");
     policyTreeLabel = new QLabel();
@@ -31,16 +38,15 @@ Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
 
     // add scene
     graphField = new GraphField;
-    auto it = new GraphBlock;
+    connect(newButton, &QPushButton::clicked, graphField, &GraphField::newUnit);
+    // auto it = new GraphBlock;
     // it->setPos(100,200);
     // graphField->addItem(it);
-    graphField->addItem(new GraphUnit);
-    auto itt = new GraphUnit;
-    itt->setPos(100,200);
-    graphField->addItem(itt);
+    // graphField->addItem(new GraphUnit);
+    // auto itt = new GraphUnit;
+    // itt->setPos(100,200);
+    // graphField->addItem(itt);
     graphView->setScene(graphField);
-    graphField->addRect(graphField->sceneRect());
-    
 
     // qDebug() << graphField->itemAt(80,80,QTransform())->pos() << Qt::endl;
 }

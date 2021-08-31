@@ -16,7 +16,26 @@ QPainterPath GraphBlock::shape() const {
 void GraphBlock::paint(QPainter *                      painter,
                        const QStyleOptionGraphicsItem *option,
                        QWidget *                       widget) {
-    painter->setBrush(Qt::red);
+    if(!m_isChecked) {
+        painter->setBrush(Qt::green);
+    }
+    else {
+        painter->setBrush(Qt::red);
+    }
     painter->setPen(QPen(Qt::black, GraphInfo::penWidth));
     painter->drawPolygon(GraphInfo::blockPoly);
+}
+
+void GraphBlock::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    qDebug() << "block: " << m_coord.x() << m_coord.y() << Qt::endl;
+    reverseCheck();
+    QGraphicsObject::mousePressEvent(event);
+}
+
+void GraphBlock::changeCheck(bool isChecked) {
+    m_isChecked = isChecked;
+    emit this->checkChanged(m_coord, m_isChecked);
+}
+void GraphBlock::reverseCheck() {
+    changeCheck(!m_isChecked);
 }

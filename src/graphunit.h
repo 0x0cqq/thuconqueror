@@ -2,19 +2,21 @@
 #define GRAPHUNIT_H
 
 #include "info.h"
+#include <QDebug>
 #include <QGraphicsObject>
 #include <QPainter>
 
 class GraphUnit : public QGraphicsObject {
     Q_OBJECT
   public:
-    qint32 uid;
+    qint32 m_uid;
     QPoint m_nowCoord;
     GraphUnit() : QGraphicsObject() { this->setFlag(ItemIsSelectable, true); }
-    GraphUnit(const QPoint &nowCoord, const QPointF &pos)
-        : m_nowCoord(nowCoord), QGraphicsObject() {
+    GraphUnit(const qint32 uid, const QPoint &nowCoord, const QPointF &pos)
+        : m_uid(uid), m_nowCoord(nowCoord), QGraphicsObject() {
         this->setPos(pos);
         this->setFlag(ItemIsSelectable, true);
+        qDebug() << "New unit " << uid << Qt::endl;
     }
     QRectF       boundingRect() const override;
     QPainterPath shape() const;
@@ -22,9 +24,6 @@ class GraphUnit : public QGraphicsObject {
                QWidget *widget) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
   signals:
-    void checked(qint32 uid);
-    void unChecked(qint32 uid);
-
   public slots:
 };
 

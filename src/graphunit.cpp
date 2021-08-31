@@ -31,4 +31,5 @@ void GraphUnit::mousePressEvent(QGraphicsSceneMouseEvent *event){
     qDebug() << "press circle: " << this->pos() << Qt::endl;
     i++;
     QGraphicsObject::mousePressEvent(event);
+    event->ignore();
 }

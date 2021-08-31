@@ -22,6 +22,7 @@ class Mainwindow : public QMainWindow {
     QHBoxLayout *buttonBox;
     QPushButton *exitButton;
     QPushButton *saveButton;
+    QPushButton *newButton;
     QLabel *     detailLabel;
     QLabel *     policyTreeLabel;
     QPushButton *nextTurnButton;
