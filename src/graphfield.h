@@ -29,7 +29,7 @@ class GraphField : public QGraphicsScene {
   public:
     qint32                         width, height;
     QVector<GraphUnit *>           units;
-    QPoint                         m_nowCheckedBlock;
+    GraphBlock *                   m_nowCheckedBlock;
     QVector<QVector<GraphBlock *>> blocks;
     GraphField();
     QPointF getBlockCenter(qint32 r, qint32 c) const;
@@ -38,27 +38,23 @@ class GraphField : public QGraphicsScene {
     void    setUnit(GraphUnit *unit) {
         blocks(unit->m_nowCoord)->m_unitOnBlock = unit;
     }
+    void changeUnitCoord(GraphUnit *graphUnit, QPoint destCoord) {
+        blocks(graphUnit->m_nowCoord)->m_unitOnBlock = nullptr;
+
+        blocks(destCoord)->m_unitOnBlock = graphUnit;
+
+        graphUnit->m_nowCoord = destCoord;
+    }
   signals:
     // 把 uid 的 unit 移动到 (posx, posy)
     void unitTryToMove(qint32 uid, QPoint targetPos);
   public slots:
     // 在当前选中的 box 里面新建一个 unit
-    void newUnit() {
-        // 需要当前位置没有Unit，否则会炸掉的
-        if(blocks(m_nowCheckedBlock)->m_unitOnBlock != nullptr) {
-            QMessageBox msgBox;
-            msgBox.setText("当前界面已经有Unit了!");
-            int ret = msgBox.exec();
-            return;
-        }
-
-        GraphUnit *newUnit = new GraphUnit(units.size(), m_nowCheckedBlock,
-                                           getBlockCenter(m_nowCheckedBlock));
-        units.append(newUnit);
-        this->addItem(newUnit);
-        setUnit(newUnit);
-    }
-    void moveUnit(qint32 uid, QVector<QPoint> path);
+    void newUnit();  // in now checked block;
+    void moveUnit(qint32 uid,const QVector<QPoint>& path);
+    void moveUnit(GraphUnit *graphUnit,const QVector<QPoint>& path);
+    void moveUnit(qint32 uid, QPoint destCoord);
+    void moveUnit(GraphUnit *graphUnit, QPoint destCoord);
     void checkBlock(QPoint coord);
     void unCheckBlock(QPoint coord);
 };

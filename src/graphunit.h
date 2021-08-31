@@ -8,6 +8,7 @@
 
 class GraphUnit : public QGraphicsObject {
     Q_OBJECT
+    Q_PROPERTY(QPointF pos READ pos WRITE setPos)
   public:
     qint32 m_uid;
     QPoint m_nowCoord;

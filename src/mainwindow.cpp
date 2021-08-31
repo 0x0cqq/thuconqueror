@@ -2,6 +2,7 @@
 #include "graphunit.h"
 
 #include <QDebug>
+#include <QPropertyAnimation>
 #include <QPushButton>
 
 Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
@@ -43,12 +44,16 @@ Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     // it->setPos(100,200);
     // graphField->addItem(it);
     // graphField->addItem(new GraphUnit);
-    // auto itt = new GraphUnit;
-    // itt->setPos(100,200);
+    // auto                itt       = new GraphUnit;
     // graphField->addItem(itt);
-    graphView->setScene(graphField);
+    // QPropertyAnimation *animation = new QPropertyAnimation(itt, "pos");
+    // animation->setDuration(10000);
+    // animation->setStartValue(QPoint(0,0));
+    // animation->setEndValue(QPoint(1000,2000));
 
-    // qDebug() << graphField->itemAt(80,80,QTransform())->pos() << Qt::endl;
+    // animation->start();
+
+    graphView->setScene(graphField);
 }
 
 Mainwindow::~Mainwindow() {}
