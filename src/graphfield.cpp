@@ -103,8 +103,7 @@ void GraphField::onBlockClicked(QPoint coord) {
                         }
                         else {
                             // B 格上不是当前玩家的棋子
-                            if(m_gameInfo.nowPlayer ==
-                               units[uidB]->m_status->isAlive()) {
+                            if(units[uidB]->m_status->isAlive()) {
                                 // 活着
                                 flag = 2;
                             }
