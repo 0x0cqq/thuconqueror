@@ -1,9 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "graphblock.h"
-#include "graphfield.h"
-#include "graphview.h"
+#include "game.h"
 #include <QBoxLayout>
 #include <QLabel>
 #include <QMainWindow>
@@ -23,10 +21,11 @@ class Mainwindow : public QMainWindow {
     QPushButton *exitButton;
     QPushButton *saveButton;
     QPushButton *newButton;
+    QLabel *     gameStatusLabel;
     QLabel *     detailLabel;
     QLabel *     policyTreeLabel;
     QPushButton *nextTurnButton;
     GraphView *  graphView;
-    GraphField * graphField;
+    Game *       game;
 };
 #endif  // MAINWINDOW_H

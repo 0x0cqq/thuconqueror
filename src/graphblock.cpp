@@ -27,15 +27,17 @@ void GraphBlock::paint(QPainter *                      painter,
 }
 
 void GraphBlock::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    qDebug() << "block: " << m_coord.x() << m_coord.y() << Qt::endl;
-    reverseCheck();
+    qDebug() << "block: " << m_status->m_coord.x() << m_status->m_coord.y()
+             << Qt::endl;
+    emit blockClicked(m_status->m_coord);
+    // reverseCheck();
     QGraphicsObject::mousePressEvent(event);
 }
 
-void GraphBlock::changeCheck(bool isChecked) {
+void GraphBlock::changeCheck(QPoint coord, bool isChecked) {
+    if(this->m_status->m_coord != coord) {
+        return;
+    }
     m_isChecked = isChecked;
-    emit this->checkChanged(m_coord, m_isChecked);
-}
-void GraphBlock::reverseCheck() {
-    changeCheck(!m_isChecked);
+    emit this->checkChanged(m_status->m_coord, m_isChecked);
 }

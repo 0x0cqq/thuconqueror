@@ -18,6 +18,9 @@
         "ostream": "cpp",
         "qstring": "cpp",
         "qdebug": "cpp",
-        "qmessagebox": "cpp"
+        "qmessagebox": "cpp",
+        "qpropertyanimation": "cpp",
+        "qpoint": "cpp",
+        "typeinfo": "cpp"
     }
 }

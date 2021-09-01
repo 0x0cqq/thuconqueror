@@ -3,6 +3,7 @@
 
 #include "graphunit.h"
 #include "info.h"
+#include "status.h"
 #include <QDebug>
 #include <QGraphicsObject>
 #include <QPainter>
@@ -10,26 +11,27 @@
 class GraphBlock : public QGraphicsObject {
     Q_OBJECT
   public:
-    QPoint     m_coord;
-    bool       m_isChecked;
-    GraphUnit *m_unitOnBlock;
+    const BlockStatus *m_status;
+    bool               m_isChecked;
     GraphBlock() : QGraphicsObject() {}
-    GraphBlock(const QPoint coord, const QPointF &pos)
-        : QGraphicsObject(), m_coord(coord), m_isChecked(false),m_unitOnBlock(nullptr) {
+    GraphBlock(BlockStatus *status, QPointF pos)
+        : QGraphicsObject(), m_status(status), m_isChecked(false) {
         this->setPos(pos);
         connect(this, &GraphBlock::checkChanged, this,
                 [&]() { this->update(this->boundingRect()); });
     }
+    // QPoint coord() const {return m_status->m_coord;}
+    // qint32 unitOnBlock() { return m_status->m_unitOnBlock;}
     QRectF       boundingRect() const override;
     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
   signals:
+    void blockClicked(QPoint coord);
     void checkChanged(QPoint coord, bool nowState);
   public slots:
-    void changeCheck(bool isChecked);
-    void reverseCheck();
+    void changeCheck(QPoint coord, bool isChecked);
 };
 
 #endif  // FIELDBLOCK_H

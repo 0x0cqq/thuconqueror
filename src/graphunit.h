@@ -2,6 +2,7 @@
 #define GRAPHUNIT_H
 
 #include "info.h"
+#include "status.h"
 #include <QDebug>
 #include <QGraphicsObject>
 #include <QPainter>
@@ -10,14 +11,13 @@ class GraphUnit : public QGraphicsObject {
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
   public:
-    qint32 m_uid;
-    QPoint m_nowCoord;
+    const UnitStatus *m_status;
     GraphUnit() : QGraphicsObject() { this->setFlag(ItemIsSelectable, true); }
-    GraphUnit(const qint32 uid, const QPoint &nowCoord, const QPointF &pos)
-        : m_uid(uid), m_nowCoord(nowCoord), QGraphicsObject() {
+    GraphUnit(UnitStatus *status, const QPointF &pos)
+        : m_status(status), QGraphicsObject() {
         this->setPos(pos);
         this->setFlag(ItemIsSelectable, true);
-        qDebug() << "New unit " << uid << Qt::endl;
+        qDebug() << "New unit " << m_status->m_uid << Qt::endl;
     }
     QRectF       boundingRect() const override;
     QPainterPath shape() const;

@@ -18,7 +18,9 @@ SOURCES += \
     src/game.cpp \
     src/graphunit.cpp \
     src/graphblock.cpp \
-    src/graphfield.cpp
+    src/graphfield.cpp \
+    src/status.cpp
+
 
 HEADERS += \
     src/mainwindow.h \
@@ -30,7 +32,8 @@ HEADERS += \
     src/unit.h \
     src/block.h \ 
     src/field.h \
-    src/game.h
+    src/game.h \
+    src/status.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

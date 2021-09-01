@@ -22,41 +22,41 @@
 // 所以 Slots 的抽象就是：“棋盘要怎么办？”
 // 但是 其实 Unit 也可以 Catch 一些 Signal ，比如显示
 
-#define blocks(point) blocks[(point).x()][(point).y()]
+#define blocks(point) m_blocks[(point).x()][(point).y()]
 
 class GraphField : public QGraphicsScene {
     Q_OBJECT
   public:
-    qint32                         width, height;
+    const GameInfo &               m_gameInfo;
+    QVector<QVector<GraphBlock *>> m_blocks;
     QVector<GraphUnit *>           units;
     GraphBlock *                   m_nowCheckedBlock;
-    QVector<QVector<GraphBlock *>> blocks;
-    GraphField();
+
+    GraphField(const GameInfo &                 gameInfo,
+               QVector<QVector<BlockStatus *>> &blockStatus,
+               QVector<UnitStatus *> &          unitStatus);
+    qint32  width() const { return m_gameInfo.map_size.x(); }
+    qint32  height() const { return m_gameInfo.map_size.y(); }
     QPointF getBlockCenter(qint32 r, qint32 c) const;
     QPointF getBlockCenter(QPoint coord) const;
     void    mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void    setUnit(GraphUnit *unit) {
-        blocks(unit->m_nowCoord)->m_unitOnBlock = unit;
-    }
-    void changeUnitCoord(GraphUnit *graphUnit, QPoint destCoord) {
-        blocks(graphUnit->m_nowCoord)->m_unitOnBlock = nullptr;
-
-        blocks(destCoord)->m_unitOnBlock = graphUnit;
-
-        graphUnit->m_nowCoord = destCoord;
-    }
   signals:
+    void checkStateChange(QPoint coord, bool state);
+    // 暂时未用
+    void userNewUnit(QPoint coord);
+    void userMoveUnit(qint32 uid, QPoint destCoord);
+    void userAttackUnit(qint32 uid, QPoint destCoord);
+    void needUpdateDetail();
     // 把 uid 的 unit 移动到 (posx, posy)
-    void unitTryToMove(qint32 uid, QPoint targetPos);
+  protected slots:
+    void moveUnit(GraphUnit *graphUnit, const QVector<QPoint> &path);
+    void attackUnit(GraphUnit *graphUnit, qint32 tarid);
   public slots:
-    // 在当前选中的 box 里面新建一个 unit
-    void newUnit();  // in now checked block;
-    void moveUnit(qint32 uid,const QVector<QPoint>& path);
-    void moveUnit(GraphUnit *graphUnit,const QVector<QPoint>& path);
-    void moveUnit(qint32 uid, QPoint destCoord);
-    void moveUnit(GraphUnit *graphUnit, QPoint destCoord);
-    void checkBlock(QPoint coord);
-    void unCheckBlock(QPoint coord);
+    void newUnit(UnitStatus *unitStatus);
+    void dieUnit(qint32 uid);
+    void moveUnit(qint32 uid, const QVector<QPoint> &path);
+    void attackUnit(qint32 uid, qint32 tarid);
+    void onBlockClicked(QPoint coord);
 };
 
 #endif
