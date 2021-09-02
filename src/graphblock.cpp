@@ -16,28 +16,43 @@ QPainterPath GraphBlock::shape() const {
 void GraphBlock::paint(QPainter *                      painter,
                        const QStyleOptionGraphicsItem *option,
                        QWidget *                       widget) {
-    if(!m_isChecked) {
-        painter->setBrush(Qt::green);
+    if(m_isMoveRange && unitOnBlock() == -1) {
+        painter->setBrush(Qt::blue);
     }
     else {
-        painter->setBrush(Qt::red);
+        if(!m_isChecked) {
+            painter->setBrush(Qt::green);
+        }
+        else {
+            painter->setBrush(Qt::red);
+        }
     }
     painter->setPen(QPen(Qt::black, GraphInfo::penWidth));
     painter->drawPolygon(GraphInfo::blockPoly);
+    painter->setFont(QFont("Microsoft YaHei", 30, 2));
+    painter->drawText(QPointF{-GraphInfo::blockSize / 2, 0},
+                      m_status->m_type == plainBlock ? "" : "X");
 }
 
 void GraphBlock::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    qDebug() << "block: " << m_status->m_coord.x() << m_status->m_coord.y()
-             << Qt::endl;
-    emit blockClicked(m_status->m_coord);
+    qDebug() << "block: " << coord().x() << coord().y() << Qt::endl;
+    emit blockClicked(coord());
     // reverseCheck();
     QGraphicsObject::mousePressEvent(event);
 }
 
 void GraphBlock::changeCheck(QPoint coord, bool isChecked) {
-    if(this->m_status->m_coord != coord) {
+    if(this->coord() != coord) {
         return;
     }
     m_isChecked = isChecked;
-    emit this->checkChanged(m_status->m_coord, m_isChecked);
+    emit this->checkChanged(coord(), m_isChecked);
+}
+
+void GraphBlock::changeMoveRange(QPoint coord, bool isMoveRange) {
+    if(this->coord() != coord) {
+        return;
+    }
+    m_isMoveRange = isMoveRange;
+    emit this->moveRangeChanged(coord(), isMoveRange);
 }

@@ -13,11 +13,15 @@ class GraphBlock : public QGraphicsObject {
   public:
     const BlockStatus *m_status;
     bool               m_isChecked;
+    bool               m_isMoveRange;
     GraphBlock() : QGraphicsObject() {}
     GraphBlock(BlockStatus *status, QPointF pos)
-        : QGraphicsObject(), m_status(status), m_isChecked(false) {
+        : QGraphicsObject(), m_status(status), m_isChecked(false),
+          m_isMoveRange(false) {
         this->setPos(pos);
         connect(this, &GraphBlock::checkChanged, this,
+                [&]() { this->update(this->boundingRect()); });
+        connect(this, &GraphBlock::moveRangeChanged, this,
                 [&]() { this->update(this->boundingRect()); });
     }
     // QPoint coord() const {return m_status->m_coord;}
@@ -30,8 +34,10 @@ class GraphBlock : public QGraphicsObject {
   signals:
     void blockClicked(QPoint coord);
     void checkChanged(QPoint coord, bool nowState);
+    void moveRangeChanged(QPoint coord, bool nowState);
   public slots:
     void changeCheck(QPoint coord, bool isChecked);
+    void changeMoveRange(QPoint coord, bool is_moveRange);
 };
 
 #endif  // FIELDBLOCK_H

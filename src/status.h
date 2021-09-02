@@ -19,6 +19,7 @@ enum BlockType {
 #define blocks(point) m_blocks[(point).x()][(point).y()]
 #define uid()         m_status->m_uid
 #define unitOnBlock() m_status->m_unitOnBlock
+#define player()      m_status->m_player
 #define coord()       m_status->m_coord
 #define nowCoord()    m_status->m_nowCoord
 

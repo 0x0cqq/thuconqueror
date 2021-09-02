@@ -42,10 +42,13 @@ class GraphField : public QGraphicsScene {
     void    mousePressEvent(QGraphicsSceneMouseEvent *event) override;
   signals:
     void checkStateChange(QPoint coord, bool state);
+    void moveRangeChange(QPoint coord, bool state);
     // 暂时未用
     void userNewUnit(QPoint coord);
     void userMoveUnit(qint32 uid, QPoint destCoord);
     void userAttackUnit(qint32 uid, QPoint destCoord);
+    void userShowMoveRange(qint32 uid);
+    void userHideMoveRange();
     void needUpdateDetail();
     // 把 uid 的 unit 移动到 (posx, posy)
   protected slots:
@@ -56,6 +59,8 @@ class GraphField : public QGraphicsScene {
     void dieUnit(qint32 uid);
     void moveUnit(qint32 uid, const QVector<QPoint> &path);
     void attackUnit(qint32 uid, qint32 tarid);
+    void showMoveRange(QVector<QPoint> range);
+    void hideMoveRange();
     void onBlockClicked(QPoint coord);
 };
 

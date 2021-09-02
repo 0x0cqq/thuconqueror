@@ -27,8 +27,21 @@ GraphField::GraphField(const GameInfo &                 gameInfo,
 
             connect(this, &GraphField::checkStateChange, m_blocks[i][j],
                     &GraphBlock::changeCheck);
+            connect(this, &GraphField::moveRangeChange, m_blocks[i][j],
+                    &GraphBlock::changeMoveRange);
         }
     }
+    connect(this, &GraphField::checkStateChange, this,
+            [=](QPoint coord, bool state) {
+                if(state == true && blocks(coord)->unitOnBlock() != -1 &&
+                   units[blocks(coord)->unitOnBlock()]->player() ==
+                       m_gameInfo.nowPlayer) {
+                    emit userShowMoveRange(blocks(coord)->unitOnBlock());
+                }
+                else {
+                    emit userHideMoveRange();
+                }
+            });
 }
 
 QPointF GraphField::getBlockCenter(qint32 r, qint32 c) const {
@@ -92,7 +105,12 @@ void GraphField::onBlockClicked(QPoint coord) {
                     // A 格上是当前玩家的棋子 且没有死
                     if(uidB == -1) {
                         // B 格子上没有棋子
-                        flag = 1;
+                        if(blocks(coord)->m_isMoveRange) {
+                            flag = 1;
+                        }
+                        else {
+                            flag = 0;
+                        }
                     }
                     else {
                         // B 格子上有棋子
@@ -165,10 +183,27 @@ void GraphField::attackUnit(qint32 uid, qint32 tarid) {
 void GraphField::attackUnit(GraphUnit *graphUnit, qint32 tarid) {
     graphUnit->update(graphUnit->boundingRect());
     units[tarid]->update(units[tarid]->boundingRect());
+    QMessageBox msgBox;
+    msgBox.setText("攻击！ " + QString::number(graphUnit->uid()) + " 号 Unit 攻击了 " + QString::number(tarid) + " 号 Unit 。");
+    msgBox.exec();
     emit needUpdateDetail();
 }
 
 void GraphField::dieUnit(qint32 uid) {
     units[uid]->update(units[uid]->boundingRect());
     emit needUpdateDetail();
+}
+
+void GraphField::showMoveRange(QVector<QPoint> range) {
+    for(auto p : range) {
+        emit moveRangeChange(p, true);
+    }
+}
+
+void GraphField::hideMoveRange() {
+    for(int i = 1; i <= width(); i++) {
+        for(int j = 1; j <= height(); j++) {
+            emit moveRangeChange(QPoint(i, j), false);
+        }
+    }
 }

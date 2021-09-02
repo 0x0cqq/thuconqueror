@@ -16,7 +16,6 @@ class Block : public QObject {
   public:
     Block(BlockStatus *status, QObject *parent = nullptr)
         : QObject(parent), m_status(status) {}
-    bool canContainUnit() const { return m_status->m_type | yesUnitBlock; }
   public slots:
 };
 
