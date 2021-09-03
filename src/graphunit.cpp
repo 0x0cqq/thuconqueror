@@ -15,8 +15,8 @@ QPainterPath GraphUnit::shape() const {
     return path;
 }
 
-void GraphUnit::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                      QWidget *widget) {
+void GraphUnit::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
+                      QWidget *) {
     if(m_status->isAlive()) {
         if(m_status->m_player == 1) {
             painter->setBrush(Qt::blue);

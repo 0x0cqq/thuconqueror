@@ -2,7 +2,7 @@
 
 UnitStatus::UnitStatus(const int &uid, const UnitType type,
                        const UnitInfo &uInfo, qint32 player, QPoint coord)
-    : m_info(uInfo), m_type(type), m_uid(uid), m_player(player),
+    : m_uid(uid), m_info(uInfo), m_type(type), m_player(player),
       m_nowCoord(coord), m_HPnow(1) {}
 
 bool UnitStatus::changeHP(qreal delta) {

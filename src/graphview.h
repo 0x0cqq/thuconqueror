@@ -15,18 +15,18 @@
 class GraphView : public QGraphicsView {
     Q_OBJECT
   public:
-    qreal           m_scale;            // 缩放值
-    qreal           m_translateSpeed;   // 平移速度
-    qreal           m_zoomDelta;        // 缩放值变化量
-    Qt::MouseButton m_translateButton;  // 平移所用的键
-    bool            m_bMouseTranslate;
+    qreal           m_scale;      // 缩放值
+    qreal           m_zoomDelta;  // 缩放值变化量
     QPoint          m_lastMousePos;
+    Qt::MouseButton m_translateButton;  // 平移所用的键
+    qreal           m_translateSpeed;   // 平移速度
+    bool            m_bMouseTranslate;
   signals:
     void finishPainting();
 
   public:
     GraphView()
-        : QGraphicsView(), m_scale(1.0), m_zoomDelta(0.1),
+        : QGraphicsView(), m_scale(1.0), m_zoomDelta(0.1), m_lastMousePos(0, 0),
           m_translateButton(Qt::RightButton), m_translateSpeed(1.0),
           m_bMouseTranslate(false) {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

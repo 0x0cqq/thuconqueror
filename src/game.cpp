@@ -28,7 +28,7 @@ Game::Game(GraphView *graphView, QPoint map_size, QObject *parent)
     // connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
 
     connect(m_graph, &GraphField::checkStateChange, this,
-            [=](QPoint coord, bool state) {
+            [=](QPoint, bool state) {
                 if(state == true) {
                     showNewUnitButton();
                 }

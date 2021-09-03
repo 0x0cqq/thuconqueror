@@ -15,11 +15,10 @@ QPainterPath GraphBlock::shape() const {
     return path;
 }
 
-void GraphBlock::paint(QPainter *                      painter,
-                       const QStyleOptionGraphicsItem *option,
-                       QWidget *                       widget) {
+void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
+                       QWidget *) {
     if(!m_isChecked) {
-        painter->setBrush(Qt::green);
+        painter->setBrush(Qt::cyan);
     }
     else {
         painter->setBrush(Qt::red);
@@ -32,9 +31,15 @@ void GraphBlock::paint(QPainter *                      painter,
     auto s = static_cast<GraphField *>(scene());
     if(m_isMoveRange) {
         if(unitOnBlock() == -1) {
-            QColor blue40 = Qt::blue;
-            blue40.setAlphaF(0.4);
-            painter->setBrush(blue40);
+            QColor color40;
+            if(s->units[s->m_nowCheckedBlock->unitOnBlock()]->player() == 1) {
+                color40 = Qt::blue;
+            }
+            else {
+                color40 = Qt::yellow;
+            }
+            color40.setAlphaF(0.4);
+            painter->setBrush(color40);
             // painter->setPen(QPen(Qt::black, 0));
 
             painter->drawPolygon(GraphInfo::blockPoly);

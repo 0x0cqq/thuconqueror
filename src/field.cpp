@@ -64,7 +64,7 @@ QVector<QPoint> Field::getPath(qint32 uid, QPoint start, QPoint end) {
     while(!q.empty()) {
         qreal  dist = q.begin().key().dist;
         QPoint pos  = q.begin().key().coord;
-        QPoint fr   = q.begin().value();
+        // QPoint fr   = q.begin().value();
         q.erase(q.begin());
         if(pos == end) {
             break;
@@ -153,7 +153,7 @@ void Field::getUnitMoveRange(qint32 uid) {
     while(!q.empty()) {
         qreal  dist = q.begin().key().dist;
         QPoint pos  = q.begin().key().coord;
-        QPoint from = q.begin().value();
+        // QPoint from = q.begin().value();
         q.erase(q.begin());
         if(vis.contains(pos))
             continue;
@@ -161,7 +161,6 @@ void Field::getUnitMoveRange(qint32 uid) {
 
         if(dist < 0)
             break;
-        // qDebug() << pos << Qt::endl;
 
         moveRange.push_back(pos);
         QVector<QPoint> nearby = getNearbyPoint(pos);
