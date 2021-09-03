@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>icons/Stop.svg</file>
+        <file>icons/nextturn.svg</file>
     </qresource>
 </RCC>

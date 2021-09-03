@@ -36,7 +36,7 @@ class Field : public QObject {
     void unitDead(qint32 uid);
     void moveUnit(qint32 uid, QVector<QPoint> path);
     void attackUnit(qint32 uid, qint32 taruid);
-    void unitMoveRangegot(QVector<QPoint> moveRange);
+    void unitMoveRangegot(qint32 uid, QVector<QPoint> moveRange);
   protected slots:
     void doUnitMove(Unit *unit, QPoint coord);
     void doUnitAttack(Unit *unit, QPoint coord);

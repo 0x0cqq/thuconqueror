@@ -29,7 +29,10 @@ Game::Game(GraphView *graphView, QPoint map_size, QObject *parent)
 
 void Game::setButtonPos() {
     if(nextTurnButtonWidget != nullptr) {
-        nextTurnButtonWidget->setPos(m_view->mapToScene(QPoint(100, 100)));
+        nextTurnButtonWidget->setPos(m_view->mapToScene(
+            QPoint(m_view->size().width(), m_view->height()) -
+            QPoint(100, 100)));
+        nextTurnButtonWidget->setZValue(100);
     }
 }
 

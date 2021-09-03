@@ -39,7 +39,7 @@ class GraphBlock : public QGraphicsObject {
     void moveRangeChanged(QPoint coord, bool nowState);
   public slots:
     void changeCheck(QPoint coord, bool isChecked);
-    void changeMoveRange(QPoint coord, bool is_moveRange);
+    void changeMoveRange(qint32 uid, QPoint coord, bool is_moveRange);
 };
 
 #endif  // FIELDBLOCK_H

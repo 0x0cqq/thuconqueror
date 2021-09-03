@@ -136,8 +136,9 @@ void GraphField::onBlockClicked(QPoint coord) {
                         }
                         else {
                             // B 格上不是当前玩家的棋子
-                            if(units[uidB]->m_status->isAlive()) {
+                            if(units[uidB]->m_status->isAlive() && isNearByPoint(coord,m_nowCheckedBlock->coord())) {
                                 // 活着
+
                                 flag = 2;
                             }
                             else {
@@ -210,16 +211,16 @@ void GraphField::dieUnit(qint32 uid) {
     emit needUpdateDetail();
 }
 
-void GraphField::showMoveRange(QVector<QPoint> range) {
+void GraphField::showMoveRange(qint32 uid, QVector<QPoint> range) {
     for(auto p : range) {
-        emit moveRangeChange(p, true);
+        emit moveRangeChange(uid, p, true);
     }
 }
 
 void GraphField::hideMoveRange() {
     for(int i = 1; i <= width(); i++) {
         for(int j = 1; j <= height(); j++) {
-            emit moveRangeChange(QPoint(i, j), false);
+            emit moveRangeChange(-1, QPoint(i, j), false);
         }
     }
 }

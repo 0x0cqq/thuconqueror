@@ -1,6 +1,5 @@
 #include "graphview.h"
 
-
 void GraphView::paintEvent(QPaintEvent *event) {
     QGraphicsView::paintEvent(event);
     emit finishPainting();
@@ -88,3 +87,4 @@ void GraphView::zoom(float scaleFactor) {
 
     scale(scaleFactor, scaleFactor);
     m_scale *= scaleFactor;
+}

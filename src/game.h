@@ -90,10 +90,16 @@ class Game : public QObject {
     void updateDetailedStatus(QLabel *detailedLabel);
 
     void setNextTurnButton() {
-        QPushButton *nextTurnButton = new QPushButton("下一回合");
+        QPushButton *nextTurnButton = new QPushButton();
+        nextTurnButton->setIcon(QIcon(":/icons/nextturn.svg"));
+        nextTurnButton->setIconSize(QSize(85,85));
+        nextTurnButton->setContentsMargins(5,5,10,10);
         nextTurnButtonWidget        = m_graph->addWidget(nextTurnButton);
         nextTurnButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
                                       true);
+
+        nextTurnButtonWidget->setGeometry(
+            QRect(QPoint(0, 0), QPoint(100, 100)));
         connect(nextTurnButton, &QPushButton::clicked, this, &Game::nextTurn);
         emit gameStatusUpdated();
     }

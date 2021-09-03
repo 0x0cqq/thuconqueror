@@ -56,4 +56,12 @@ class UnitStatus : public QObject {
 // calculate the attack point (source, target)
 QPair<qreal, qreal> calculateAttack(UnitStatus *source, UnitStatus *target);
 
+
+
+bool isNearByPoint(const QPoint &a, const QPoint &b);
+
+bool isNearbyBlock(const BlockStatus *a, const BlockStatus *b);
+
+QVector<QPoint> getNearbyPoint(const QPoint &a);
+
 #endif

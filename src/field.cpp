@@ -19,29 +19,6 @@ Field::Field(const GameInfo &                       gameInfo,
     }
 }
 
-QPoint nearby[2][6] = {{{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}},
-                       {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {1, -1}}};
-
-bool isNearByPoint(const QPoint &a, const QPoint &b) {
-    for(int i = 0; i < 6; i++) {
-        if(a + nearby[a.x() % 2][i] == b) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool isNearbyBlock(const BlockStatus *a, const BlockStatus *b) {
-    return isNearByPoint(a->m_coord, b->m_coord);
-}
-
-QVector<QPoint> getNearbyPoint(const QPoint &a) {
-    QVector<QPoint> ans;
-    for(int i = 0; i < 6; i++) {
-        ans.push_back(a + nearby[a.x() % 2][i]);
-    }
-    return ans;
-}
 
 bool cmp(const QPoint &a, const QPoint &b) {
     if(a.x() < b.x()) {
@@ -202,6 +179,6 @@ void Field::getUnitMoveRange(qint32 uid) {
         }
     }
     moveRange.erase(moveRange.begin());  // 抹掉本身
-    emit unitMoveRangegot(moveRange);
+    emit unitMoveRangegot(uid, moveRange);
     qDebug() << moveRange.size() << Qt::endl;
 }

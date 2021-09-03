@@ -19,6 +19,7 @@ SOURCES += \
     src/graphunit.cpp \
     src/graphblock.cpp \
     src/graphfield.cpp \
+    src/graphview.cpp \
     src/status.cpp
 
 

@@ -3,6 +3,7 @@
 
 #include "graphblock.h"
 #include "graphunit.h"
+#include "status.h"
 #include "info.h"
 
 #include <QDebug>
@@ -44,7 +45,7 @@ class GraphField : public QGraphicsScene {
 
   signals:
     void checkStateChange(QPoint coord, bool state);
-    void moveRangeChange(QPoint coord, bool state);
+    void moveRangeChange(qint32 uid, QPoint coord, bool state);
     // 暂时未用
     void userNewUnit(QPoint coord);
     void userMoveUnit(qint32 uid, QPoint destCoord);
@@ -61,7 +62,7 @@ class GraphField : public QGraphicsScene {
     void dieUnit(qint32 uid);
     void moveUnit(qint32 uid, const QVector<QPoint> &path);
     void attackUnit(qint32 uid, qint32 tarid);
-    void showMoveRange(QVector<QPoint> range);
+    void showMoveRange(qint32 uid, QVector<QPoint> range);
     void hideMoveRange();
     void onBlockClicked(QPoint coord);
 };
