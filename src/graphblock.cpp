@@ -1,4 +1,5 @@
 #include "graphblock.h"
+#include <QGraphicsSceneMouseEvent>
 
 QRectF GraphBlock::boundingRect() const {
     return QRectF(-GraphInfo::blockSize - GraphInfo::penWidth,
@@ -35,10 +36,22 @@ void GraphBlock::paint(QPainter *                      painter,
 }
 
 void GraphBlock::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    qDebug() << "block: " << coord().x() << coord().y() << Qt::endl;
-    emit blockClicked(coord());
-    // reverseCheck();
-    QGraphicsObject::mousePressEvent(event);
+    if(event->button() == Qt::LeftButton) {
+        qDebug() << "press block: " << coord().x() << coord().y() << Qt::endl;
+        // emit blockClicked(coord());
+        // reverseCheck();
+        QGraphicsObject::mousePressEvent(event);
+        event->accept();
+    }
+}
+
+void GraphBlock::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+    if(event->button() == Qt::LeftButton) {
+        qDebug() << "release block: " << coord().x() << coord().y() << Qt::endl;
+        emit blockClicked(coord());
+        // reverseCheck();
+        QGraphicsObject::mouseReleaseEvent(event);
+    }
 }
 
 void GraphBlock::changeCheck(QPoint coord, bool isChecked) {

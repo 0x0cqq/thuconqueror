@@ -33,10 +33,12 @@ GraphField::GraphField(const GameInfo &                 gameInfo,
     }
     connect(this, &GraphField::checkStateChange, this,
             [=](QPoint coord, bool state) {
-                if(state == true && blocks(coord)->unitOnBlock() != -1 &&
-                   units[blocks(coord)->unitOnBlock()]->player() ==
-                       m_gameInfo.nowPlayer) {
-                    emit userShowMoveRange(blocks(coord)->unitOnBlock());
+                qint32 uid = blocks(coord)->unitOnBlock();
+                if(state == true && uid != -1 &&
+                   units[uid]->player() ==
+                       m_gameInfo.nowPlayer &&
+                   units[uid]->m_status->isAlive()) {
+                    emit userShowMoveRange(uid);
                 }
                 else {
                     emit userHideMoveRange();
@@ -59,6 +61,11 @@ QPointF GraphField::getBlockCenter(QPoint coord) const {
 void GraphField::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     qDebug() << "scene: " << event->scenePos() << Qt::endl;
     QGraphicsScene::mousePressEvent(event);
+}
+
+void GraphField::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+    qDebug() << "release scene: " << event->scenePos() << Qt::endl;
+    QGraphicsScene::mouseReleaseEvent(event);
 }
 
 void GraphField::moveUnit(qint32 uid, const QVector<QPoint> &path) {
@@ -184,7 +191,8 @@ void GraphField::attackUnit(GraphUnit *graphUnit, qint32 tarid) {
     graphUnit->update(graphUnit->boundingRect());
     units[tarid]->update(units[tarid]->boundingRect());
     QMessageBox msgBox;
-    msgBox.setText("攻击！ " + QString::number(graphUnit->uid()) + " 号 Unit 攻击了 " + QString::number(tarid) + " 号 Unit 。");
+    msgBox.setText("攻击！ " + QString::number(graphUnit->uid()) +
+                   " 号 Unit 攻击了 " + QString::number(tarid) + " 号 Unit 。");
     msgBox.exec();
     emit needUpdateDetail();
 }

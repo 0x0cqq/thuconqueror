@@ -39,3 +39,9 @@ void GraphUnit::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mousePressEvent(event);
     event->ignore();
 }
+
+void GraphUnit::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+    qDebug() << "press unit: " << this->m_status->m_uid << Qt::endl;
+    QGraphicsObject::mouseReleaseEvent(event);
+    event->ignore();
+}

@@ -30,7 +30,9 @@ class GraphBlock : public QGraphicsObject {
     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
   signals:
     void blockClicked(QPoint coord);
     void checkChanged(QPoint coord, bool nowState);

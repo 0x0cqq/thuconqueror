@@ -12,9 +12,8 @@ class GraphUnit : public QGraphicsObject {
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
   public:
     const UnitStatus *m_status;
-    GraphUnit() : QGraphicsObject() { this->setFlag(ItemIsSelectable, true); }
     GraphUnit(UnitStatus *status, const QPointF &pos)
-        : m_status(status), QGraphicsObject() {
+        : QGraphicsObject(), m_status(status) {
         this->setPos(pos);
         this->setFlag(ItemIsSelectable, true);
         qDebug() << "New unit " << m_status->m_uid << Qt::endl;
@@ -24,6 +23,8 @@ class GraphUnit : public QGraphicsObject {
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+
   signals:
   public slots:
 };

@@ -40,6 +40,8 @@ class GraphField : public QGraphicsScene {
     QPointF getBlockCenter(qint32 r, qint32 c) const;
     QPointF getBlockCenter(QPoint coord) const;
     void    mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void    mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+
   signals:
     void checkStateChange(QPoint coord, bool state);
     void moveRangeChange(QPoint coord, bool state);
