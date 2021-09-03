@@ -44,6 +44,7 @@ class Game : public QObject {
         // 应该重载一下那个 Label的，不过之后再说吧，现在先写一个能用的
         connect(this, &Game::gameStatusUpdated, this,
                 [=]() { this->updateGameStatus(gameStatusLabel); });
+        this->updateGameStatus(gameStatusLabel);
     }
     void updateGameStatus(QLabel *gameStatusLabel) {
         gameStatusLabel->setText(
@@ -62,6 +63,8 @@ class Game : public QObject {
     void setNextTurnButton() {
         QPushButton *nextTurnButton = new QPushButton();
         nextTurnButton->setIcon(QIcon(":/icons/nextturn.svg"));
+        nextTurnButton->setWhatsThis("当前回合完成，进入下一回合");
+
         nextTurnButton->setIconSize(QSize(85, 85));
         nextTurnButton->setContentsMargins(5, 5, 10, 10);
         nextTurnButtonWidget = m_graph->addWidget(nextTurnButton);
@@ -76,6 +79,7 @@ class Game : public QObject {
     void setNewUnitButton() {
         QPushButton *newUnitButton = new QPushButton();
         newUnitButton->setText("新建兵");
+        newUnitButton->setWhatsThis("在选中的Block上新建一个兵吧！");
         newUnitButtonWidget = m_graph->addWidget(newUnitButton);
         newUnitButtonWidget->setGeometry(
             QRect(QPoint(0, 0), QPoint(100, 100)));
