@@ -29,6 +29,8 @@ class Game : public QObject {
     GraphField *                    m_graph;
     GraphView *                     m_view;
     QGraphicsProxyWidget *          nextTurnButtonWidget;
+    QGraphicsProxyWidget *          newUnitButtonWidget;
+
     qint32 width() const { return m_gameInfo.map_size.x(); }
     qint32 height() const { return m_gameInfo.map_size.y(); }
     Game(GraphView *graphView, QPoint map_size, QObject *parent = nullptr);
@@ -38,7 +40,47 @@ class Game : public QObject {
   public slots:
     void init();
     void setButtonPos();
-    void setNewUnitButton(QPushButton *newUnitButton) {
+    void setgameStatusLabel(QLabel *gameStatusLabel) {
+        // 应该重载一下那个 Label的，不过之后再说吧，现在先写一个能用的
+        connect(this, &Game::gameStatusUpdated, this,
+                [=]() { this->updateGameStatus(gameStatusLabel); });
+    }
+    void updateGameStatus(QLabel *gameStatusLabel) {
+        gameStatusLabel->setText(
+            "回合数：" + QString::number(m_gameInfo.m_turnNumber) +
+            " 现在正在操作的玩家：" + QString::number(m_gameInfo.nowPlayer));
+    }
+    void setDetailedLabel(QLabel *detailedLabel) {
+        connect(m_graph, &GraphField::checkStateChange, this,
+                [=]() { this->updateDetailedStatus(detailedLabel); });
+        connect(m_graph, &GraphField::needUpdateDetail, this,
+                [=]() { this->updateDetailedStatus(detailedLabel); });
+        this->updateDetailedStatus(detailedLabel);
+    }
+    void updateDetailedStatus(QLabel *detailedLabel);
+
+    void setNextTurnButton() {
+        QPushButton *nextTurnButton = new QPushButton();
+        nextTurnButton->setIcon(QIcon(":/icons/nextturn.svg"));
+        nextTurnButton->setIconSize(QSize(85, 85));
+        nextTurnButton->setContentsMargins(5, 5, 10, 10);
+        nextTurnButtonWidget = m_graph->addWidget(nextTurnButton);
+        nextTurnButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
+                                      true);
+
+        nextTurnButtonWidget->setGeometry(
+            QRect(QPoint(0, 0), QPoint(100, 100)));
+        connect(nextTurnButton, &QPushButton::clicked, this, &Game::nextTurn);
+        emit gameStatusUpdated();
+    }
+    void setNewUnitButton() {
+        QPushButton *newUnitButton = new QPushButton();
+        newUnitButton->setText("新建兵");
+        newUnitButtonWidget = m_graph->addWidget(newUnitButton);
+        newUnitButtonWidget->setGeometry(
+            QRect(QPoint(0, 0), QPoint(100, 100)));
+        newUnitButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
+                                     true);
         connect(newUnitButton, &QPushButton::clicked, this, [=]() {
             // 需要当前位置没有Unit，否则会炸掉的
             if(m_graph->m_nowCheckedBlock == nullptr) {
@@ -70,40 +112,17 @@ class Game : public QObject {
             m_field->doNewUnit(unitStatus);
         });
     }
-    void setgameStatusLabel(QLabel *gameStatusLabel) {
-        // 应该重载一下那个 Label的，不过之后再说吧，现在先写一个能用的
-        connect(this, &Game::gameStatusUpdated, this,
-                [=]() { this->updateGameStatus(gameStatusLabel); });
-    }
-    void updateGameStatus(QLabel *gameStatusLabel) {
-        gameStatusLabel->setText(
-            "回合数：" + QString::number(m_gameInfo.m_turnNumber) +
-            " 现在正在操作的玩家：" + QString::number(m_gameInfo.nowPlayer));
-    }
-    void setDetailedLabel(QLabel *detailedLabel) {
-        connect(m_graph, &GraphField::checkStateChange, this,
-                [=]() { this->updateDetailedStatus(detailedLabel); });
-        connect(m_graph, &GraphField::needUpdateDetail, this,
-                [=]() { this->updateDetailedStatus(detailedLabel); });
-        this->updateDetailedStatus(detailedLabel);
-    }
-    void updateDetailedStatus(QLabel *detailedLabel);
-
-    void setNextTurnButton() {
-        QPushButton *nextTurnButton = new QPushButton();
-        nextTurnButton->setIcon(QIcon(":/icons/nextturn.svg"));
-        nextTurnButton->setIconSize(QSize(85,85));
-        nextTurnButton->setContentsMargins(5,5,10,10);
-        nextTurnButtonWidget        = m_graph->addWidget(nextTurnButton);
-        nextTurnButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
-                                      true);
-
-        nextTurnButtonWidget->setGeometry(
-            QRect(QPoint(0, 0), QPoint(100, 100)));
-        connect(nextTurnButton, &QPushButton::clicked, this, &Game::nextTurn);
-        emit gameStatusUpdated();
-    }
     void nextTurn();
+    void showNewUnitButton() {
+        if(newUnitButtonWidget != nullptr) {
+            newUnitButtonWidget->show();
+        }
+    }
+    void hideNewUnitButton() {
+        if(newUnitButtonWidget != nullptr) {
+            newUnitButtonWidget->hide();
+        }
+    }
 };
 
 #endif

@@ -25,6 +25,16 @@ Game::Game(GraphView *graphView, QPoint map_size, QObject *parent)
     }
 
     connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
+    // connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
+
+    connect(m_graph, &GraphField::checkStateChange, this, [=](QPoint coord, bool state) {
+        if(state == true) {
+            showNewUnitButton();
+        }
+        else {
+            hideNewUnitButton();
+        }
+    });
 }
 
 void Game::setButtonPos() {
@@ -33,6 +43,11 @@ void Game::setButtonPos() {
             QPoint(m_view->size().width(), m_view->height()) -
             QPoint(100, 100)));
         nextTurnButtonWidget->setZValue(100);
+    }
+    if(newUnitButtonWidget != nullptr) {
+        newUnitButtonWidget->setPos(m_view->mapToScene(
+            QPoint(m_view->size().width() / 2 - 50, m_view->height() - 100)));
+        newUnitButtonWidget->setZValue(100);
     }
 }
 

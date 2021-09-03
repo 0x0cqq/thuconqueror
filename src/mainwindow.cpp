@@ -12,15 +12,15 @@ Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     hBox->addWidget(graphView);
     hvBox = new QVBoxLayout();
     hBox->addLayout(hvBox);
-    buttonBox = new QHBoxLayout();
-    hvBox->addLayout(buttonBox);
-    exitButton = new QPushButton("退出");
-    saveButton = new QPushButton("保存");
-    newButton  = new QPushButton("新建单元");
+    // buttonBox = new QHBoxLayout();
+    // hvBox->addLayout(buttonBox);
+    // exitButton = new QPushButton("退出");
+    // saveButton = new QPushButton("保存");
+    // newButton  = new QPushButton("新建单元");
 
-    buttonBox->addWidget(saveButton);
-    buttonBox->addWidget(exitButton);
-    buttonBox->addWidget(newButton);
+    // buttonBox->addWidget(saveButton);
+    // buttonBox->addWidget(exitButton);
+    // buttonBox->addWidget(newButton);
 
     gameStatusLabel = new QLabel("游戏信息占位");
     detailLabel     = new QLabel("详细信息占位");
@@ -39,7 +39,7 @@ Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
 
     // add scene
     game = new Game(graphView, QPoint(24, 16), this);
-    game->setNewUnitButton(newButton);
+    game->setNewUnitButton();
     game->setgameStatusLabel(gameStatusLabel);
     game->setNextTurnButton();
     game->setDetailedLabel(detailLabel);
