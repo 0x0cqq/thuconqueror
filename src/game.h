@@ -6,6 +6,7 @@
 #include "graphview.h"
 #include "info.h"
 #include "status.h"
+#include <QGraphicsProxyWidget>
 #include <QLabel>
 #include <QObject>
 #include <QPoint>
@@ -26,17 +27,17 @@ class Game : public QObject {
     QVector<UnitStatus *>           m_units;
     Field *                         m_field;
     GraphField *                    m_graph;
+    GraphView *                     m_view;
+    QGraphicsProxyWidget *          nextTurnButtonWidget;
     qint32 width() const { return m_gameInfo.map_size.x(); }
     qint32 height() const { return m_gameInfo.map_size.y(); }
     Game(GraphView *graphView, QPoint map_size, QObject *parent = nullptr);
 
-    // game 类得有一个专门的函数负责把两边连接起来，其实主要是 死的 graphblock
-    // 和 abstractblock 之间。这个函数不太好写，之后再说吧。
   signals:
     void gameStatusUpdated();
   public slots:
     void init();
-    // 一定要采用这种方式吗？或许之后可以把所有的 GUI 都塞到图里面呢。
+    void setButtonPos();
     void setNewUnitButton(QPushButton *newUnitButton) {
         connect(newUnitButton, &QPushButton::clicked, this, [=]() {
             // 需要当前位置没有Unit，否则会炸掉的
@@ -52,11 +53,11 @@ class Game : public QObject {
                 msgBox.exec();
                 return;
             }
-            if(m_graph->m_nowCheckedBlock->m_status->m_type != plainBlock){
+            if(m_graph->m_nowCheckedBlock->m_status->m_type != plainBlock) {
                 QMessageBox msgBox;
                 msgBox.setText("当前 Block 的地形不能生产 Unit !");
-                msgBox.exec();   
-                return;             
+                msgBox.exec();
+                return;
             }
             UnitStatus *unitStatus = new UnitStatus(
                 m_units.size(), virusUnit, unitinfo, m_gameInfo.nowPlayer,
@@ -88,7 +89,11 @@ class Game : public QObject {
     }
     void updateDetailedStatus(QLabel *detailedLabel);
 
-    void setNextTurnButton(QPushButton *nextTurnButton) {
+    void setNextTurnButton() {
+        QPushButton *nextTurnButton = new QPushButton("下一回合");
+        nextTurnButtonWidget        = m_graph->addWidget(nextTurnButton);
+        nextTurnButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
+                                      true);
         connect(nextTurnButton, &QPushButton::clicked, this, &Game::nextTurn);
         emit gameStatusUpdated();
     }

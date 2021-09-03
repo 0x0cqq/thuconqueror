@@ -13,8 +13,6 @@ class Mainwindow : public QMainWindow {
   public:
     Mainwindow(QWidget *parent = nullptr);
     ~Mainwindow();
-
-  private:
     QHBoxLayout *hBox;
     QVBoxLayout *hvBox;
     QHBoxLayout *buttonBox;

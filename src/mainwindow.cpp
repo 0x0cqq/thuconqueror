@@ -1,8 +1,9 @@
 #include "mainwindow.h"
 #include <QDebug>
+#include <QGraphicsProxyWidget>
 #include <QPropertyAnimation>
 #include <QPushButton>
-#include <QGraphicsProxyWidget>
+#include <cstdlib>
 
 Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     this->setCentralWidget(new QWidget(this));
@@ -15,21 +16,20 @@ Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     hvBox->addLayout(buttonBox);
     exitButton = new QPushButton("退出");
     saveButton = new QPushButton("保存");
-    newButton = new QPushButton("新建单元");
+    newButton  = new QPushButton("新建单元");
 
     buttonBox->addWidget(saveButton);
     buttonBox->addWidget(exitButton);
     buttonBox->addWidget(newButton);
 
     gameStatusLabel = new QLabel("游戏信息占位");
-    detailLabel = new QLabel("详细信息占位");
+    detailLabel     = new QLabel("详细信息占位");
     policyTreeLabel = new QLabel("政策树占位");
 
     hvBox->addWidget(gameStatusLabel);
     hvBox->addWidget(detailLabel);
     hvBox->addWidget(policyTreeLabel);
 
-    nextTurnButton = new QPushButton("下一回合");
     // QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget();
     // proxy->setWidget(nextTurnButton);
 
@@ -41,11 +41,9 @@ Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     game = new Game(graphView, QPoint(24, 16), this);
     game->setNewUnitButton(newButton);
     game->setgameStatusLabel(gameStatusLabel);
-    game->setNextTurnButton(nextTurnButton);
-    game->init();
-    game->m_graph->addWidget(nextTurnButton);
+    game->setNextTurnButton();
     game->setDetailedLabel(detailLabel);
-    
+    game->init();
 }
 
 Mainwindow::~Mainwindow() {}

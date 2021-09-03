@@ -1,5 +1,6 @@
 #include "graphfield.h"
 #include "graphblock.h"
+#include <QGraphicsView>
 #include <QPropertyAnimation>
 
 GraphField::GraphField(const GameInfo &                 gameInfo,
@@ -35,8 +36,7 @@ GraphField::GraphField(const GameInfo &                 gameInfo,
             [=](QPoint coord, bool state) {
                 qint32 uid = blocks(coord)->unitOnBlock();
                 if(state == true && uid != -1 &&
-                   units[uid]->player() ==
-                       m_gameInfo.nowPlayer &&
+                   units[uid]->player() == m_gameInfo.nowPlayer &&
                    units[uid]->m_status->isAlive()) {
                     emit userShowMoveRange(uid);
                 }
@@ -44,6 +44,7 @@ GraphField::GraphField(const GameInfo &                 gameInfo,
                     emit userHideMoveRange();
                 }
             });
+
 }
 
 QPointF GraphField::getBlockCenter(qint32 r, qint32 c) const {
@@ -60,6 +61,13 @@ QPointF GraphField::getBlockCenter(QPoint coord) const {
 
 void GraphField::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     qDebug() << "scene: " << event->scenePos() << Qt::endl;
+
+    qDebug() << "view: " << views().first()->mapFromScene(event->scenePos())
+             << Qt::endl;
+    qDebug() << "view: "
+             << views().first()->mapToScene(
+                    views().first()->mapFromScene(event->scenePos()))
+             << Qt::endl;
     QGraphicsScene::mousePressEvent(event);
 }
 

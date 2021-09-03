@@ -1,10 +1,12 @@
 #include "game.h"
 #include <QRandomGenerator>
+#include <QThread>
 
 Game::Game(GraphView *graphView, QPoint map_size, QObject *parent)
     : QObject(parent) {
     m_gameInfo.m_turnNumber = 0, m_gameInfo.map_size = map_size,
     m_gameInfo.nowPlayer = 1, m_gameInfo.playerNumbers = 2;
+    nextTurnButtonWidget = nullptr;
     m_blocks.resize(width() + 2);
     for(int i = 1; i <= width(); i++) {
         m_blocks[i].resize(height() + 2);
@@ -17,8 +19,17 @@ Game::Game(GraphView *graphView, QPoint map_size, QObject *parent)
     }
     m_field = new Field(m_gameInfo, m_blocks, m_units);
     m_graph = new GraphField(m_gameInfo, m_blocks, m_units);
-    if(graphView != nullptr) {
-        graphView->setScene(m_graph);
+    m_view  = graphView;
+    if(m_view != nullptr) {
+        m_view->setScene(m_graph);
+    }
+
+    connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
+}
+
+void Game::setButtonPos() {
+    if(nextTurnButtonWidget != nullptr) {
+        nextTurnButtonWidget->setPos(m_view->mapToScene(QPoint(100, 100)));
     }
 }
 
