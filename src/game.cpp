@@ -27,14 +27,28 @@ Game::Game(GraphView *graphView, QPoint map_size, QObject *parent)
     connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
     // connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
 
-    connect(m_graph, &GraphField::checkStateChange, this, [=](QPoint coord, bool state) {
-        if(state == true) {
-            showNewUnitButton();
-        }
-        else {
-            hideNewUnitButton();
-        }
-    });
+    connect(m_graph, &GraphField::checkStateChange, this,
+            [=](QPoint coord, bool state) {
+                if(state == true) {
+                    showNewUnitButton();
+                }
+                else {
+                    hideNewUnitButton();
+                }
+            });
+}
+
+void Game::setgameStatusLabel(QLabel *gameStatusLabel) {
+    // 应该重载一下那个 Label的，不过之后再说吧，现在先写一个能用的
+    connect(this, &Game::gameStatusUpdated, this,
+            [=]() { this->updateGameStatus(gameStatusLabel); });
+    this->updateGameStatus(gameStatusLabel);
+}
+
+void Game::updateGameStatus(QLabel *gameStatusLabel) {
+    gameStatusLabel->setText(
+        "回合数：" + QString::number(m_gameInfo.m_turnNumber) +
+        " 现在正在操作的玩家：" + QString::number(m_gameInfo.nowPlayer));
 }
 
 void Game::setButtonPos() {
@@ -74,6 +88,14 @@ void Game::init() {
             &GraphField::hideMoveRange);
 }
 
+void Game::setDetailedLabel(QLabel *detailedLabel) {
+    connect(m_graph, &GraphField::checkStateChange, this,
+            [=]() { this->updateDetailedStatus(detailedLabel); });
+    connect(m_graph, &GraphField::needUpdateDetail, this,
+            [=]() { this->updateDetailedStatus(detailedLabel); });
+    this->updateDetailedStatus(detailedLabel);
+}
+
 void Game::updateDetailedStatus(QLabel *detailedLabel) {
     if(m_graph->m_nowCheckedBlock == nullptr) {
         detailedLabel->setText("当前无选中格。");
@@ -111,7 +133,23 @@ void Game::updateDetailedStatus(QLabel *detailedLabel) {
     }
 }
 
-void Game::nextTurn() {
+void Game::setNextTurnButton() {
+    QPushButton *nextTurnButton = new QPushButton();
+    nextTurnButton->setIcon(QIcon(":/icons/nextturn.svg"));
+    nextTurnButton->setWhatsThis("当前回合完成，进入下一回合");
+
+    nextTurnButton->setIconSize(QSize(85, 85));
+    nextTurnButton->setContentsMargins(5, 5, 10, 10);
+    nextTurnButtonWidget = m_graph->addWidget(nextTurnButton);
+    nextTurnButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
+                                  true);
+
+    nextTurnButtonWidget->setGeometry(QRect(QPoint(0, 0), QPoint(100, 100)));
+    connect(nextTurnButton, &QPushButton::clicked, this, &Game::usernextTurn);
+    emit gameStatusUpdated();
+}
+
+void Game::usernextTurn() {
     if(m_gameInfo.playerNumbers == m_gameInfo.nowPlayer) {
         m_gameInfo.nowPlayer = 1;
         m_gameInfo.m_turnNumber++;
@@ -126,4 +164,45 @@ void Game::nextTurn() {
                    " 号玩家，请开始操控。");
     msgBox.exec();
     emit gameStatusUpdated();
+}
+
+void Game::setNewUnitButton() {
+    QPushButton *newUnitButton = new QPushButton();
+    newUnitButton->setText("新建兵");
+    newUnitButton->setWhatsThis("在选中的Block上新建一个兵吧！");
+    newUnitButtonWidget = m_graph->addWidget(newUnitButton);
+    newUnitButtonWidget->setGeometry(QRect(QPoint(0, 0), QPoint(100, 100)));
+    newUnitButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
+                                 true);
+    connect(newUnitButton, &QPushButton::clicked, this, &Game::usernewUnit);
+}
+
+void Game::usernewUnit() {
+    // 需要当前位置没有Unit，否则会炸掉的
+    if(m_graph->m_nowCheckedBlock == nullptr) {
+        QMessageBox msgBox;
+        msgBox.setText("没有选中Block!");
+        msgBox.exec();
+        return;
+    }
+    if(m_graph->m_nowCheckedBlock->unitOnBlock() != -1) {
+        QMessageBox msgBox;
+        msgBox.setText("当前Block已经有Unit了!");
+        msgBox.exec();
+        return;
+    }
+    if(m_graph->m_nowCheckedBlock->m_status->m_type != plainBlock) {
+        QMessageBox msgBox;
+        msgBox.setText("当前 Block 的地形不能生产 Unit !");
+        msgBox.exec();
+        return;
+    }
+    UnitStatus *unitStatus = new UnitStatus(
+        m_units.size(), virusUnit, unitinfo, m_gameInfo.nowPlayer,
+        m_graph->m_nowCheckedBlock->coord());
+
+    emit m_graph->checkStateChange(m_graph->m_nowCheckedBlock->coord(), false);
+    m_graph->m_nowCheckedBlock = nullptr;
+    m_units.push_back(unitStatus);
+    m_field->doNewUnit(unitStatus);
 }

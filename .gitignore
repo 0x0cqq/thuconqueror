@@ -1,3 +1,5 @@
 build/
 *.exe
 .VSCodeCounter
+release/
+*.lnk
