@@ -1,5 +1,6 @@
 #include "graphview.h"
 
+
 void GraphView::paintEvent(QPaintEvent *event) {
     QGraphicsView::paintEvent(event);
     emit finishPainting();
