@@ -34,7 +34,7 @@ class Game : public QObject {
 
     qint32 width() const { return m_gameInfo.map_size.x(); }
     qint32 height() const { return m_gameInfo.map_size.y(); }
-    Game(GraphView *graphView, QPoint map_size, QObject *parent = nullptr);
+    Game(QPoint map_size, QObject *parent = nullptr);
 
   signals:
     void gameStatusUpdated();

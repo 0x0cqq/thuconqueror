@@ -3,8 +3,7 @@
 #include <QThread>
 #include <QWindow>
 
-Game::Game(GraphView *graphView, QPoint map_size, QObject *parent)
-    : QObject(parent) {
+Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
     m_gameInfo.m_turnNumber = 0, m_gameInfo.map_size = map_size,
     m_gameInfo.nowPlayer = 1, m_gameInfo.playerNumbers = 2;
     nextTurnButtonWidget = nullptr, newUnitButtonWidget = nullptr,
@@ -21,10 +20,8 @@ Game::Game(GraphView *graphView, QPoint map_size, QObject *parent)
     }
     m_field = new Field(m_gameInfo, m_blocks, m_units);
     m_graph = new GraphField(m_gameInfo, m_blocks, m_units);
-    m_view  = graphView;
-    if(m_view != nullptr) {
-        m_view->setScene(m_graph);
-    }
+    m_view  = new GraphView;
+    m_view->setScene(m_graph);
 
     connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
     // connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
@@ -93,6 +90,7 @@ void Game::init() {
 
     connect(m_graph, &GraphField::userHideMoveRange, m_graph,
             &GraphField::hideMoveRange);
+            
 }
 
 void Game::setDetailedLabel(QLabel *detailedLabel) {
