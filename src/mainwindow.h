@@ -15,14 +15,9 @@ class Mainwindow : public QMainWindow {
     ~Mainwindow();
     QHBoxLayout *hBox;
     QVBoxLayout *hvBox;
-    QHBoxLayout *buttonBox;
-    QPushButton *exitButton;
-    QPushButton *saveButton;
-    QPushButton *newButton;
     QLabel *     gameStatusLabel;
     QLabel *     detailLabel;
     QLabel *     policyTreeLabel;
-    QPushButton *nextTurnButton;
     GraphView *  graphView;
     Game *       game;
 };

@@ -30,6 +30,8 @@ class Game : public QObject {
     GraphView *                     m_view;
     QGraphicsProxyWidget *          nextTurnButtonWidget;
     QGraphicsProxyWidget *          newUnitButtonWidget;
+    QGraphicsProxyWidget *          pauseButtonWidget;
+
 
     qint32 width() const { return m_gameInfo.map_size.x(); }
     qint32 height() const { return m_gameInfo.map_size.y(); }
@@ -39,16 +41,18 @@ class Game : public QObject {
     void gameStatusUpdated();
   public slots:
     void init();
-    void setButtonPos();
     void setgameStatusLabel(QLabel *gameStatusLabel);
     void updateGameStatus(QLabel *gameStatusLabel);
     void setDetailedLabel(QLabel *detailedLabel);
     void updateDetailedStatus(QLabel *detailedLabel);
 
+    void setButtonPos();
     void setNextTurnButton();
-    void setNewUnitButton();
     void usernextTurn();
+    void setNewUnitButton();
     void usernewUnit();
+    void setPauseButton();
+    void userPause();
     void showNewUnitButton() {
         if(newUnitButtonWidget != nullptr) {
             newUnitButtonWidget->show();

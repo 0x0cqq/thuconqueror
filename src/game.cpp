@@ -1,12 +1,14 @@
 #include "game.h"
 #include <QRandomGenerator>
 #include <QThread>
+#include <QWindow>
 
 Game::Game(GraphView *graphView, QPoint map_size, QObject *parent)
     : QObject(parent) {
     m_gameInfo.m_turnNumber = 0, m_gameInfo.map_size = map_size,
     m_gameInfo.nowPlayer = 1, m_gameInfo.playerNumbers = 2;
-    nextTurnButtonWidget = nullptr;
+    nextTurnButtonWidget = nullptr, newUnitButtonWidget = nullptr,
+    pauseButtonWidget = nullptr;
     m_blocks.resize(width() + 2);
     for(int i = 1; i <= width(); i++) {
         m_blocks[i].resize(height() + 2);
@@ -62,6 +64,11 @@ void Game::setButtonPos() {
         newUnitButtonWidget->setPos(m_view->mapToScene(
             QPoint(m_view->size().width() / 2 - 50, m_view->height() - 100)));
         newUnitButtonWidget->setZValue(100);
+    }
+    if(pauseButtonWidget != nullptr) {
+        pauseButtonWidget->setPos(
+            m_view->mapToScene(QPoint(m_view->size().width() - 100, 0)));
+        pauseButtonWidget->setZValue(100);
     }
 }
 
@@ -164,6 +171,24 @@ void Game::usernextTurn() {
                    " 号玩家，请开始操控。");
     msgBox.exec();
     emit gameStatusUpdated();
+}
+
+void Game::setPauseButton() {
+    QPushButton *pauseButton = new QPushButton();
+    pauseButton->setGeometry(-100, 0, 100, 100);
+    pauseButton->setIcon(QIcon(":/icons/pause.png"));
+    pauseButton->setIconSize(QSize(85, 85));
+    pauseButton->setContentsMargins(5, 5, 10, 10);
+    pauseButtonWidget = m_graph->addWidget(pauseButton);
+    pauseButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
+    connect(pauseButton, &QPushButton::clicked, this, &Game::userPause);
+}
+
+void Game::userPause() {
+    QDialog window;
+    window.exec();
+    // window->show();
+    // m_graph->addWidget(window);
 }
 
 void Game::setNewUnitButton() {
