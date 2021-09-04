@@ -1,17 +1,16 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "field.h"
-#include "graphfield.h"
+#include "logic/field.h"
+#include "graph/graphfield.h"
 #include "graphview.h"
-#include "info.h"
-#include "status.h"
+#include "basic/info.h"
+#include "basic/status.h"
 #include <QGraphicsProxyWidget>
-#include <QLabel>
 #include <QObject>
-#include <QPoint>
-#include <QPushButton>
 #include <QString>
+#include <QPushButton>
+#include <QLabel>
 
 // 总体思路：所有实质性的内容都交给 Field 和 GraphField 去做，而且它们之间通过
 // signals/slots 联系，不通过 Game 类联系。 所以，Game

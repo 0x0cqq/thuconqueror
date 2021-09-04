@@ -1,7 +1,6 @@
 #ifndef GRAPHVIEW_H
 #define GRAPHVIEW_H
 
-#include "graphfield.h"
 #include <QDebug>
 #include <QGraphicsView>
 #include <QMouseEvent>

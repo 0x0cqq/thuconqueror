@@ -1,5 +1,6 @@
 #include "graphunit.h"
 #include <QDebug>
+#include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 
 QRectF GraphUnit::boundingRect() const {

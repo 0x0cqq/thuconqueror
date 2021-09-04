@@ -12,29 +12,29 @@ CONFIG += c++11
 SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
-    src/unit.cpp \
-    src/block.cpp \
-    src/field.cpp \
+    src/logic/unit.cpp \
+    src/logic/block.cpp \
+    src/logic/field.cpp \
     src/game.cpp \
-    src/graphunit.cpp \
-    src/graphblock.cpp \
-    src/graphfield.cpp \
+    src/graph/graphunit.cpp \
+    src/graph/graphblock.cpp \
+    src/graph/graphfield.cpp \
     src/graphview.cpp \
-    src/status.cpp
+    src/basic/status.cpp
 
 
 HEADERS += \
     src/mainwindow.h \
-    src/graphblock.h \
+    src/graph/graphblock.h \
     src/graphview.h \
-    src/graphfield.h \
-    src/graphunit.h \
-    src/info.h \
-    src/unit.h \
-    src/block.h \ 
-    src/field.h \
+    src/graph/graphfield.h \
+    src/graph/graphunit.h \
+    src/basic/info.h \
+    src/logic/unit.h \
+    src/logic/block.h \ 
+    src/logic/field.h \
     src/game.h \
-    src/status.h
+    src/basic/status.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
