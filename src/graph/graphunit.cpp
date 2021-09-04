@@ -1,7 +1,11 @@
 #include "graphunit.h"
 #include <QDebug>
-#include <QPainter>
+#include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsView>
+#include <QLabel>
+#include <QLayout>
+#include <QPainter>
 
 QRectF GraphUnit::boundingRect() const {
     return QRectF(-GraphInfo::unitSize - GraphInfo::penWidth,
@@ -45,4 +49,29 @@ void GraphUnit::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     qDebug() << "press unit: " << this->m_status->m_uid << Qt::endl;
     QGraphicsObject::mouseReleaseEvent(event);
     event->ignore();
+}
+
+void GraphUnit::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+    qDebug() << "hover!" << nowCoord();
+    auto v = scene()->views().first();
+    if(dialogWidget == nullptr) {
+        dialogWidget = scene()->addWidget(w);
+        dialogWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,true);
+        dialogWidget->hide();
+    }
+    timer->singleShot(500, [=]() {
+        dialogWidget->setPos(this->mapToScene(100, 100));
+        w->updateInfo();
+        w->show();
+        // w->move(v->mapToGlobal(v->mapFromScene(this->mapToScene(100, 100))));
+        // w->show();
+    });
+    QGraphicsObject::hoverEnterEvent(event);
+}
+
+void GraphUnit::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
+    qDebug() << "hover leave" << nowCoord();
+    // dialogWidget->hide();
+    w->hide();
+    QGraphicsObject::hoverLeaveEvent(event);
 }

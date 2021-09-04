@@ -36,8 +36,8 @@ GraphField::GraphField(const GameInfo &                 gameInfo,
             [=](QPoint coord, bool state) {
                 qint32 uid = blocks(coord)->unitOnBlock();
                 if(state == true && uid != -1 &&
-                   units[uid]->player() == m_gameInfo.nowPlayer &&
-                   units[uid]->m_status->isAlive()) {
+                   m_units[uid]->player() == m_gameInfo.nowPlayer &&
+                   m_units[uid]->m_status->isAlive()) {
                     emit userShowMoveRange(uid);
                 }
                 else {
@@ -77,8 +77,8 @@ void GraphField::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void GraphField::moveUnit(qint32 uid, const QVector<QPoint> &path) {
-    Q_ASSERT(uid < units.size());
-    this->moveUnit(units[uid], path);
+    Q_ASSERT(uid < m_units.size());
+    this->moveUnit(m_units[uid], path);
 }
 
 // 不包括graphunit现在的点
@@ -115,8 +115,8 @@ void GraphField::onBlockClicked(QPoint coord) {
                    uidB = blocks(coord)->unitOnBlock();
             if(uidA != -1) {
                 // A 格子上有棋子
-                if(m_gameInfo.nowPlayer == units[uidA]->m_status->m_player &&
-                   units[uidA]->m_status->isAlive()) {
+                if(m_gameInfo.nowPlayer == m_units[uidA]->m_status->m_player &&
+                   m_units[uidA]->m_status->isAlive()) {
                     // A 格上是当前玩家的棋子 且没有死
                     if(uidB == -1) {
                         // B 格子上没有棋子
@@ -130,13 +130,13 @@ void GraphField::onBlockClicked(QPoint coord) {
                     else {
                         // B 格子上有棋子
                         if(m_gameInfo.nowPlayer ==
-                           units[uidB]->m_status->m_player) {
+                           m_units[uidB]->m_status->m_player) {
                             // B 格上是当前玩家的棋子
                             flag = 0;
                         }
                         else {
                             // B 格上不是当前玩家的棋子
-                            if(units[uidB]->m_status->isAlive() && isNearByPoint(coord,m_nowCheckedBlock->coord())) {
+                            if(m_units[uidB]->m_status->isAlive() && isNearByPoint(coord,m_nowCheckedBlock->coord())) {
                                 // 活着
 
                                 flag = 2;
@@ -188,17 +188,17 @@ void GraphField::newUnit(UnitStatus *unitStatus) {
     qDebug() << "new unit: " << unitStatus->m_nowCoord << Qt::endl;
     GraphUnit *newUnit =
         new GraphUnit(unitStatus, getBlockCenter(unitStatus->m_nowCoord));
-    units.append(newUnit);
+    m_units.append(newUnit);
     this->addItem(newUnit);
     emit needUpdateDetail();
 }
 
 void GraphField::attackUnit(qint32 uid, qint32 tarid) {
-    attackUnit(units[uid], tarid);
+    attackUnit(m_units[uid], tarid);
 }
 void GraphField::attackUnit(GraphUnit *graphUnit, qint32 tarid) {
     graphUnit->update(graphUnit->boundingRect());
-    units[tarid]->update(units[tarid]->boundingRect());
+    m_units[tarid]->update(m_units[tarid]->boundingRect());
     QMessageBox msgBox;
     msgBox.setText("攻击！ " + QString::number(graphUnit->uid()) +
                    " 号 Unit 攻击了 " + QString::number(tarid) + " 号 Unit 。");
@@ -207,7 +207,7 @@ void GraphField::attackUnit(GraphUnit *graphUnit, qint32 tarid) {
 }
 
 void GraphField::dieUnit(qint32 uid) {
-    units[uid]->update(units[uid]->boundingRect());
+    m_units[uid]->update(m_units[uid]->boundingRect());
     emit needUpdateDetail();
 }
 

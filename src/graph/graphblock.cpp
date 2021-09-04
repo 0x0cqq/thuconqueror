@@ -32,7 +32,7 @@ void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     if(m_isMoveRange) {
         if(unitOnBlock() == -1) {
             QColor color40;
-            if(s->units[s->m_nowCheckedBlock->unitOnBlock()]->player() == 1) {
+            if(s->m_units[s->m_nowCheckedBlock->unitOnBlock()]->player() == 1) {
                 color40 = Qt::blue;
             }
             else {
@@ -48,9 +48,9 @@ void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     if(unitOnBlock() != -1 && s->m_nowCheckedBlock != nullptr &&
        s->m_nowCheckedBlock->unitOnBlock() != -1) {
         if(isNearByPoint(s->m_nowCheckedBlock->coord(), coord()) &&
-           s->units[unitOnBlock()]->player() !=
-               s->units[s->m_nowCheckedBlock->unitOnBlock()]->player() &&
-           s->units[s->m_nowCheckedBlock->unitOnBlock()]->player() ==
+           s->m_units[unitOnBlock()]->player() !=
+               s->m_units[s->m_nowCheckedBlock->unitOnBlock()]->player() &&
+           s->m_units[s->m_nowCheckedBlock->unitOnBlock()]->player() ==
                s->m_gameInfo.nowPlayer) {
             // 可以攻击
             QColor red40 = Qt::red;

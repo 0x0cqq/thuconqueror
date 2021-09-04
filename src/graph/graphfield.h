@@ -30,7 +30,7 @@ class GraphField : public QGraphicsScene {
   public:
     const GameInfo &               m_gameInfo;
     QVector<QVector<GraphBlock *>> m_blocks;
-    QVector<GraphUnit *>           units;
+    QVector<GraphUnit *>           m_units;
     GraphBlock *                   m_nowCheckedBlock;
 
     GraphField(const GameInfo &                 gameInfo,

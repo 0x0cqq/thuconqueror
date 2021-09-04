@@ -19,6 +19,7 @@ SOURCES += \
     src/graph/graphunit.cpp \
     src/graph/graphblock.cpp \
     src/graph/graphfield.cpp \
+    src/graph/unitdialog.cpp \
     src/graphview.cpp \
     src/basic/status.cpp
 
@@ -29,6 +30,7 @@ HEADERS += \
     src/graphview.h \
     src/graph/graphfield.h \
     src/graph/graphunit.h \
+    src/graph/unitdialog.h \
     src/basic/info.h \
     src/logic/unit.h \
     src/logic/block.h \ 
