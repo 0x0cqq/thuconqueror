@@ -12,6 +12,7 @@ CONFIG += c++11
 SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
+    src/startwindow.cpp \
     src/logic/unit.cpp \
     src/logic/block.cpp \
     src/logic/field.cpp \
@@ -21,11 +22,14 @@ SOURCES += \
     src/graph/graphfield.cpp \
     src/graph/unitdialog.cpp \
     src/graphview.cpp \
+    src/myapplication.cpp \
     src/basic/status.cpp
 
 
 HEADERS += \
+    src/myapplication.h \
     src/mainwindow.h \
+    src/startwindow.h \
     src/graph/graphblock.h \
     src/graphview.h \
     src/graph/graphfield.h \

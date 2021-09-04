@@ -6,9 +6,6 @@
 #include <cstdlib>
 
 Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
-
-
-
     // add scene
     game = new Game(QPoint(24, 16), this);
     game->setNewUnitButton();

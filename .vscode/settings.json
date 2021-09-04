@@ -78,6 +78,9 @@
         "cinttypes": "cpp",
         "variant": "cpp",
         "qgraphicsproxywidget": "cpp",
-        "qapplication": "cpp"
+        "qapplication": "cpp",
+        "qmainwindow": "cpp",
+        "qresizeevent": "cpp",
+        "qgraphicspixmapitem": "cpp"
     }
 }
