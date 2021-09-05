@@ -17,9 +17,9 @@ void GameInfo::write(QJsonObject &json) {
     QJsonArray size;
     size.append(map_size.x());
     size.append(map_size.y());
-    json["map_size"]   = size;
-    json["nowPlayer"]  = nowPlayer;
-    json["turnNumber"] = m_turnNumber;
+    json["map_size"]      = size;
+    json["nowPlayer"]     = nowPlayer;
+    json["turnNumber"]    = m_turnNumber;
     json["playerNumbers"] = playerNumbers;
 }
 
@@ -111,4 +111,16 @@ QVector<QPoint> getNearbyPoint(const QPoint &a) {
         ans.push_back(a + nearby[a.x() % 2][i]);
     }
     return ans;
+}
+
+QPointF getBlockCenter(qint32 r, qint32 c) {
+    // Q_ASSERT(1 <= r && r <= width());
+    // Q_ASSERT(1 <= c && c <= height());
+    return QPointF(1.5 * (r - 1),
+                   qSqrt(3) * (c - 1) + (r % 2 == 0 ? qSqrt(3) / 2 : 0)) *
+        GraphInfo::blockSize;
+}
+
+QPointF getBlockCenter(QPoint coord) {
+    return getBlockCenter(coord.x(), coord.y());
 }

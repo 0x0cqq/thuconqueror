@@ -54,8 +54,7 @@ void Game::clearMemory() {
     }
 }
 
-void Game::read(const QJsonObject &json) {
-    clearMemory();
+Game::Game(const QJsonObject &json) {
     if(json.contains("gameInfo") && json["gameInfo"].isObject()) {
         m_gameInfo.read(json["gameInfo"].toObject());
     }
@@ -78,9 +77,23 @@ void Game::read(const QJsonObject &json) {
         m_units.clear();
         m_units.resize(units.size());
         for(int i = 0; i < units.size(); i++) {
-            m_units[i].read(units[i]);
+            m_units[i]->read(units[i].toObject());
         }
     }
+    m_field = new Field(m_gameInfo, m_blocks, m_units);
+    m_graph = new GraphField(m_gameInfo, m_blocks, m_units);
+    m_view->setScene(m_graph);
+    connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
+
+    connect(m_graph, &GraphField::checkStateChange, this,
+            [=](QPoint, bool state) {
+                if(state == true) {
+                    showNewUnitButton();
+                }
+                else {
+                    hideNewUnitButton();
+                }
+            });
 }
 
 void Game::write(QJsonObject &json) {

@@ -1,9 +1,9 @@
 #ifndef GRAPHFIELD_H
 #define GRAPHFIELD_H
 
+#include "../basic/status.h"
 #include "graphblock.h"
 #include "graphunit.h"
-#include "../basic/status.h"
 
 #include <QDebug>
 #include <QGraphicsScene>
@@ -35,12 +35,11 @@ class GraphField : public QGraphicsScene {
     GraphField(const GameInfo &                 gameInfo,
                QVector<QVector<BlockStatus *>> &blockStatus,
                QVector<UnitStatus *> &          unitStatus);
-    qint32  width() const { return m_gameInfo.map_size.x(); }
-    qint32  height() const { return m_gameInfo.map_size.y(); }
-    QPointF getBlockCenter(qint32 r, qint32 c) const;
-    QPointF getBlockCenter(QPoint coord) const;
-    void    mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void    mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    ~GraphField();
+    qint32 width() const { return m_gameInfo.map_size.x(); }
+    qint32 height() const { return m_gameInfo.map_size.y(); }
+    void   mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void   mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
   signals:
     void checkStateChange(QPoint coord, bool state);

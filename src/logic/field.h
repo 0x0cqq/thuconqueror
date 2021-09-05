@@ -30,6 +30,7 @@ class Field : public QObject {
     Field(const GameInfo &                       gameInfo,
           const QVector<QVector<BlockStatus *>> &blockStatus,
           const QVector<UnitStatus *> &          unitStatus);
+    ~Field();
   signals:
     void newUnit(UnitStatus *unitStatus);
     void unitDead(qint32 uid);

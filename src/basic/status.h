@@ -145,4 +145,8 @@ bool isNearbyBlock(const BlockStatus *a, const BlockStatus *b);
 
 QVector<QPoint> getNearbyPoint(const QPoint &a);
 
+QPointF getBlockCenter(qint32 r, qint32 c);
+
+QPointF getBlockCenter(QPoint coord);
+
 #endif

@@ -21,6 +21,10 @@ GraphField::GraphField(const GameInfo &                 gameInfo,
             this->addItem(m_blocks[i][j]);
         }
     }
+    for(int i = 0; i < unitStatus.size(); i++) {
+        m_units.push_back(new GraphUnit(unitStatus[i]));
+        this->addItem(m_units[i]);
+    }
     for(int i = 1; i <= width(); i++) {
         for(int j = 1; j <= height(); j++) {
             connect(m_blocks[i][j], &GraphBlock::blockClicked, this,
@@ -44,20 +48,9 @@ GraphField::GraphField(const GameInfo &                 gameInfo,
                     emit userHideMoveRange();
                 }
             });
-
 }
 
-QPointF GraphField::getBlockCenter(qint32 r, qint32 c) const {
-    Q_ASSERT(1 <= r && r <= width());
-    Q_ASSERT(1 <= c && c <= height());
-    return QPointF(1.5 * (r - 1),
-                   qSqrt(3) * (c - 1) + (r % 2 == 0 ? qSqrt(3) / 2 : 0)) *
-        GraphInfo::blockSize;
-}
 
-QPointF GraphField::getBlockCenter(QPoint coord) const {
-    return getBlockCenter(coord.x(), coord.y());
-}
 
 void GraphField::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     qDebug() << "scene: " << event->scenePos() << Qt::endl;
@@ -136,7 +129,9 @@ void GraphField::onBlockClicked(QPoint coord) {
                         }
                         else {
                             // B 格上不是当前玩家的棋子
-                            if(m_units[uidB]->m_status->isAlive() && isNearByPoint(coord,m_nowCheckedBlock->coord())) {
+                            if(m_units[uidB]->m_status->isAlive() &&
+                               isNearByPoint(coord,
+                                             m_nowCheckedBlock->coord())) {
                                 // 活着
 
                                 flag = 2;

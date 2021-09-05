@@ -16,9 +16,20 @@ Field::Field(const GameInfo &                       gameInfo,
         }
     }
     for(int i = 0; i < unitStatus.size(); i++) {
+        m_units.push_back(new Unit(unitStatus[i]));
     }
 }
 
+Field::~Field() {
+    for(int i = 1; i <= width(); i++) {
+        for(int j = 1; j <= height(); j++) {
+            delete m_blocks[i][j];
+        }
+    }
+    for(int i = 0; i < m_units.size(); i++) {
+        delete m_units[i];
+    }
+}
 
 bool cmp(const QPoint &a, const QPoint &b) {
     if(a.x() < b.x()) {
@@ -80,7 +91,6 @@ QVector<QPoint> Field::getPath(qint32 uid, QPoint start, QPoint end) {
                 qreal newdist = dist - blocks(p)->m_status->MPneed();
                 if((!dis.contains(p) || newdist > dis[p]) &&
                    ableToPass(uid, p)) {
-                       
                     // qDebug() << p << dis.contains(p) << Qt::endl;
                     dis[p] = dist;
                     q.insert(distance{newdist, p}, pos);
