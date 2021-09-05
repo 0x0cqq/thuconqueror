@@ -3,13 +3,11 @@
 MyApplication::MyApplication(int &argc, char *argv[])
     : QApplication(argc, argv) {
     createStartWindow();
-}
+} 
 
 void MyApplication::createStartWindow() {
     startWindow = new StartWindow;
     startWindow->show();
-    connect(dynamic_cast<QPushButton *>(startWindow->m_startButton->widget()),
-            &QPushButton::clicked, this, &MyApplication::changeToMainWindow);
 }
 
 void MyApplication::changeToMainWindow() {

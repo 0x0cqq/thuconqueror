@@ -8,31 +8,50 @@
 #include <QMainWindow>
 #include <QPushButton>
 
-
 class FitGraphicsView : public QGraphicsView {
     Q_OBJECT
 
-  protected:
+  public:
+    QGraphicsScene *m_scene;
+
     void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+    FitGraphicsView();
+    ~FitGraphicsView();
   signals:
     void finishPainting();
+};
+
+class StartView : public FitGraphicsView {
+    Q_OBJECT
+  public:
+    QGraphicsPixmapItem * m_background;
+    QGraphicsProxyWidget *m_startButton;
+    StartView();
+  public slots:
+    void setButtonPos();
+};
+
+class ChooseLevelView : public FitGraphicsView {
+    Q_OBJECT
+    QGraphicsPixmapItem *m_background;
+
+  public:
+    ChooseLevelView();
 };
 
 class StartWindow : public QMainWindow {
     Q_OBJECT
   public:
-    FitGraphicsView *    m_view;
-    QGraphicsScene *     m_scene;
-    QGraphicsPixmapItem *m_background;
-    QGraphicsProxyWidget *m_startButton;
-
+    StartView *      m_startView;
+    ChooseLevelView *m_chooseLevelView;
     StartWindow(QWidget *parent = nullptr);
     ~StartWindow();
-    void setButtonPos();
     // bool eventFilter(QObject *object, QEvent *event);
   signals:
     void userStartGame();
+  public slots:
+    void changeToChooseLevelWindow();
 };
 
 #endif
