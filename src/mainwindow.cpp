@@ -16,7 +16,6 @@ Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     auto it = new QLabel("滚轮缩放地图，右键点击可以拖动地图。\n移动范围目前是 5 ，攻击范围是 1 。\n移动、攻击次数均不限。\n");
     gameStatusLabel = new QLabel("游戏信息占位");
     detailLabel     = new QLabel("详细信息占位");
-    policyTreeLabel = new QLabel("政策树占位");
 
     game->setgameStatusLabel(gameStatusLabel);
     game->setDetailedLabel(detailLabel);

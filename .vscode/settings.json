@@ -84,6 +84,7 @@
         "qgraphicspixmapitem": "cpp",
         "qevent": "cpp",
         "qdir": "cpp",
-        "qjsonobject": "cpp"
+        "qjsonobject": "cpp",
+        "qlayout": "cpp"
     }
 }

@@ -1,4 +1,5 @@
 #include "game.h"
+#include "graph/menudialog.h"
 #include <QRandomGenerator>
 #include <QThread>
 #include <QWindow>
@@ -243,8 +244,11 @@ void Game::setPolicyTreeButton() {
     policyTreeButtonWidget = m_graph->addWidget(policyTreeButton);
     policyTreeButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
                                     true);
+    connect(policyTreeButton, &QPushButton::clicked, this, &Game::usershowPolicyTree);
+
 }
 
 void Game::usershowPolicyTree(){
-
+    PolicyTreeDialog t(this, nullptr);
+    t.exec();
 }

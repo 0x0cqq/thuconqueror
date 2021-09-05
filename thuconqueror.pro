@@ -21,6 +21,7 @@ SOURCES += \
     src/graph/graphblock.cpp \
     src/graph/graphfield.cpp \
     src/graph/unitdialog.cpp \
+    src/graph/menudialog.cpp \
     src/graphview.cpp \
     src/myapplication.cpp \
     src/basic/status.cpp
@@ -35,6 +36,7 @@ HEADERS += \
     src/graph/graphfield.h \
     src/graph/graphunit.h \
     src/graph/unitdialog.h \
+    src/graph/menudialog.h \
     src/basic/info.h \
     src/logic/unit.h \
     src/logic/block.h \ 
