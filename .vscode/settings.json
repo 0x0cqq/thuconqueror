@@ -81,6 +81,9 @@
         "qapplication": "cpp",
         "qmainwindow": "cpp",
         "qresizeevent": "cpp",
-        "qgraphicspixmapitem": "cpp"
+        "qgraphicspixmapitem": "cpp",
+        "qevent": "cpp",
+        "qdir": "cpp",
+        "qjsonobject": "cpp"
     }
 }

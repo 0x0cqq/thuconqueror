@@ -1,16 +1,16 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "logic/field.h"
-#include "graph/graphfield.h"
-#include "graphview.h"
 #include "basic/info.h"
 #include "basic/status.h"
+#include "graph/graphfield.h"
+#include "graphview.h"
+#include "logic/field.h"
 #include <QGraphicsProxyWidget>
-#include <QObject>
-#include <QString>
-#include <QPushButton>
 #include <QLabel>
+#include <QObject>
+#include <QPushButton>
+#include <QString>
 
 // 总体思路：所有实质性的内容都交给 Field 和 GraphField 去做，而且它们之间通过
 // signals/slots 联系，不通过 Game 类联系。 所以，Game
@@ -30,7 +30,7 @@ class Game : public QObject {
     QGraphicsProxyWidget *          nextTurnButtonWidget;
     QGraphicsProxyWidget *          newUnitButtonWidget;
     QGraphicsProxyWidget *          pauseButtonWidget;
-
+    QGraphicsProxyWidget *          policyTreeButtonWidget;
 
     qint32 width() const { return m_gameInfo.map_size.x(); }
     qint32 height() const { return m_gameInfo.map_size.y(); }
@@ -52,6 +52,8 @@ class Game : public QObject {
     void usernewUnit();
     void setPauseButton();
     void userPause();
+    void setPolicyTreeButton();
+    void usershowPolicyTree();
     void showNewUnitButton() {
         if(newUnitButtonWidget != nullptr) {
             newUnitButtonWidget->show();

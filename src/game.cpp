@@ -7,7 +7,7 @@ Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
     m_gameInfo.m_turnNumber = 0, m_gameInfo.map_size = map_size,
     m_gameInfo.nowPlayer = 1, m_gameInfo.playerNumbers = 2;
     nextTurnButtonWidget = nullptr, newUnitButtonWidget = nullptr,
-    pauseButtonWidget = nullptr;
+    pauseButtonWidget = nullptr, policyTreeButtonWidget = nullptr;
     m_blocks.resize(width() + 2);
     for(int i = 1; i <= width(); i++) {
         m_blocks[i].resize(height() + 2);
@@ -67,6 +67,11 @@ void Game::setButtonPos() {
             m_view->mapToScene(QPoint(m_view->size().width() - 100, 0)));
         pauseButtonWidget->setZValue(100);
     }
+    if(policyTreeButtonWidget != nullptr) {
+        policyTreeButtonWidget->setPos(
+            m_view->mapToScene(QPoint(0, m_view->size().height() - 100)));
+        policyTreeButtonWidget->setZValue(100);
+    }
 }
 
 void Game::init() {
@@ -90,7 +95,6 @@ void Game::init() {
 
     connect(m_graph, &GraphField::userHideMoveRange, m_graph,
             &GraphField::hideMoveRange);
-            
 }
 
 void Game::setDetailedLabel(QLabel *detailedLabel) {
@@ -228,4 +232,19 @@ void Game::usernewUnit() {
     m_graph->m_nowCheckedBlock = nullptr;
     m_units.push_back(unitStatus);
     m_field->doNewUnit(unitStatus);
+}
+
+void Game::setPolicyTreeButton() {
+    QPushButton *policyTreeButton = new QPushButton();
+    policyTreeButton->setGeometry(QRect(0, -100, 100, 100));
+    policyTreeButton->setIcon(QIcon(":/icons/policytree.png"));
+    policyTreeButton->setIconSize(QSize(85, 85));
+    policyTreeButton->setContentsMargins(5, 5, 5, 5);
+    policyTreeButtonWidget = m_graph->addWidget(policyTreeButton);
+    policyTreeButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
+                                    true);
+}
+
+void Game::usershowPolicyTree(){
+
 }

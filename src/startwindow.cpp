@@ -1,9 +1,15 @@
 #include "startwindow.h"
 
+#include <QCoreApplication>
+#include <QDir>
 #include <QEvent>
+#include <QFile>
 #include <QGraphicsProxyWidget>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QLayout>
 #include <QResizeEvent>
+#include <QTextStream>
 
 void FitGraphicsView::resizeEvent(QResizeEvent *event) {
     if(this->scene() != nullptr) {
@@ -58,9 +64,12 @@ StartWindow::StartWindow(QWidget *parent)
     this->setCentralWidget(new QWidget(this));
     this->centralWidget()->setLayout(new QHBoxLayout(this->centralWidget()));
     this->centralWidget()->layout()->addWidget(m_startView);
-    connect(dynamic_cast<QPushButton *>(
-                this->m_startView->m_startButton->widget()),
-            &QPushButton::clicked, this, &StartWindow::changeToChooseLevelWindow);
+    connect(
+        dynamic_cast<QPushButton *>(this->m_startView->m_startButton->widget()),
+        &QPushButton::clicked, this, &StartWindow::changeToChooseLevelWindow);
+    connect(
+        dynamic_cast<QPushButton *>(this->m_startView->m_startButton->widget()),
+        &QPushButton::clicked, this, &StartWindow::userStartGame);
     // m_startButton->
 }
 
@@ -71,6 +80,14 @@ StartWindow::~StartWindow() {
 void StartWindow::changeToChooseLevelWindow() {
     this->centralWidget()->layout()->removeWidget(m_startView);
     this->centralWidget()->layout()->addWidget(m_chooseLevelView);
+    QFile file(QCoreApplication::applicationDirPath() + "/out.txt");
+    if(file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QJsonObject json;
+        QTextStream out(&file);
+        out << "Result: " << qSetFieldWidth(10) << Qt::left << 3.14 << 2.7;
+        // writes "Result: 3.14      2.7       "
+    }
+    file.close();
 }
 
 // bool StartWindow::eventFilter(QObject *object, QEvent *event) {}

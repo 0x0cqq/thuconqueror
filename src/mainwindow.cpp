@@ -10,6 +10,7 @@ Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     game = new Game(QPoint(24, 16), this);
     game->setNewUnitButton();
     game->setNextTurnButton();
+    game->setPolicyTreeButton();
     game->setPauseButton();
 
     auto it = new QLabel("滚轮缩放地图，右键点击可以拖动地图。\n移动范围目前是 5 ，攻击范围是 1 。\n移动、攻击次数均不限。\n");
@@ -32,7 +33,7 @@ Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     hvBox->addWidget(it);
     hvBox->addWidget(gameStatusLabel);
     hvBox->addWidget(detailLabel);
-    hvBox->addWidget(policyTreeLabel);
+    // hvBox->addWidget(policyTreeLabel);
     this->resize(1920, 1080);
 }
 

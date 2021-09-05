@@ -3,6 +3,7 @@
 MyApplication::MyApplication(int &argc, char *argv[])
     : QApplication(argc, argv) {
     createStartWindow();
+    connect(startWindow,&StartWindow::userStartGame,this,&MyApplication::changeToMainWindow);
 } 
 
 void MyApplication::createStartWindow() {
@@ -12,9 +13,12 @@ void MyApplication::createStartWindow() {
 
 void MyApplication::changeToMainWindow() {
     // delete startWindow;
-    startWindow->hide();
+    // startWindow->hide();
     mainWindow = new Mainwindow;
     mainWindow->show();
 }
 
-MyApplication::~MyApplication() {}
+MyApplication::~MyApplication() {
+    delete startWindow;
+    delete mainWindow;
+}
