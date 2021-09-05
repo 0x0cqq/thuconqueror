@@ -1,5 +1,7 @@
 #include "game.h"
 #include "graph/menudialog.h"
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QRandomGenerator>
 #include <QThread>
 #include <QWindow>
@@ -25,7 +27,6 @@ Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
     m_view->setScene(m_graph);
 
     connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
-    // connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
 
     connect(m_graph, &GraphField::checkStateChange, this,
             [=](QPoint, bool state) {
@@ -36,6 +37,71 @@ Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
                     hideNewUnitButton();
                 }
             });
+}
+
+Game::~Game() {
+    clearMemory();
+}
+
+void Game::clearMemory() {
+    for(int i = 1; i <= width(); i++) {
+        for(int j = 1; j <= height(); j++) {
+            delete m_blocks[i][j];
+        }
+    }
+    for(int i = 0; i < m_units.size(); i++) {
+        delete m_units[i];
+    }
+}
+
+void Game::read(const QJsonObject &json) {
+    clearMemory();
+    if(json.contains("gameInfo") && json["gameInfo"].isObject()) {
+        m_gameInfo.read(json["gameInfo"].toObject());
+    }
+    if(json.contains("blocks") && json["blocks"].isArray()) {
+        QJsonArray blocks = json["blocks"].toArray();
+        int        cnt    = 0;
+        m_blocks.clear();
+        m_blocks.resize(width() + 2);
+        for(int i = 1; i <= width(); i++) {
+            m_blocks[i].resize(height() + 2);
+            for(int j = 1; j <= height(); j++) {
+                m_blocks[i][j] = new BlockStatus();
+                m_blocks[i][j]->read(blocks[cnt].toObject());
+                cnt++;
+            }
+        }
+    }
+    if(json.contains("units") && json["units"].isArray()) {
+        QJsonArray units = json["units"].toArray();
+        m_units.clear();
+        m_units.resize(units.size());
+        for(int i = 0; i < units.size(); i++) {
+            m_units[i].read(units[i]);
+        }
+    }
+}
+
+void Game::write(QJsonObject &json) {
+    QJsonObject gameInfo;
+    m_gameInfo.write(gameInfo);
+    QJsonArray blocks;
+    for(int i = 1; i <= width(); i++) {
+        for(int j = 1; j <= height(); j++) {
+            QJsonObject block;
+            m_blocks[i][j]->write(block);
+            blocks.append(block);
+        }
+    }
+    json["blocks"] = blocks;
+    QJsonArray units;
+    for(int i = 0; i < m_units.size(); i++) {
+        QJsonObject unit;
+        m_units[i]->write(unit);
+        units.append(unit);
+    }
+    json["units"] = units;
 }
 
 void Game::setgameStatusLabel(QLabel *gameStatusLabel) {
@@ -244,11 +310,11 @@ void Game::setPolicyTreeButton() {
     policyTreeButtonWidget = m_graph->addWidget(policyTreeButton);
     policyTreeButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
                                     true);
-    connect(policyTreeButton, &QPushButton::clicked, this, &Game::usershowPolicyTree);
-
+    connect(policyTreeButton, &QPushButton::clicked, this,
+            &Game::usershowPolicyTree);
 }
 
-void Game::usershowPolicyTree(){
+void Game::usershowPolicyTree() {
     PolicyTreeDialog t(this, nullptr);
     t.exec();
 }

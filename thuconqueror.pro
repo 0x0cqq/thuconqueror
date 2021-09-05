@@ -37,7 +37,6 @@ HEADERS += \
     src/graph/graphunit.h \
     src/graph/unitdialog.h \
     src/graph/menudialog.h \
-    src/basic/info.h \
     src/logic/unit.h \
     src/logic/block.h \ 
     src/logic/field.h \

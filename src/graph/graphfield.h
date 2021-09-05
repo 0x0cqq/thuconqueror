@@ -3,7 +3,6 @@
 
 #include "graphblock.h"
 #include "graphunit.h"
-#include "../basic/info.h"
 #include "../basic/status.h"
 
 #include <QDebug>

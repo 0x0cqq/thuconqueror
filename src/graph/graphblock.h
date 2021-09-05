@@ -1,7 +1,6 @@
 #ifndef GRAPHBLOCK_H
 #define GRAPHBLOCK_H
 
-#include "../basic/info.h"
 #include "../basic/status.h"
 #include <QDebug>
 #include <QGraphicsObject>

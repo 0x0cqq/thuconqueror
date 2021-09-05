@@ -1,7 +1,6 @@
 #ifndef GRAPHUNIT_H
 #define GRAPHUNIT_H
 
-#include "../basic/info.h"
 #include "../basic/status.h"
 #include "unitdialog.h"
 #include <QDebug>

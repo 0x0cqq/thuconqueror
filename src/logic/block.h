@@ -1,7 +1,6 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
-#include "../basic/info.h"
 #include "../basic/status.h"
 #include <QObject>
 

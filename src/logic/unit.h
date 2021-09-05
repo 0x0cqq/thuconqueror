@@ -1,7 +1,6 @@
 #ifndef UNIT_H
 #define UNIT_H
 
-#include "../basic/info.h"
 #include "../basic/status.h"
 #include <QObject>
 

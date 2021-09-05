@@ -1,7 +1,6 @@
 #ifndef FIELD_H
 #define FIELD_H
 
-#include "../basic/info.h"
 #include "../basic/status.h"
 #include "unit.h"
 #include "block.h"
