@@ -78,7 +78,7 @@ Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
     m_view  = new GraphView;
     m_view->setScene(m_graph);
 
-    connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
+    connect(m_view, &GraphView::finishPainting, this, &Game::setFixedWidgetPos);
 
     connect(m_graph, &GraphField::checkStateChange, this,
             [=](QPoint, bool state) {
@@ -153,9 +153,9 @@ Game::Game(const QJsonObject &json) {
     }
     m_field = new Field(m_gameInfo, m_blocks, m_units);
     m_graph = new GraphField(m_gameInfo, m_blocks, m_units);
-    m_view = new GraphView;
+    m_view  = new GraphView;
     m_view->setScene(m_graph);
-    connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
+    connect(m_view, &GraphView::finishPainting, this, &Game::setFixedWidgetPos);
 
     connect(m_graph, &GraphField::checkStateChange, this,
             [=](QPoint, bool state) {
@@ -197,10 +197,16 @@ void Game::write(QJsonObject &json) {
     json["units"] = units;
 }
 
-void Game::setgameStatusLabel(QLabel *gameStatusLabel) {
-    // 应该重载一下那个 Label的，不过之后再说吧，现在先写一个能用的
+void Game::setgameStatusLabel() {
+    // 应该重载一下那个 Label 的，不过之后再说吧，现在先写一个能用的
+    QLabel *gameStatusLabel = new QLabel();
+    gameStatusLabel->setStyleSheet(
+        "font-size: 40px; background-color: rgba(244,244,244,100)");
     connect(this, &Game::gameStatusUpdated, this,
             [=]() { this->updateGameStatus(gameStatusLabel); });
+    gameStatusLabelWidget = m_graph->addWidget(gameStatusLabel);
+    gameStatusLabelWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
+                                   true);
     this->updateGameStatus(gameStatusLabel);
 }
 
@@ -210,16 +216,19 @@ void Game::updateGameStatus(QLabel *gameStatusLabel) {
         " 现在正在操作的玩家：" + QString::number(m_gameInfo.nowPlayer));
 }
 
-void Game::setButtonPos() {
+void Game::setFixedWidgetPos() {
     if(nextTurnButtonWidget != nullptr) {
         nextTurnButtonWidget->setPos(m_view->mapToScene(
             QPoint(m_view->size().width(), m_view->height()) -
-            QPoint(100, 100)));
+            QPoint(nextTurnButtonWidget->size().width(),
+                   nextTurnButtonWidget->size().height())));
         nextTurnButtonWidget->setZValue(100);
     }
     if(newUnitButtonWidget != nullptr) {
         newUnitButtonWidget->setPos(m_view->mapToScene(
-            QPoint(m_view->size().width() / 2 - 50, m_view->height() - 100)));
+            QPoint(m_view->size().width() / 2 -
+                       newUnitButtonWidget->size().width() / 2,
+                   m_view->height() - newUnitButtonWidget->size().height())));
         newUnitButtonWidget->setZValue(100);
     }
     if(pauseButtonWidget != nullptr) {
@@ -231,6 +240,13 @@ void Game::setButtonPos() {
         policyTreeButtonWidget->setPos(
             m_view->mapToScene(QPoint(0, m_view->size().height() - 100)));
         policyTreeButtonWidget->setZValue(100);
+    }
+    if(gameStatusLabelWidget != nullptr) {
+        gameStatusLabelWidget->setPos(m_view->mapToScene(
+            QPoint(m_view->size().width() / 2 -
+                       gameStatusLabelWidget->size().width() / 2,
+                   0)));
+        gameStatusLabelWidget->setZValue(100);
     }
 }
 
@@ -262,6 +278,7 @@ void Game::setDetailedLabel(QLabel *detailedLabel) {
             [=]() { this->updateDetailedStatus(detailedLabel); });
     connect(m_graph, &GraphField::needUpdateDetail, this,
             [=]() { this->updateDetailedStatus(detailedLabel); });
+
     this->updateDetailedStatus(detailedLabel);
 }
 

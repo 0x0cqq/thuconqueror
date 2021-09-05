@@ -79,15 +79,8 @@ StartWindow::~StartWindow() {
 
 void StartWindow::changeToChooseLevelWindow() {
     this->centralWidget()->layout()->removeWidget(m_startView);
+    m_startView->hide();
     this->centralWidget()->layout()->addWidget(m_chooseLevelView);
-    QFile file(QCoreApplication::applicationDirPath() + "/out.txt");
-    if(file.open(QFile::WriteOnly | QFile::Truncate)) {
-        QJsonObject json;
-        QTextStream out(&file);
-        out << "Result: " << qSetFieldWidth(10) << Qt::left << 3.14 << 2.7;
-        // writes "Result: 3.14      2.7       "
-    }
-    file.close();
 }
 
 // bool StartWindow::eventFilter(QObject *object, QEvent *event) {}

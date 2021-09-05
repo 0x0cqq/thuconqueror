@@ -35,6 +35,10 @@ void GraphUnit::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     }
     painter->setPen(QPen(Qt::black, GraphInfo::penWidth));
     painter->drawEllipse({0, 0}, GraphInfo::unitSize, GraphInfo::unitSize);
+    painter->setFont(QFont("Microsoft YaHei", 30, 2));
+    painter->drawText(QPoint(0,0),QString::number(m_status->m_type));
+
+
     // painter->drawRoundedRect(-100, -100, 200, 200, 50, 50);
     // painter->fillRect(0, 0, 100, 100, Qt::green);
 }
