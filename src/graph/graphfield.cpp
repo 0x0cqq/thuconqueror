@@ -50,7 +50,7 @@ GraphField::GraphField(const GameInfo &                 gameInfo,
             });
 }
 
-
+GraphField::~GraphField() {}
 
 void GraphField::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     qDebug() << "scene: " << event->scenePos() << Qt::endl;

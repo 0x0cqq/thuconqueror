@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QPushButton>
 #include <QString>
+#include <QMap>
 
 // 总体思路：所有实质性的内容都交给 Field 和 GraphField 去做，而且它们之间通过
 // signals/slots 联系，不通过 Game 类联系。 所以，Game
@@ -17,8 +18,8 @@
 class Game : public QObject {
     Q_OBJECT
   public:
-    UnitInfo unitinfo = UnitInfo(10, 1, 5);
     GameInfo m_gameInfo;
+    QMap<int, UnitInfo> m_typeInfo;
     // 两个玩家（or 一个玩家 vs 一个 AI）都玩完才算一个回合
 
     QVector<QVector<BlockStatus *>> m_blocks;
@@ -35,6 +36,7 @@ class Game : public QObject {
     qint32 height() const { return m_gameInfo.map_size.y(); }
     Game(QPoint map_size, QObject *parent = nullptr);
     Game(const QJsonObject &json);
+    Game(const QString & filename);
     ~Game();
 
     void clearMemory();

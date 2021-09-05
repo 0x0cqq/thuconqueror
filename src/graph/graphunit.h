@@ -19,7 +19,7 @@ class GraphUnit : public QGraphicsObject {
     QGraphicsProxyWidget *dialogWidget;
 
     QTimer *timer;
-    GraphUnit(UnitStatus *status, const QPointF &pos = QPointF(0, 0))
+    GraphUnit(UnitStatus *status, const QPointF = QPoint(0,0))
         : QGraphicsObject(), m_status(status), w(nullptr),
           dialogWidget(nullptr), timer(nullptr) {
         w     = new UnitDialog(status, nullptr);

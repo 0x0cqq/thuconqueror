@@ -119,20 +119,20 @@ class UnitStatus : public QObject {
   public:
     // return true if HP < 0
     qint32    m_uid;
-    UnitInfo &m_info;
+    UnitInfo *m_info;
     UnitType  m_type;
     qint32    m_player;
     QPoint    m_nowCoord;
     qreal     m_HPnow;  // [0,1]
-    qreal     getHP() const { return m_info.HPfull * m_info.HPratio * m_HPnow; }
-    qreal     getCE() const { return m_info.CEfull * m_info.CEratio * m_HPnow; }
-    qreal     getMP() const { return m_info.MPfull; }
-    bool      changeHP(qreal delta);
-    bool      isAlive() const { return this->getHP() > 0; }
-    void      read(const QJsonObject &json);
-    void      write(QJsonObject &json);
+    qreal getHP() const { return m_info->HPfull * m_info->HPratio * m_HPnow; }
+    qreal getCE() const { return m_info->CEfull * m_info->CEratio * m_HPnow; }
+    qreal getMP() const { return m_info->MPfull; }
+    bool  changeHP(qreal delta);
+    bool  isAlive() const { return this->getHP() > 0; }
+    void  read(const QJsonObject &json);
+    void  write(QJsonObject &json);
     UnitStatus();
-    UnitStatus(const int &uid, const UnitType type, UnitInfo &uInfo,
+    UnitStatus(const int &uid, const UnitType type, UnitInfo *uInfo,
                qint32 player, QPoint coord);
 };
 

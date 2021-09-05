@@ -1,10 +1,54 @@
 #include "game.h"
 #include "graph/menudialog.h"
+#include <QApplication>
 #include <QJsonArray>
+#include <QJsonDocument>
 #include <QJsonObject>
 #include <QRandomGenerator>
+#include <QString>
 #include <QThread>
 #include <QWindow>
+
+// https://www.cnblogs.com/lifexy/p/11930436.html
+bool openJson(const QString &filename, QJsonObject &json) {
+    //打开文件
+    QFile file(QApplication::applicationDirPath() + "/" + filename);
+    if(!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "File open failed!";
+    }
+    else {
+        qDebug() << "File open successfully!";
+    }
+    QJsonParseError *error = new QJsonParseError;
+    QJsonDocument    jdc   = QJsonDocument::fromJson(file.readAll(), error);
+
+    //判断文件是否完整
+    if(error->error != QJsonParseError::NoError) {
+        qDebug() << "parseJson:" << error->errorString();
+        return false;
+    }
+
+    json = jdc.object();  //获取对象
+    return true;
+}
+
+bool writeJson(const QString &filename, const QJsonObject &json) {
+    //打开文件
+    QFile file(QApplication::applicationDirPath() + "/" + filename);
+    if(!file.open(QIODevice::WriteOnly)) {
+        qDebug() << "File open failed!";
+        return false;
+    }
+    else {
+        qDebug() << "File open successfully!";
+    }
+    QJsonDocument jdoc;
+    jdoc.setObject(json);
+    file.write(
+        jdoc.toJson(QJsonDocument::Compact));  // Indented:表示自动添加/n回车符
+    file.close();
+    return false;
+}
 
 Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
     m_gameInfo.m_turnNumber = 0, m_gameInfo.map_size = map_size,
@@ -12,6 +56,14 @@ Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
     nextTurnButtonWidget = nullptr, newUnitButtonWidget = nullptr,
     pauseButtonWidget = nullptr, policyTreeButtonWidget = nullptr;
     m_blocks.resize(width() + 2);
+
+    m_typeInfo[studentUnit] = UnitInfo(15, 1, 3);
+    m_typeInfo[teacherUnit] = UnitInfo(20, 2, 2);
+    m_typeInfo[childUnit]   = UnitInfo(10, 3, 1);
+    m_typeInfo[alphaUnit]   = UnitInfo(5, 2, 2);
+    m_typeInfo[deltaUnit]   = UnitInfo(5, 1, 5);
+    m_typeInfo[zetaUnit]    = UnitInfo(15, 3, 3);
+
     for(int i = 1; i <= width(); i++) {
         m_blocks[i].resize(height() + 2);
         for(int j = 1; j <= height(); j++) {
@@ -54,9 +106,26 @@ void Game::clearMemory() {
     }
 }
 
+Game::Game(const QString &filename)
+    : Game([](const QString &filename) -> QJsonObject {
+          QJsonObject json;
+          openJson(filename, json);
+          return json;
+      }(filename)) {}
+
 Game::Game(const QJsonObject &json) {
+    // 本质上是一个 read 函数
     if(json.contains("gameInfo") && json["gameInfo"].isObject()) {
         m_gameInfo.read(json["gameInfo"].toObject());
+    }
+    if(json.contains("typeInfo") && json["typeInfo"].isObject()) {
+        QJsonObject typeInfo = json["typeInfo"].toObject();
+        for(auto it = typeInfo.begin(); it != typeInfo.end(); it++) {
+            QJsonObject unitInfo = it.value().toObject();
+            UnitInfo    _unitInfo;
+            _unitInfo.read(unitInfo);
+            m_typeInfo[it.key().toInt()] = _unitInfo;
+        }
     }
     if(json.contains("blocks") && json["blocks"].isArray()) {
         QJsonArray blocks = json["blocks"].toArray();
@@ -77,11 +146,14 @@ Game::Game(const QJsonObject &json) {
         m_units.clear();
         m_units.resize(units.size());
         for(int i = 0; i < units.size(); i++) {
+            m_units[i] = new UnitStatus();
             m_units[i]->read(units[i].toObject());
+            m_units[i]->m_info = &m_typeInfo[m_units[i]->m_type];
         }
     }
     m_field = new Field(m_gameInfo, m_blocks, m_units);
     m_graph = new GraphField(m_gameInfo, m_blocks, m_units);
+    m_view = new GraphView;
     m_view->setScene(m_graph);
     connect(m_view, &GraphView::finishPainting, this, &Game::setButtonPos);
 
@@ -99,6 +171,14 @@ Game::Game(const QJsonObject &json) {
 void Game::write(QJsonObject &json) {
     QJsonObject gameInfo;
     m_gameInfo.write(gameInfo);
+    json["gameInfo"] = gameInfo;
+    QJsonObject typeInfo;
+    for(auto it = m_typeInfo.begin(); it != m_typeInfo.end(); it++) {
+        QJsonObject unitInfo;
+        it.value().write(unitInfo);
+        typeInfo[QString::number(it.key())] = unitInfo;
+    }
+    json["typeInfo"] = typeInfo;
     QJsonArray blocks;
     for(int i = 1; i <= width(); i++) {
         for(int j = 1; j <= height(); j++) {
@@ -239,6 +319,9 @@ void Game::setNextTurnButton() {
 }
 
 void Game::usernextTurn() {
+    QJsonObject json;
+    write(json);
+    writeJson("2.json", json);
     if(m_gameInfo.playerNumbers == m_gameInfo.nowPlayer) {
         m_gameInfo.nowPlayer = 1;
         m_gameInfo.m_turnNumber++;
@@ -246,12 +329,14 @@ void Game::usernextTurn() {
     else {
         m_gameInfo.nowPlayer += 1;
     }
+
     QMessageBox msgBox;
     msgBox.setText("进入下一玩家游戏。当前是第 " +
                    QString::number(m_gameInfo.m_turnNumber) + " 回合，第 " +
                    QString::number(m_gameInfo.nowPlayer) +
                    " 号玩家，请开始操控。");
     msgBox.exec();
+
     emit gameStatusUpdated();
 }
 
@@ -305,8 +390,8 @@ void Game::usernewUnit() {
         return;
     }
     UnitStatus *unitStatus = new UnitStatus(
-        m_units.size(), virusUnit, unitinfo, m_gameInfo.nowPlayer,
-        m_graph->m_nowCheckedBlock->coord());
+        m_units.size(), studentUnit, &m_typeInfo[studentUnit],
+        m_gameInfo.nowPlayer, m_graph->m_nowCheckedBlock->coord());
 
     emit m_graph->checkStateChange(m_graph->m_nowCheckedBlock->coord(), false);
     m_graph->m_nowCheckedBlock = nullptr;

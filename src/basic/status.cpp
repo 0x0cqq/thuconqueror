@@ -41,15 +41,17 @@ void BlockStatus::read(const QJsonObject &json) {
         m_unitOnBlock = json["unitOnBlock"].toInt();
 }
 
-UnitStatus::UnitStatus(const int &uid, const UnitType type, UnitInfo &uInfo,
+UnitStatus::UnitStatus(const int &uid, const UnitType type, UnitInfo *uInfo,
                        qint32 player, QPoint coord)
     : m_uid(uid), m_info(uInfo), m_type(type), m_player(player),
       m_nowCoord(coord), m_HPnow(1) {}
 
+UnitStatus::UnitStatus() {}
+
 bool UnitStatus::changeHP(qreal delta) {
-    Q_ASSERT(m_info.HPfull != 0);
-    Q_ASSERT(m_info.HPratio != 0);
-    m_HPnow += delta / (m_info.HPfull * m_info.HPratio);
+    Q_ASSERT(m_info->HPfull != 0);
+    Q_ASSERT(m_info->HPratio != 0);
+    m_HPnow += delta / (m_info->HPfull * m_info->HPratio);
     return m_HPnow < 0;
 }
 
@@ -72,9 +74,9 @@ void UnitStatus::read(const QJsonObject &json) {
 
 void UnitStatus::write(QJsonObject &json) {
     json["uid"] = m_uid;
-    QJsonObject info;
-    m_info.write(info);
-    json["info"]   = info;
+    // QJsonObject info;
+    // m_info.write(info);
+    // json["info"]   = info;
     json["type"]   = m_type;
     json["player"] = m_player;
     QJsonArray nowCoord;
