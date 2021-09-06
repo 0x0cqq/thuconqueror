@@ -8,9 +8,9 @@ GraphField::GraphField(const GameInfo &                 gameInfo,
                        QVector<UnitStatus *> &          unitStatus)
     : QGraphicsScene(), m_gameInfo(gameInfo), m_nowCheckedBlock(nullptr) {
     this->setSceneRect(
-        QRectF(-1 * GraphInfo::blockSize, -qSqrt(3) / 2 * GraphInfo::blockSize,
-               (1.5 * width() + 0.5) * GraphInfo::blockSize,
-               (qSqrt(3) * (height() + 0.5)) * GraphInfo::blockSize));
+        QRectF(-qSqrt(3) / 2 * GraphInfo::blockSize, -1 * GraphInfo::blockSize,
+               (qSqrt(3) * (width() + 0.5)) * GraphInfo::blockSize,
+               (1.5 * height() + 0.5) * GraphInfo::blockSize));
     this->addRect(this->sceneRect());
     m_blocks.resize(width() + 2);
     for(int i = 1; i <= width(); i++) {
@@ -221,6 +221,5 @@ void GraphField::hideMoveRange() {
         }
     }
 }
-
 
 // a attack b

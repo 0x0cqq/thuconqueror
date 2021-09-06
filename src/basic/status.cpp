@@ -92,11 +92,11 @@ void UnitStatus::write(QJsonObject &json) const {
     json["canAttack"] = m_canAttack;
 }
 
-void UnitStatus::setMoveState(bool state){
+void UnitStatus::setMoveState(bool state) {
     m_canMove = state;
     emit unitStateChanged();
 }
-void UnitStatus::setAttackState(bool state){
+void UnitStatus::setAttackState(bool state) {
     m_canAttack = state;
     emit unitStateChanged();
 }
@@ -106,12 +106,12 @@ QPair<qreal, qreal> calculateAttack(UnitStatus *source, UnitStatus *target) {
     return qMakePair(b, a);
 }
 
-QPoint nearby[2][6] = {{{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, 1}},
-                       {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {1, -1}}};
+QPoint nearby[2][6] = {{{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, -1}, {1, 1}},
+                       {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}}};
 
 bool isNearByPoint(const QPoint &a, const QPoint &b) {
     for(int i = 0; i < 6; i++) {
-        if(a + nearby[a.x() % 2][i] == b) {
+        if(a + nearby[a.y() % 2][i] == b) {
             return true;
         }
     }
@@ -142,7 +142,7 @@ bool canUnitAttack(const UnitStatus *a, const UnitStatus *b) {
 QVector<QPoint> getNearbyPoint(const QPoint &a) {
     QVector<QPoint> ans;
     for(int i = 0; i < 6; i++) {
-        ans.push_back(a + nearby[a.x() % 2][i]);
+        ans.push_back(a + nearby[a.y() % 2][i]);
     }
     return ans;
 }
@@ -150,8 +150,8 @@ QVector<QPoint> getNearbyPoint(const QPoint &a) {
 QPointF getBlockCenter(qint32 r, qint32 c) {
     // Q_ASSERT(1 <= r && r <= width());
     // Q_ASSERT(1 <= c && c <= height());
-    return QPointF(1.5 * (r - 1),
-                   qSqrt(3) * (c - 1) + (r % 2 == 0 ? qSqrt(3) / 2 : 0)) *
+    return QPointF(qSqrt(3) * (r - 1) + (c % 2 == 0 ? qSqrt(3) / 2 : 0),
+                   1.5 * (c - 1)) *
         GraphInfo::blockSize;
 }
 

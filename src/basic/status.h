@@ -13,12 +13,12 @@ namespace GraphInfo {
 const static qreal blockSize = 100.0;
 const static qreal unitSize  = qSqrt(3) / 2 * qSqrt(3) / 2 * blockSize;
 const QPolygonF    blockPoly =
-    QVector<QPointF>{QPointF{-0.5, qSqrt(3) / 2} * blockSize,
-                     QPointF{0.5, qSqrt(3) / 2} * blockSize,
-                     QPointF{1.0, 0.0} * blockSize,
-                     QPointF{0.5, -qSqrt(3) / 2} * blockSize,
-                     QPointF{-0.5, -qSqrt(3) / 2} * blockSize,
-                     QPointF{-1.0, 0.0} * blockSize};
+    QVector<QPointF>{QPointF{qSqrt(3) / 2, -0.5} * blockSize,
+                     QPointF{qSqrt(3) / 2, 0.5} * blockSize,
+                     QPointF{0.0, 1.0} * blockSize,
+                     QPointF{-qSqrt(3) / 2, 0.5} * blockSize,
+                     QPointF{-qSqrt(3) / 2, -0.5} * blockSize,
+                     QPointF{0.0, -1.0} * blockSize};
 const qreal penWidth = 5;
 }  // namespace GraphInfo
 
@@ -39,8 +39,9 @@ enum BlockType {
     plainBlock      = yesUnitBlock | 1 << 2,
     obstacleBlock   = noUnitBlock | 1 << 3,
     dampBlock       = yesUnitBlock | 1 << 4,
-    virusCampBlock  = yesUnitBlock | 1 << 5,
-    peopleCampBlock = yesUnitBlock | 1 << 6
+    roadBlock       = yesUnitBlock | 1 << 5,
+    virusCampBlock  = yesUnitBlock | 1 << 6,
+    peopleCampBlock = yesUnitBlock | 1 << 7
 };
 
 #define blocks(point) m_blocks[(point).x()][(point).y()]
@@ -115,8 +116,8 @@ class UnitInfo {
 };
 
 enum UnitType {
-    peopleUnit  = 1 << 1, // 人类是 1 号玩家
-    virusUnit   = 1 << 2, // 病毒是 2 号玩家（x）
+    peopleUnit  = 1 << 1,  // 人类是 1 号玩家
+    virusUnit   = 1 << 2,  // 病毒是 2 号玩家（x）
     studentUnit = peopleUnit | 1 << 3,
     teacherUnit = peopleUnit | 1 << 4,
     childUnit   = peopleUnit | 1 << 5,
