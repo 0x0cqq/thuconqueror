@@ -45,15 +45,13 @@ void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
             painter->drawPolygon(GraphInfo::blockPoly);
         }
     }
+
     if(unitOnBlock() != -1 && s->m_nowCheckedBlock != nullptr &&
        s->m_nowCheckedBlock->unitOnBlock() != -1) {
-        if(isNearByPoint(s->m_nowCheckedBlock->coord(), coord()) &&
-           s->m_units[unitOnBlock()]->player() !=
-               s->m_units[s->m_nowCheckedBlock->unitOnBlock()]->player() &&
-           s->m_units[s->m_nowCheckedBlock->unitOnBlock()]->player() ==
-               s->m_gameInfo.nowPlayer &&
-           s->m_units[s->m_nowCheckedBlock->unitOnBlock()]
-               ->m_status->isAlive()) {
+        GraphUnit *a = s->m_units[s->m_nowCheckedBlock->unitOnBlock()],
+                  *b = s->m_units[unitOnBlock()];
+        if(a->player() == s->m_gameInfo.nowPlayer &&
+           canUnitAttack(a->m_status, b->m_status)) {
             // 可以攻击
             QColor red40 = Qt::red;
             red40.setAlphaF(0.4);

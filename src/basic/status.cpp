@@ -44,7 +44,7 @@ void BlockStatus::read(const QJsonObject &json) {
 UnitStatus::UnitStatus(const int &uid, const UnitType type, UnitInfo *uInfo,
                        qint32 player, QPoint coord)
     : m_uid(uid), m_info(uInfo), m_type(type), m_player(player),
-      m_nowCoord(coord), m_HPnow(1) {}
+      m_nowCoord(coord), m_HPnow(1), m_canMove(true), m_canAttack(true) {}
 
 UnitStatus::UnitStatus() {}
 
@@ -70,6 +70,10 @@ void UnitStatus::read(const QJsonObject &json) {
                             json["nowCoord"].toArray()[1].toInt()};
     if(json.contains("HPnow") && json["HPnow"].isDouble())
         m_HPnow = json["HPnow"].toDouble();
+    if(json.contains("canMove") && json["canMove"].isBool())
+        m_canMove = json["canMove"].toBool();
+    if(json.contains("canAttack") && json["canAttack"].isBool())
+        m_canAttack = json["canAttack"].toBool();
 }
 
 void UnitStatus::write(QJsonObject &json) {
@@ -82,8 +86,10 @@ void UnitStatus::write(QJsonObject &json) {
     QJsonArray nowCoord;
     nowCoord.append(m_nowCoord.x());
     nowCoord.append(m_nowCoord.y());
-    json["nowCoord"] = nowCoord;
-    json["HPnow"]    = m_HPnow;
+    json["nowCoord"]  = nowCoord;
+    json["HPnow"]     = m_HPnow;
+    json["canMove"]   = m_canMove;
+    json["canAttack"] = m_canAttack;
 }
 
 QPair<qreal, qreal> calculateAttack(UnitStatus *source, UnitStatus *target) {
@@ -103,8 +109,25 @@ bool isNearByPoint(const QPoint &a, const QPoint &b) {
     return false;
 }
 
-bool isNearbyBlock(const BlockStatus *a, const BlockStatus *b) {
+bool isNearByBlock(const BlockStatus *a, const BlockStatus *b) {
     return isNearByPoint(a->m_coord, b->m_coord);
+}
+
+bool canUnitAttack(const UnitStatus *a,const UnitStatus *b) {
+    // 没有检查 a 的主人是什么
+    if(!isNearByPoint(a->m_nowCoord,b->m_nowCoord)){
+        return false;
+    }
+    if(!a->isAlive() || !b->isAlive()) {
+        return false;
+    }
+    if(a->m_player == b->m_player){
+        return false;
+    }
+    if(!a->m_canAttack){
+        return false;
+    }
+    return true;
 }
 
 QVector<QPoint> getNearbyPoint(const QPoint &a) {

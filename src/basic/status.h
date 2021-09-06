@@ -49,6 +49,8 @@ enum BlockType {
 #define player()      m_status->m_player
 #define coord()       m_status->m_coord
 #define nowCoord()    m_status->m_nowCoord
+#define canMove()     m_status->m_canMove
+#define canAttack()   m_status->m_canAttack
 
 class BlockStatus : public QObject {
     Q_OBJECT
@@ -136,6 +138,8 @@ class UnitStatus : public QObject {
     qint32    m_player;
     QPoint    m_nowCoord;
     qreal     m_HPnow;  // [0,1]
+    bool      m_canMove;
+    bool      m_canAttack;
     qreal getHP() const { return m_info->HPfull * m_info->HPratio * m_HPnow; }
     qreal getCE() const { return m_info->CEfull * m_info->CEratio * m_HPnow; }
     qreal getMP() const { return m_info->MPfull; }
@@ -153,7 +157,9 @@ QPair<qreal, qreal> calculateAttack(UnitStatus *source, UnitStatus *target);
 
 bool isNearByPoint(const QPoint &a, const QPoint &b);
 
-bool isNearbyBlock(const BlockStatus *a, const BlockStatus *b);
+bool isNearByBlock(const BlockStatus *a, const BlockStatus *b);
+
+bool canUnitAttack(const UnitStatus *a,const UnitStatus *b);
 
 QVector<QPoint> getNearbyPoint(const QPoint &a);
 

@@ -12,7 +12,7 @@ QRectF GraphUnit::boundingRect() const {
     if(m_Movie) {
         // qDebug() << m_Movie->frameRect();
         auto tmp = m_Movie->frameRect();
-        tmp.moveCenter(QPoint(0,0));
+        tmp.moveCenter(QPoint(0, 0));
         return tmp;
     }
     else
@@ -50,8 +50,8 @@ void GraphUnit::paintAroundLoop(QPainter *painter) {
     if(m_Movie != nullptr) {
         // qDebug() << "indeed paint around loop"
         //          << QRandomGenerator::global()->generate() << Qt::endl;
-        painter->drawPixmap(-m_Movie->frameRect().bottomRight() / 2, m_Movie->currentPixmap(),
-                            m_Movie->frameRect());
+        painter->drawPixmap(-m_Movie->frameRect().bottomRight() / 2,
+                            m_Movie->currentPixmap(), m_Movie->frameRect());
     }
 }
 
@@ -72,7 +72,9 @@ void GraphUnit::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     painter->drawEllipse({0, 0}, GraphInfo::unitSize, GraphInfo::unitSize);
     painter->setFont(QFont("Microsoft YaHei", 30, 2));
     painter->drawText(QPoint(0, 0), QString::number(m_status->m_type));
-    paintAroundLoop(painter);
+    if(canMove() || canAttack()) {
+        paintAroundLoop(painter);
+    }
     // painter->drawRoundedRect(-100, -100, 200, 200, 50, 50);
     // painter->fillRect(0, 0, 100, 100, Qt::green);
 }

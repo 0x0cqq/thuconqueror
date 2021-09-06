@@ -41,7 +41,8 @@ GraphField::GraphField(const GameInfo &                 gameInfo,
                 qint32 uid = blocks(coord)->unitOnBlock();
                 if(state == true && uid != -1 &&
                    m_units[uid]->player() == m_gameInfo.nowPlayer &&
-                   m_units[uid]->m_status->isAlive()) {
+                   m_units[uid]->m_status->isAlive() &&
+                   m_units[uid]->canMove()) {
                     emit userShowMoveRange(uid);
                 }
                 else {
@@ -113,7 +114,7 @@ void GraphField::onBlockClicked(QPoint coord) {
                     // A 格上是当前玩家的棋子 且没有死
                     if(uidB == -1) {
                         // B 格子上没有棋子
-                        if(blocks(coord)->m_isMoveRange) {
+                        if(blocks(coord)->m_isMoveRange && m_units[uidA]->canMove()) {
                             flag = 1;
                         }
                         else {
@@ -131,9 +132,8 @@ void GraphField::onBlockClicked(QPoint coord) {
                             // B 格上不是当前玩家的棋子
                             if(m_units[uidB]->m_status->isAlive() &&
                                isNearByPoint(coord,
-                                             m_nowCheckedBlock->coord())) {
-                                // 活着
-
+                                             m_nowCheckedBlock->coord()) && m_units[uidA]->canAttack()) {
+                                // 活着 且 本单元格能攻击啊
                                 flag = 2;
                             }
                             else {
@@ -219,3 +219,6 @@ void GraphField::hideMoveRange() {
         }
     }
 }
+
+
+// a attack b

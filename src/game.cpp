@@ -52,7 +52,7 @@ bool writeJson(const QString &filename, const QJsonObject &json) {
 
 Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
     m_gameInfo.m_turnNumber = 0, m_gameInfo.map_size = map_size,
-    m_gameInfo.nowPlayer = 1, m_gameInfo.playerNumbers = 2;
+    m_gameInfo.nowPlayer = 0, m_gameInfo.playerNumbers = 2;
     nextTurnButtonWidget = nullptr, newUnitButtonWidget = nullptr,
     pauseButtonWidget = nullptr, policyTreeButtonWidget = nullptr;
     m_blocks.resize(width() + 2);
@@ -89,6 +89,7 @@ Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
                     hideNewUnitButton();
                 }
             });
+    usernextTurn();
 }
 
 Game::~Game() {
@@ -346,7 +347,12 @@ void Game::usernextTurn() {
     else {
         m_gameInfo.nowPlayer += 1;
     }
-
+    for(int i = 0; i < m_units.size(); i++) {
+        if(m_units[i]->m_player == m_gameInfo.nowPlayer) {
+            m_units[i]->m_canAttack = true;
+            m_units[i]->m_canMove   = true;
+        }
+    }
     QMessageBox msgBox;
     msgBox.setText("进入下一玩家游戏。当前是第 " +
                    QString::number(m_gameInfo.m_turnNumber) + " 回合，第 " +
@@ -385,15 +391,16 @@ void Game::setNewUnitButton() {
                                  true);
     // 初始时需要隐藏
     newUnitButtonWidget->hide();
-    
+
     connect(newUnitButton, &QPushButton::clicked, this, &Game::usernewUnit);
 }
 
 void Game::usernewUnit() {
     // 需要当前位置没有Unit，否则会炸掉的
-    NewUnitDialog *newunit = new NewUnitDialog(this);
-    int newUnitType = newunit->exec();
-    if(newUnitType == 0) return;
+    NewUnitDialog *newunit     = new NewUnitDialog(this);
+    int            newUnitType = newunit->exec();
+    if(newUnitType == 0)
+        return;
     delete newunit;
     if(m_graph->m_nowCheckedBlock == nullptr) {
         QMessageBox msgBox;
