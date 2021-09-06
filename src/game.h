@@ -3,6 +3,7 @@
 
 #include "basic/status.h"
 #include "graph/graphfield.h"
+#include "graph/menudialog.h"
 #include "graphview.h"
 #include "logic/field.h"
 #include <QGraphicsProxyWidget>
@@ -27,6 +28,7 @@ class Game : public QObject {
     Field *                         m_field;
     GraphField *                    m_graph;
     GraphView *                     m_view;
+    // QGraphicsProxyWidget *          newUnitDialogWidget;
     QGraphicsProxyWidget *          nextTurnButtonWidget;
     QGraphicsProxyWidget *          newUnitButtonWidget;
     QGraphicsProxyWidget *          pauseButtonWidget;

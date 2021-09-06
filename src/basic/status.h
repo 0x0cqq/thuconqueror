@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QPoint>
 #include <QPolygon>
+#include <QString>
 #include <QtGlobal>
 #include <QtMath>
 
@@ -65,6 +66,8 @@ class BlockStatus : public QObject {
 
 class UnitInfo {
   public:
+    QString name;
+    QString description;
     // HP == Health Point
     qint32 HPfull;
     qreal  HPratio;
@@ -73,7 +76,8 @@ class UnitInfo {
     qreal  CEratio;
     // movePoint
     qint32 MPfull;
-    void   read(const QJsonObject &json) {
+
+    void read(const QJsonObject &json) {
         if(json.contains("HPfull") && json["HPfull"].isDouble())
             HPfull = json["HPfull"].toInt();
         if(json.contains("HPratio") && json["HPratio"].isDouble())
@@ -84,20 +88,28 @@ class UnitInfo {
             CEratio = json["CEratio"].toDouble();
         if(json.contains("MPfull") && json["MPfull"].isDouble())
             MPfull = json["MPfull"].toInt();
+        if(json.contains("description") && json["description"].isString())
+            description = json["description"].toString();
+        if(json.contains("name") && json["name"].isString())
+            name = json["name"].toString();
     }
     void write(QJsonObject &json) {
-        json["HPfull"]  = HPfull;
-        json["HPratio"] = HPratio;
-        json["CEfull"]  = CEfull;
-        json["CEratio"] = CEratio;
-        json["MPfull"]  = MPfull;
+        json["HPfull"]      = HPfull;
+        json["HPratio"]     = HPratio;
+        json["CEfull"]      = CEfull;
+        json["CEratio"]     = CEratio;
+        json["MPfull"]      = MPfull;
+        json["description"] = description;
+        json["name"]        = name;
     }
     UnitInfo() {
         HPfull = CEfull = MPfull = 0;
         HPratio = CEratio = 1;
     }
-    UnitInfo(qint32 _HPfull, qint32 _CEfull, qint32 _MPfull)
-        : HPfull(_HPfull), CEfull(_CEfull), MPfull(_MPfull) {
+    UnitInfo(const QString &_name, const QString &_description, qint32 _HPfull,
+             qint32 _CEfull, qint32 _MPfull)
+        : name(_name), description(_description), HPfull(_HPfull),
+          CEfull(_CEfull), MPfull(_MPfull) {
         HPratio = CEratio = 1;
     }
 };

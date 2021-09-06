@@ -85,6 +85,7 @@
         "qevent": "cpp",
         "qdir": "cpp",
         "qjsonobject": "cpp",
-        "qlayout": "cpp"
+        "qlayout": "cpp",
+        "qgroupbox": "cpp"
     }
 }

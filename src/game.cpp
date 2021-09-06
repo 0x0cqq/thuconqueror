@@ -57,12 +57,12 @@ Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
     pauseButtonWidget = nullptr, policyTreeButtonWidget = nullptr;
     m_blocks.resize(width() + 2);
 
-    m_typeInfo[studentUnit] = UnitInfo(15, 1, 3);
-    m_typeInfo[teacherUnit] = UnitInfo(20, 2, 2);
-    m_typeInfo[childUnit]   = UnitInfo(10, 3, 1);
-    m_typeInfo[alphaUnit]   = UnitInfo(5, 2, 2);
-    m_typeInfo[deltaUnit]   = UnitInfo(5, 1, 5);
-    m_typeInfo[zetaUnit]    = UnitInfo(15, 3, 3);
+    m_typeInfo[studentUnit] = UnitInfo("学生", "学生", 15, 1, 3);
+    m_typeInfo[teacherUnit] = UnitInfo("教师", "教师", 20, 2, 2);
+    m_typeInfo[childUnit]   = UnitInfo("孩子", "孩子", 10, 3, 1);
+    m_typeInfo[alphaUnit]   = UnitInfo("Alpha 病毒", "Alpha", 5, 2, 2);
+    m_typeInfo[deltaUnit]   = UnitInfo("Delta 病毒", "Delta", 5, 1, 5);
+    m_typeInfo[zetaUnit]    = UnitInfo("Zeta 病毒", "Boss", 15, 3, 3);
 
     for(int i = 1; i <= width(); i++) {
         m_blocks[i].resize(height() + 2);
@@ -383,11 +383,18 @@ void Game::setNewUnitButton() {
     newUnitButtonWidget->setGeometry(QRect(QPoint(0, 0), QPoint(100, 100)));
     newUnitButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
                                  true);
+    // 初始时需要隐藏
+    newUnitButtonWidget->hide();
+    
     connect(newUnitButton, &QPushButton::clicked, this, &Game::usernewUnit);
 }
 
 void Game::usernewUnit() {
     // 需要当前位置没有Unit，否则会炸掉的
+    NewUnitDialog *newunit = new NewUnitDialog(this);
+    int newUnitType = newunit->exec();
+    if(newUnitType == 0) return;
+    delete newunit;
     if(m_graph->m_nowCheckedBlock == nullptr) {
         QMessageBox msgBox;
         msgBox.setText("没有选中Block!");
@@ -407,7 +414,7 @@ void Game::usernewUnit() {
         return;
     }
     UnitStatus *unitStatus = new UnitStatus(
-        m_units.size(), studentUnit, &m_typeInfo[studentUnit],
+        m_units.size(), UnitType(newUnitType), &m_typeInfo[newUnitType],
         m_gameInfo.nowPlayer, m_graph->m_nowCheckedBlock->coord());
 
     emit m_graph->checkStateChange(m_graph->m_nowCheckedBlock->coord(), false);
