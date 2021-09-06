@@ -209,7 +209,7 @@ void Game::write(QJsonObject &json) {
             it++) {
             QJsonObject blockInfo;
             it.value().write(blockInfo);
-            blockTypeInfo[QString::number(it.key())] = blockTypeInfo;
+            blockTypeInfo[QString::number(it.key())] = blockInfo;
         }
         json["blockTypeInfo"] = blockTypeInfo;
     }
@@ -376,7 +376,7 @@ void Game::setNextTurnButton() {
 void Game::usernextTurn() {
     QJsonObject json;
     write(json);
-    writeJson("2.json", json);
+    writeJson("3.json", json);
     if(m_gameInfo.playerNumbers == m_gameInfo.nowPlayer) {
         m_gameInfo.nowPlayer = 1;
         m_gameInfo.m_turnNumber++;

@@ -2,8 +2,8 @@
 #define FIELD_H
 
 #include "../basic/status.h"
-#include "unit.h"
 #include "block.h"
+#include "unit.h"
 #include <QObject>
 
 class Field : public QObject {
@@ -20,11 +20,11 @@ class Field : public QObject {
             a.y() <= height();
     }
     bool ableToPass(qint32 uid, QPoint p) {
-        return blocks(p)->m_status->m_type == plainBlock &&
+        return ((blocks(p)->m_status->m_type & yesUnitBlock) != 0) &&
             (blocks(p)->unitOnBlock() == -1 ||
-            (blocks(p)->unitOnBlock() != -1 &&
-             m_units[blocks(p)->unitOnBlock()]->player() ==
-                 m_units[uid]->player()));
+             (blocks(p)->unitOnBlock() != -1 &&
+              m_units[blocks(p)->unitOnBlock()]->player() ==
+                  m_units[uid]->player()));
     }
     QVector<QPoint> getPath(qint32 uid, QPoint start, QPoint end);
     Field(const GameInfo &                       gameInfo,

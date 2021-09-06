@@ -7,7 +7,7 @@
 
 Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     // add scene
-    // game = new Game(QPoint(24, 16), this);
+    // game = new Game(QPoint(15, 14), this);
     game = new Game("2.json");
     game->setNewUnitButton();
     game->setNextTurnButton();

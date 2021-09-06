@@ -25,9 +25,19 @@ void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     }
     painter->setPen(QPen(Qt::black, GraphInfo::penWidth));
     painter->drawPolygon(GraphInfo::blockPoly);
-    painter->setFont(QFont("Microsoft YaHei", 30, 2));
-    painter->drawText(QPointF{-GraphInfo::blockSize / 2, 0},
-                      m_status->m_type == plainBlock ? "" : "X");
+    if(m_status->m_type == roadBlock) {
+        painter->setFont(QFont("Microsoft YaHei", 10, 2));
+    }
+    else if(m_status->m_type == obstacleBlock) {
+        painter->setFont(QFont("Microsoft YaHei", 40, 15));
+    }
+    else{
+        painter->setFont(QFont("Microsoft YaHei", 20, 1));
+
+    }
+    if(m_status->m_type != plainBlock)
+        painter->drawText(QPointF{-GraphInfo::blockSize / 2, 0},
+                          QString::number(m_status->m_type));
     auto s = static_cast<GraphField *>(scene());
     if(m_isMoveRange) {
         if(unitOnBlock() == -1) {
