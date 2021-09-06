@@ -72,7 +72,7 @@ void GraphUnit::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     painter->drawEllipse({0, 0}, GraphInfo::unitSize, GraphInfo::unitSize);
     painter->setFont(QFont("Microsoft YaHei", 30, 2));
     painter->drawText(QPoint(0, 0), QString::number(m_status->m_type));
-    if(canMove() || canAttack()) {
+    if(m_status->canMove() || m_status->canAttack()) {
         paintAroundLoop(painter);
     }
     // painter->drawRoundedRect(-100, -100, 200, 200, 50, 50);
@@ -97,6 +97,7 @@ void GraphUnit::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if(dialogWidget == nullptr) {
         dialogWidget = scene()->addWidget(w);
         dialogWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
+        dialogWidget->setZValue(100);
         dialogWidget->hide();
     }
     timer->singleShot(500, [=]() {

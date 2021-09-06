@@ -2,7 +2,7 @@
 #include <QLabel>
 #include <QLayout>
 
-UnitDialog::UnitDialog(UnitStatus *unitStatus, QWidget *parent)
+UnitDialog::UnitDialog(const UnitStatus *unitStatus, QWidget *parent)
     : QDialog(parent, Qt::FramelessWindowHint), m_status(unitStatus),
       detailLabel(nullptr), showTimes(0) {
     detailLabel = new QLabel(this);

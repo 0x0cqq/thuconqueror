@@ -119,18 +119,19 @@ void Field::doUnitMove(Unit *unit, QPoint destCoord) {
     blocks(unit->nowCoord())->unitOnBlock() = -1;
     unit->nowCoord()                        = destCoord;
     blocks(unit->nowCoord())->unitOnBlock() = unit->uid();
-    unit->m_status->m_canMove               = false;
-    auto np                                 = getNearbyPoint(unit->nowCoord());
+    unit->m_status->setMoveState(false);
+    auto np = getNearbyPoint(unit->nowCoord());
     bool flag = false;  // 检测是否旁边一个可以攻击的敌方元素都没有
     for(auto nearPoint : np) {
         if(blocks(nearPoint)->unitOnBlock() == -1)
             continue;
-        if(canUnitAttack(unit->m_status,m_units[blocks(nearPoint)->unitOnBlock()]->m_status)){
-                flag = true;
-                break;
-            }
+        if(canUnitAttack(unit->m_status,
+                         m_units[blocks(nearPoint)->unitOnBlock()]->m_status)) {
+            flag = true;
+            break;
+        }
     }
-    unit->m_status->m_canAttack = flag;
+    unit->m_status->setAttackState(flag);
 }
 void Field::doUnitMove(qint32 uid, QPoint coord) {
     doUnitMove(m_units[uid], coord);
@@ -146,8 +147,8 @@ void Field::doUnitAttack(Unit *unit, QPoint coord) {
         emit unitDead(unit->uid());
     if(!isBAlive)
         emit unitDead(taruid);
-    unit->m_status->m_canAttack = false;
-    unit->m_status->m_canMove   = false;
+    unit->m_status->setAttackState(false);
+    unit->m_status->setMoveState(false);
     emit attackUnit(unit->uid(), taruid);
 }
 void Field::doUnitAttack(qint32 uid, QPoint coord) {

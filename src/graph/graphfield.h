@@ -39,8 +39,8 @@ class GraphField : public QGraphicsScene {
     qint32 width() const { return m_gameInfo.map_size.x(); }
     qint32 height() const { return m_gameInfo.map_size.y(); }
 
-    void   mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void   mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
   signals:
     void checkStateChange(QPoint coord, bool state);
@@ -52,6 +52,7 @@ class GraphField : public QGraphicsScene {
     void userShowMoveRange(qint32 uid);
     void userHideMoveRange();
     void needUpdateDetail();
+
     // 把 uid 的 unit 移动到 (posx, posy)
   protected slots:
     void moveUnit(GraphUnit *graphUnit, const QVector<QPoint> &path);

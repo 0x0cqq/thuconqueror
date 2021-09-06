@@ -76,7 +76,7 @@ void UnitStatus::read(const QJsonObject &json) {
         m_canAttack = json["canAttack"].toBool();
 }
 
-void UnitStatus::write(QJsonObject &json) {
+void UnitStatus::write(QJsonObject &json) const {
     json["uid"] = m_uid;
     // QJsonObject info;
     // m_info.write(info);
@@ -90,6 +90,15 @@ void UnitStatus::write(QJsonObject &json) {
     json["HPnow"]     = m_HPnow;
     json["canMove"]   = m_canMove;
     json["canAttack"] = m_canAttack;
+}
+
+void UnitStatus::setMoveState(bool state){
+    m_canMove = state;
+    emit unitStateChanged();
+}
+void UnitStatus::setAttackState(bool state){
+    m_canAttack = state;
+    emit unitStateChanged();
 }
 
 QPair<qreal, qreal> calculateAttack(UnitStatus *source, UnitStatus *target) {
@@ -113,18 +122,18 @@ bool isNearByBlock(const BlockStatus *a, const BlockStatus *b) {
     return isNearByPoint(a->m_coord, b->m_coord);
 }
 
-bool canUnitAttack(const UnitStatus *a,const UnitStatus *b) {
+bool canUnitAttack(const UnitStatus *a, const UnitStatus *b) {
     // 没有检查 a 的主人是什么
-    if(!isNearByPoint(a->m_nowCoord,b->m_nowCoord)){
+    if(!isNearByPoint(a->m_nowCoord, b->m_nowCoord)) {
         return false;
     }
     if(!a->isAlive() || !b->isAlive()) {
         return false;
     }
-    if(a->m_player == b->m_player){
+    if(a->m_player == b->m_player) {
         return false;
     }
-    if(!a->m_canAttack){
+    if(!a->canAttack()) {
         return false;
     }
     return true;

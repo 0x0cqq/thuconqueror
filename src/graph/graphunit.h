@@ -15,12 +15,12 @@ class GraphUnit : public QGraphicsObject {
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
   public:
-    QMovie *         m_Movie;
+    QMovie *                m_Movie;
     const UnitStatus *      m_status;
     UnitDialog *            w;
     QGraphicsProxyWidget *  dialogWidget;
     QMetaObject::Connection mConnection;
-    QTimer *timer;
+    QTimer *                timer;
     GraphUnit(UnitStatus *status, const QPointF = QPoint(0, 0))
         : QGraphicsObject(), m_status(status), w(nullptr),
           dialogWidget(nullptr), timer(nullptr) {
@@ -31,6 +31,8 @@ class GraphUnit : public QGraphicsObject {
         this->setAcceptHoverEvents(true);
         qDebug() << "New unit " << m_status->m_uid << Qt::endl;
         setMovie(new QMovie(":/images/loop.gif"));
+        connect(m_status, &UnitStatus::unitStateChanged, this,
+                [=]() { this->update(this->boundingRect()); });
     }
     ~GraphUnit() { delete w; }
     QRectF       boundingRect() const override;

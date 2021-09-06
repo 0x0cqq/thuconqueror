@@ -1,6 +1,7 @@
 #include "game.h"
 #include "graph/menudialog.h"
 #include <QApplication>
+#include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -349,8 +350,12 @@ void Game::usernextTurn() {
     }
     for(int i = 0; i < m_units.size(); i++) {
         if(m_units[i]->m_player == m_gameInfo.nowPlayer) {
-            m_units[i]->m_canAttack = true;
-            m_units[i]->m_canMove   = true;
+            m_units[i]->setAttackState(true);
+            m_units[i]->setMoveState(true);
+        }
+        else{
+            m_units[i]->setAttackState(false);
+            m_units[i]->setMoveState(false);
         }
     }
     QMessageBox msgBox;
@@ -447,3 +452,4 @@ void Game::usershowPolicyTree() {
     PolicyTreeDialog t(this, nullptr);
     t.exec();
 }
+

@@ -49,8 +49,6 @@ enum BlockType {
 #define player()      m_status->m_player
 #define coord()       m_status->m_coord
 #define nowCoord()    m_status->m_nowCoord
-#define canMove()     m_status->m_canMove
-#define canAttack()   m_status->m_canAttack
 
 class BlockStatus : public QObject {
     Q_OBJECT
@@ -117,8 +115,8 @@ class UnitInfo {
 };
 
 enum UnitType {
-    peopleUnit  = 1 << 1,
-    virusUnit   = 1 << 2,
+    peopleUnit  = 1 << 1, // 人类是 1 号玩家
+    virusUnit   = 1 << 2, // 病毒是 2 号玩家（x）
     studentUnit = peopleUnit | 1 << 3,
     teacherUnit = peopleUnit | 1 << 4,
     childUnit   = peopleUnit | 1 << 5,
@@ -130,6 +128,10 @@ enum UnitType {
 
 class UnitStatus : public QObject {
     Q_OBJECT
+  protected:
+    bool m_canMove;
+    bool m_canAttack;
+
   public:
     // return true if HP < 0
     qint32    m_uid;
@@ -138,18 +140,25 @@ class UnitStatus : public QObject {
     qint32    m_player;
     QPoint    m_nowCoord;
     qreal     m_HPnow;  // [0,1]
-    bool      m_canMove;
-    bool      m_canAttack;
+
     qreal getHP() const { return m_info->HPfull * m_info->HPratio * m_HPnow; }
     qreal getCE() const { return m_info->CEfull * m_info->CEratio * m_HPnow; }
     qreal getMP() const { return m_info->MPfull; }
     bool  changeHP(qreal delta);
     bool  isAlive() const { return this->getHP() > 0; }
+    bool  canMove() const { return m_canMove; }
+    bool  canAttack() const { return m_canAttack; }
     void  read(const QJsonObject &json);
-    void  write(QJsonObject &json);
+    void  write(QJsonObject &json) const;
     UnitStatus();
     UnitStatus(const int &uid, const UnitType type, UnitInfo *uInfo,
                qint32 player, QPoint coord);
+
+  public:
+    void setMoveState(bool state);
+    void setAttackState(bool state);
+  signals:
+    void unitStateChanged();
 };
 
 // calculate the attack point (source, target)
@@ -159,7 +168,7 @@ bool isNearByPoint(const QPoint &a, const QPoint &b);
 
 bool isNearByBlock(const BlockStatus *a, const BlockStatus *b);
 
-bool canUnitAttack(const UnitStatus *a,const UnitStatus *b);
+bool canUnitAttack(const UnitStatus *a, const UnitStatus *b);
 
 QVector<QPoint> getNearbyPoint(const QPoint &a);
 

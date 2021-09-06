@@ -8,10 +8,10 @@
 class UnitDialog : public QDialog {
     Q_OBJECT
   public:
-    UnitStatus *m_status;
+    const UnitStatus *m_status;
     QLabel *    detailLabel;
     int showTimes;
-    UnitDialog(UnitStatus *unitStatus, QWidget *parent = nullptr);
+    UnitDialog(const UnitStatus *unitStatus, QWidget *parent = nullptr);
     void show();
     void hide();
     void updateInfo();
