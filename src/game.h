@@ -42,6 +42,7 @@ class Game : public QObject {
     Game(QPoint map_size, QObject *parent = nullptr);
     Game(const QJsonObject &json);
     Game(const QString &filename);
+    Game(const qint32 &level);
     ~Game();
 
     void clearMemory();

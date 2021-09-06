@@ -86,6 +86,7 @@
         "qdir": "cpp",
         "qjsonobject": "cpp",
         "qlayout": "cpp",
-        "qgroupbox": "cpp"
+        "qgroupbox": "cpp",
+        "qdialog": "cpp"
     }
 }

@@ -15,7 +15,7 @@ class MyApplication : public QApplication {
     ~MyApplication();
   public slots:
     void createStartWindow();
-    void changeToMainWindow();
+    void changeToMainWindow(qint32 gameLevel);
 
 };
 

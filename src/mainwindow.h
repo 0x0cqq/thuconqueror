@@ -11,7 +11,7 @@ class Mainwindow : public QMainWindow {
     Q_OBJECT
 
   public:
-    Mainwindow(QWidget *parent = nullptr);
+    Mainwindow(qint32 gamelevel, QWidget *parent = nullptr);
     ~Mainwindow();
     QHBoxLayout *hBox;
     QVBoxLayout *hvBox;
@@ -20,5 +20,8 @@ class Mainwindow : public QMainWindow {
     QLabel *     policyTreeLabel;
     GraphView *  graphView;
     Game *       game;
+    void         closeEvent(QCloseEvent *event) override;
+  signals:
+    void mainWindowClosed();
 };
 #endif  // MAINWINDOW_H

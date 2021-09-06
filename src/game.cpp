@@ -124,6 +124,11 @@ Game::Game(const QString &filename)
           return json;
       }(filename)) {}
 
+Game::Game(const qint32 &level)
+    : Game([](qint32 level) -> QString {
+          return "json/level" + QString::number(level) + ".json";
+      }(level)) {}
+
 Game::Game(const QJsonObject &json) {
     // 本质上是一个 read 函数
     if(json.contains("gameInfo") && json["gameInfo"].isObject()) {
@@ -157,7 +162,8 @@ Game::Game(const QJsonObject &json) {
             for(int j = 1; j <= height(); j++) {
                 m_blocks[i][j] = new BlockStatus();
                 m_blocks[i][j]->read(blocks[cnt].toObject());
-                m_blocks[i][j]->m_info = &m_blockTypeInfo[m_blocks[i][j]->m_type];
+                m_blocks[i][j]->m_info =
+                    &m_blockTypeInfo[m_blocks[i][j]->m_type];
                 cnt++;
             }
         }

@@ -12,8 +12,8 @@
 #include <QTextStream>
 
 void FitGraphicsView::resizeEvent(QResizeEvent *event) {
-    if(this->scene() != nullptr) {
-        this->fitInView(this->scene()->sceneRect(), Qt::KeepAspectRatio);
+    if(m_background != nullptr) {
+        this->fitInView(m_background->boundingRect(), Qt::KeepAspectRatio);
     }
     // qDebug() << event->size();
     this->QGraphicsView::resizeEvent(event);
@@ -24,18 +24,20 @@ void FitGraphicsView::paintEvent(QPaintEvent *event) {
     QGraphicsView::paintEvent(event);
 }
 
-FitGraphicsView::FitGraphicsView() : QGraphicsView(), m_scene(nullptr) {
+FitGraphicsView::FitGraphicsView(const QString &filename)
+    : QGraphicsView(), m_scene(nullptr) {
     m_scene = new QGraphicsScene;
     this->setScene(m_scene);
+    m_background = new QGraphicsPixmapItem(QPixmap(filename));
+    m_scene->addItem(m_background);
 }
 
 FitGraphicsView::~FitGraphicsView() {
     delete m_scene;
 }
 
-StartView::StartView() : m_background(nullptr), m_startButton(nullptr) {
-    m_background = new QGraphicsPixmapItem(QPixmap(":/images/cover.jpg"));
-    m_scene->addItem(m_background);
+StartView::StartView()
+    : FitGraphicsView(":/images/cover.jpg"), m_startButton(nullptr) {
     m_startButton = m_scene->addWidget(new QPushButton());
     dynamic_cast<QPushButton *>(m_startButton->widget())->setText("开始！");
     dynamic_cast<QPushButton *>(m_startButton->widget())
@@ -44,15 +46,42 @@ StartView::StartView() : m_background(nullptr), m_startButton(nullptr) {
     connect(this, &StartView::finishPainting, this, &StartView::setButtonPos);
 }
 
-ChooseLevelView::ChooseLevelView() : FitGraphicsView(), m_background(nullptr) {
-    m_background = new QGraphicsPixmapItem(QPixmap(":/images/chooselevel.jpg"));
-    m_scene->addItem(m_background);
+ChooseLevelView::ChooseLevelView()
+    : FitGraphicsView(":/images/chooselevel.jpg") {
+    QVector<LevelInfo> levels;
+    levels.append(
+        LevelInfo{1, "决战紫荆之巅",
+                  "紫操虽大，但我们已经无处可退：我们的身后就是紫荆一号楼。"});
+    levels.append(
+        LevelInfo{2, "保卫工字厅", "保卫六教！保卫大礼堂！保卫工字厅！"});
+    chooseLevelDialog = m_scene->addWidget(new ChooseDialog(levels));
+    chooseLevelDialog->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+    connect(dynamic_cast<ChooseDialog *>(chooseLevelDialog->widget()),
+            &ChooseDialog::userChooseLevel, this,
+            &ChooseLevelView::userStartLevel);
+    connect(this, &ChooseLevelView::finishPainting, this,
+            &ChooseLevelView::setWidgetPos);
+}
+
+void ChooseLevelView::setWidgetPos() {
+    auto v = chooseLevelDialog->scene()->views().first();
+    // chooseLevelDialog->hide();
+    // this->fitInView(m_background->boundingRect(), Qt::KeepAspectRatio);
+
+    if(chooseLevelDialog != nullptr) {
+        chooseLevelDialog->setPos(v->mapToScene(
+            QPoint(v->width() / 2 - chooseLevelDialog->size().width() / 2,
+                   v->height() / 2 - chooseLevelDialog->size().height() / 2)));
+        // chooseLevelDialog->show();
+    }
 }
 
 void StartView::setButtonPos() {
     auto v = m_startButton->scene()->views().first();
-    m_startButton->setPos(
-        v->mapToScene(QPoint(v->width() / 2 - 100, v->height() - 100)));
+    if(m_startButton != nullptr)
+        m_startButton->setPos(v->mapToScene(
+            QPoint(v->width() / 2 - m_startButton->size().width() / 2,
+                   v->height() - m_startButton->size().height())));
     // m_startButton->
     // m_startButton->setS(QSize(4000,1000));
 }
