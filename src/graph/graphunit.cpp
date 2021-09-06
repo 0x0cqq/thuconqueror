@@ -6,18 +6,53 @@
 #include <QLabel>
 #include <QLayout>
 #include <QPainter>
+#include <QRandomGenerator>
 
 QRectF GraphUnit::boundingRect() const {
-    return QRectF(-GraphInfo::unitSize - GraphInfo::penWidth,
-                  -GraphInfo::unitSize - GraphInfo::penWidth,
-                  2 * (GraphInfo::unitSize + GraphInfo::penWidth),
-                  2 * (GraphInfo::unitSize + GraphInfo::penWidth));
+    if(m_Movie) {
+        // qDebug() << m_Movie->frameRect();
+        auto tmp = m_Movie->frameRect();
+        tmp.moveCenter(QPoint(0,0));
+        return tmp;
+    }
+    else
+        return QRectF(-GraphInfo::unitSize - GraphInfo::penWidth,
+                      -GraphInfo::unitSize - GraphInfo::penWidth,
+                      2 * (GraphInfo::unitSize + GraphInfo::penWidth),
+                      2 * (GraphInfo::unitSize + GraphInfo::penWidth));
 }
 
 QPainterPath GraphUnit::shape() const {
     QPainterPath path;
     path.addEllipse({0, 0}, GraphInfo::unitSize, GraphInfo::unitSize);
     return path;
+}
+
+// about movie:
+// https://forum.qt.io/topic/123784/animated-gif-in-qgraphicsscene-qgraphicsview/5
+
+void GraphUnit::setMovie(QMovie *movie) {
+    prepareGeometryChange();
+    QObject::disconnect(mConnection);  // disconnect old object
+    m_Movie = movie;
+    if(m_Movie) {
+        qDebug() << "indeed scale size"
+                 << QRandomGenerator::global()->generate() << Qt::endl;
+        mConnection =
+            QObject::connect(m_Movie, &QMovie::frameChanged, [=] { update(); });
+        m_Movie->setScaledSize(
+            QSize(4 * GraphInfo::unitSize, 4 * GraphInfo::unitSize));
+        m_Movie->start();
+    }
+}
+
+void GraphUnit::paintAroundLoop(QPainter *painter) {
+    if(m_Movie != nullptr) {
+        // qDebug() << "indeed paint around loop"
+        //          << QRandomGenerator::global()->generate() << Qt::endl;
+        painter->drawPixmap(-m_Movie->frameRect().bottomRight() / 2, m_Movie->currentPixmap(),
+                            m_Movie->frameRect());
+    }
 }
 
 void GraphUnit::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
@@ -36,9 +71,8 @@ void GraphUnit::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     painter->setPen(QPen(Qt::black, GraphInfo::penWidth));
     painter->drawEllipse({0, 0}, GraphInfo::unitSize, GraphInfo::unitSize);
     painter->setFont(QFont("Microsoft YaHei", 30, 2));
-    painter->drawText(QPoint(0,0),QString::number(m_status->m_type));
-
-
+    painter->drawText(QPoint(0, 0), QString::number(m_status->m_type));
+    paintAroundLoop(painter);
     // painter->drawRoundedRect(-100, -100, 200, 200, 50, 50);
     // painter->fillRect(0, 0, 100, 100, Qt::green);
 }
@@ -60,7 +94,7 @@ void GraphUnit::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     auto v = scene()->views().first();
     if(dialogWidget == nullptr) {
         dialogWidget = scene()->addWidget(w);
-        dialogWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,true);
+        dialogWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
         dialogWidget->hide();
     }
     timer->singleShot(500, [=]() {

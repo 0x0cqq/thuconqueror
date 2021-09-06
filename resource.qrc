@@ -7,5 +7,7 @@
         <file>icons/startbutton.png</file>
         <file>images/cover.jpg</file>
         <file>images/chooselevel.jpg</file>
+        <file>images/loop.gif</file>
+
     </qresource>
 </RCC>
