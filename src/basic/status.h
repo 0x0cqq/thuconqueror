@@ -44,6 +44,35 @@ enum BlockType {
     peopleCampBlock = yesUnitBlock | 1 << 7
 };
 
+class BlockInfo {
+  public:
+    QString name;
+    QString description;
+    qint32  HPfull;
+    qint32  MPneed;
+    void    read(const QJsonObject &json) {
+        if(json.contains("HPfull") && json["HPfull"].isDouble())
+            HPfull = json["HPfull"].toInt();
+        if(json.contains("MPneed") && json["MPneed"].isDouble())
+            MPneed = json["MPneed"].toInt();
+        if(json.contains("description") && json["description"].isString())
+            description = json["description"].toString();
+        if(json.contains("name") && json["name"].isString())
+            name = json["name"].toString();
+    }
+    void write(QJsonObject &json) {
+        json["HPfull"]      = HPfull;
+        json["MPneed"]      = MPneed;
+        json["description"] = description;
+        json["name"]        = name;
+    }
+    BlockInfo() {}
+    BlockInfo(const QString &_name, const QString &_description, qint32 _HPfull,
+              qint32 _MPneed)
+        : name(_name), description(_description), HPfull(_HPfull),
+          MPneed(_MPneed) {}
+};
+
 #define blocks(point) m_blocks[(point).x()][(point).y()]
 #define uid()         m_status->m_uid
 #define unitOnBlock() m_status->m_unitOnBlock
@@ -54,15 +83,19 @@ enum BlockType {
 class BlockStatus : public QObject {
     Q_OBJECT
   public:
-    BlockType m_type;
-    QPoint    m_coord;
-    qint32    m_unitOnBlock;
-    void      read(const QJsonObject &json);
-    void      write(QJsonObject &json);
-    qint32    MPneed() const { return 1; }
+    BlockType  m_type;
+    BlockInfo *m_info;
+    QPoint     m_coord;
+    qint32     m_unitOnBlock;
+    qreal      m_HPnow;  // [0,1]
+    void       read(const QJsonObject &json);
+    void       write(QJsonObject &json);
+    qreal      getHP() const { return m_info->HPfull * m_HPnow; }
+    qint32     MPneed() const { return m_info->MPneed; }
     BlockStatus() {}
-    BlockStatus(BlockType type, QPoint coord)
-        : m_type(type), m_coord(coord), m_unitOnBlock(-1) {}
+    BlockStatus(BlockType type, BlockInfo *blockInfo, QPoint coord)
+        : m_type(type), m_info(blockInfo), m_coord(coord), m_unitOnBlock(-1),
+          m_HPnow(1) {}
 };
 
 class UnitInfo {

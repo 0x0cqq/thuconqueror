@@ -7,8 +7,8 @@
 
 Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     // add scene
-    game = new Game(QPoint(24, 16), this);
-    // game = new Game("2.json");
+    // game = new Game(QPoint(24, 16), this);
+    game = new Game("2.json");
     game->setNewUnitButton();
     game->setNextTurnButton();
     game->setPolicyTreeButton();
@@ -27,12 +27,12 @@ Mainwindow::Mainwindow(QWidget *parent) : QMainWindow(parent) {
     hBox      = new QHBoxLayout(this->centralWidget());
     graphView = game->m_view;
     hBox->addWidget(graphView);
-    hvBox = new QVBoxLayout();
-    hBox->addLayout(hvBox);
+    // hvBox = new QVBoxLayout();
+    // hBox->addLayout(hvBox);
 
-    hvBox->addWidget(it);
+    // hvBox->addWidget(it);
     // hvBox->addWidget(gameStatusLabel);
-    hvBox->addWidget(detailLabel);
+    // hvBox->addWidget(detailLabel);
     // hvBox->addWidget(policyTreeLabel);
     this->resize(1920, 1080);
 }

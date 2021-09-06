@@ -58,20 +58,29 @@ Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
     pauseButtonWidget = nullptr, policyTreeButtonWidget = nullptr;
     m_blocks.resize(width() + 2);
 
-    m_typeInfo[studentUnit] = UnitInfo("学生", "学生", 15, 1, 3);
-    m_typeInfo[teacherUnit] = UnitInfo("教师", "教师", 20, 2, 2);
-    m_typeInfo[childUnit]   = UnitInfo("孩子", "孩子", 10, 3, 1);
-    m_typeInfo[alphaUnit]   = UnitInfo("Alpha 病毒", "Alpha", 5, 2, 2);
-    m_typeInfo[deltaUnit]   = UnitInfo("Delta 病毒", "Delta", 5, 1, 5);
-    m_typeInfo[zetaUnit]    = UnitInfo("Zeta 病毒", "Boss", 15, 3, 3);
+    m_unitTypeInfo[studentUnit] = UnitInfo("学生", "学生", 15, 1, 4);
+    m_unitTypeInfo[teacherUnit] = UnitInfo("教师", "教师", 20, 2, 3);
+    m_unitTypeInfo[childUnit]   = UnitInfo("孩子", "孩子", 10, 3, 2);
+    m_unitTypeInfo[alphaUnit]   = UnitInfo("Alpha 病毒", "Alpha", 5, 2, 2);
+    m_unitTypeInfo[deltaUnit]   = UnitInfo("Delta 病毒", "Delta", 5, 1, 5);
+    m_unitTypeInfo[zetaUnit]    = UnitInfo("Zeta 病毒", "Boss", 15, 3, 3);
+
+    m_blockTypeInfo[plainBlock]     = BlockInfo("平地", "平地", 0, 2);
+    m_blockTypeInfo[obstacleBlock]  = BlockInfo("障碍", "障碍", 0, 10000);
+    m_blockTypeInfo[roadBlock]      = BlockInfo("平地", "平地", 0, 1);
+    m_blockTypeInfo[dampBlock]      = BlockInfo("泥地", "平地", 0, 3);
+    m_blockTypeInfo[virusCampBlock] = BlockInfo("人类营地", "平地", 30, 2);
+    m_blockTypeInfo[peopleCampBlock] = BlockInfo("病毒营地", "平地", 30, 2);
 
     for(int i = 1; i <= width(); i++) {
         m_blocks[i].resize(height() + 2);
         for(int j = 1; j <= height(); j++) {
-            m_blocks[i][j] = new BlockStatus(
-                QRandomGenerator::global()->generate() % 4 != 0 ? plainBlock :
-                                                                  obstacleBlock,
-                QPoint(i, j));
+            int t = QRandomGenerator::global()->generate() % 4;
+            m_blocks[i][j] =
+                new BlockStatus(t ? plainBlock : obstacleBlock,
+                                t ? &m_blockTypeInfo[plainBlock] :
+                                    &m_blockTypeInfo[obstacleBlock],
+                                QPoint(i, j));
         }
     }
     m_field = new Field(m_gameInfo, m_blocks, m_units);
@@ -120,13 +129,22 @@ Game::Game(const QJsonObject &json) {
     if(json.contains("gameInfo") && json["gameInfo"].isObject()) {
         m_gameInfo.read(json["gameInfo"].toObject());
     }
-    if(json.contains("typeInfo") && json["typeInfo"].isObject()) {
-        QJsonObject typeInfo = json["typeInfo"].toObject();
-        for(auto it = typeInfo.begin(); it != typeInfo.end(); it++) {
+    if(json.contains("unitTypeInfo") && json["unitTypeInfo"].isObject()) {
+        QJsonObject unitTypeInfo = json["unitTypeInfo"].toObject();
+        for(auto it = unitTypeInfo.begin(); it != unitTypeInfo.end(); it++) {
             QJsonObject unitInfo = it.value().toObject();
             UnitInfo    _unitInfo;
             _unitInfo.read(unitInfo);
-            m_typeInfo[it.key().toInt()] = _unitInfo;
+            m_unitTypeInfo[it.key().toInt()] = _unitInfo;
+        }
+    }
+    if(json.contains("blockTypeInfo") && json["blockTypeInfo"].isObject()) {
+        QJsonObject blockTypeInfo = json["blockTypeInfo"].toObject();
+        for(auto it = blockTypeInfo.begin(); it != blockTypeInfo.end(); it++) {
+            QJsonObject blockInfo = it.value().toObject();
+            BlockInfo   _blockInfo;
+            _blockInfo.read(blockInfo);
+            m_blockTypeInfo[it.key().toInt()] = _blockInfo;
         }
     }
     if(json.contains("blocks") && json["blocks"].isArray()) {
@@ -139,6 +157,7 @@ Game::Game(const QJsonObject &json) {
             for(int j = 1; j <= height(); j++) {
                 m_blocks[i][j] = new BlockStatus();
                 m_blocks[i][j]->read(blocks[cnt].toObject());
+                m_blocks[i][j]->m_info = &m_blockTypeInfo[m_blocks[i][j]->m_type];
                 cnt++;
             }
         }
@@ -150,7 +169,7 @@ Game::Game(const QJsonObject &json) {
         for(int i = 0; i < units.size(); i++) {
             m_units[i] = new UnitStatus();
             m_units[i]->read(units[i].toObject());
-            m_units[i]->m_info = &m_typeInfo[m_units[i]->m_type];
+            m_units[i]->m_info = &m_unitTypeInfo[m_units[i]->m_type];
         }
     }
     m_field = new Field(m_gameInfo, m_blocks, m_units);
@@ -174,29 +193,46 @@ void Game::write(QJsonObject &json) {
     QJsonObject gameInfo;
     m_gameInfo.write(gameInfo);
     json["gameInfo"] = gameInfo;
-    QJsonObject typeInfo;
-    for(auto it = m_typeInfo.begin(); it != m_typeInfo.end(); it++) {
-        QJsonObject unitInfo;
-        it.value().write(unitInfo);
-        typeInfo[QString::number(it.key())] = unitInfo;
-    }
-    json["typeInfo"] = typeInfo;
-    QJsonArray blocks;
-    for(int i = 1; i <= width(); i++) {
-        for(int j = 1; j <= height(); j++) {
-            QJsonObject block;
-            m_blocks[i][j]->write(block);
-            blocks.append(block);
+    {
+        QJsonObject unitTypeInfo;
+        for(auto it = m_unitTypeInfo.begin(); it != m_unitTypeInfo.end();
+            it++) {
+            QJsonObject unitInfo;
+            it.value().write(unitInfo);
+            unitTypeInfo[QString::number(it.key())] = unitInfo;
         }
+        json["unitTypeInfo"] = unitTypeInfo;
     }
-    json["blocks"] = blocks;
-    QJsonArray units;
-    for(int i = 0; i < m_units.size(); i++) {
-        QJsonObject unit;
-        m_units[i]->write(unit);
-        units.append(unit);
+    {
+        QJsonObject blockTypeInfo;
+        for(auto it = m_blockTypeInfo.begin(); it != m_blockTypeInfo.end();
+            it++) {
+            QJsonObject blockInfo;
+            it.value().write(blockInfo);
+            blockTypeInfo[QString::number(it.key())] = blockTypeInfo;
+        }
+        json["blockTypeInfo"] = blockTypeInfo;
     }
-    json["units"] = units;
+    {
+        QJsonArray blocks;
+        for(int i = 1; i <= width(); i++) {
+            for(int j = 1; j <= height(); j++) {
+                QJsonObject block;
+                m_blocks[i][j]->write(block);
+                blocks.append(block);
+            }
+        }
+        json["blocks"] = blocks;
+    }
+    {
+        QJsonArray units;
+        for(int i = 0; i < m_units.size(); i++) {
+            QJsonObject unit;
+            m_units[i]->write(unit);
+            units.append(unit);
+        }
+        json["units"] = units;
+    }
 }
 
 void Game::setgameStatusLabel() {
@@ -353,7 +389,7 @@ void Game::usernextTurn() {
             m_units[i]->setAttackState(true);
             m_units[i]->setMoveState(true);
         }
-        else{
+        else {
             m_units[i]->setAttackState(false);
             m_units[i]->setMoveState(false);
         }
@@ -426,7 +462,7 @@ void Game::usernewUnit() {
         return;
     }
     UnitStatus *unitStatus = new UnitStatus(
-        m_units.size(), UnitType(newUnitType), &m_typeInfo[newUnitType],
+        m_units.size(), UnitType(newUnitType), &m_unitTypeInfo[newUnitType],
         m_gameInfo.nowPlayer, m_graph->m_nowCheckedBlock->coord());
 
     emit m_graph->checkStateChange(m_graph->m_nowCheckedBlock->coord(), false);
@@ -452,4 +488,3 @@ void Game::usershowPolicyTree() {
     PolicyTreeDialog t(this, nullptr);
     t.exec();
 }
-

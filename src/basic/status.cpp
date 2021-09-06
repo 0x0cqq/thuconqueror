@@ -30,6 +30,7 @@ void BlockStatus::write(QJsonObject &json) {
     coord.append(m_coord.y());
     json["coord"]       = coord;
     json["unitOnBlock"] = m_unitOnBlock;
+    json["HPnow"] = m_HPnow;
 }
 void BlockStatus::read(const QJsonObject &json) {
     if(json.contains("type") && json["type"].isDouble())
@@ -39,6 +40,8 @@ void BlockStatus::read(const QJsonObject &json) {
                          json["coord"].toArray()[1].toInt()};
     if(json.contains("unitOnBlock") && json["unitOnBlock"].isDouble())
         m_unitOnBlock = json["unitOnBlock"].toInt();
+    if(json.contains("HPnow") && json["HPnow"].isDouble())
+        m_HPnow = json["HPnow"].toDouble();
 }
 
 UnitStatus::UnitStatus(const int &uid, const UnitType type, UnitInfo *uInfo,

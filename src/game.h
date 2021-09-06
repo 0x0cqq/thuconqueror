@@ -20,7 +20,9 @@ class Game : public QObject {
     Q_OBJECT
   public:
     GameInfo            m_gameInfo;
-    QMap<int, UnitInfo> m_typeInfo;
+    QMap<int, UnitInfo> m_unitTypeInfo;
+    QMap<int, BlockInfo> m_blockTypeInfo;
+
     // 两个玩家（or 一个玩家 vs 一个 AI）都玩完才算一个回合
 
     QVector<QVector<BlockStatus *>> m_blocks;

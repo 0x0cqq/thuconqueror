@@ -24,7 +24,7 @@ NewUnitDialog::NewUnitDialog(Game *game, QWidget *parent)
 
     // this->layout()->addWidget(new QPushButton());
     // 根据 UnitType 制造？Game 的指针可以用起来
-    for(auto it = game->m_typeInfo.begin(); it != game->m_typeInfo.end();
+    for(auto it = game->m_unitTypeInfo.begin(); it != game->m_unitTypeInfo.end();
         it++) {
         if((it.key() & (1 << game->m_gameInfo.nowPlayer)) == 0){
             continue;
