@@ -1,5 +1,5 @@
 #include "game.h"
-#include "graph/menudialog.h"
+#include "../graph/menudialog.h"
 #include <QApplication>
 #include <QFile>
 #include <QJsonArray>

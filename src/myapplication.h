@@ -1,8 +1,8 @@
 #ifndef MYAPPLICATION_H
 #define MYAPPLICATION_H
 
-#include "mainwindow.h"
-#include "startwindow.h"
+#include "windows/mainwindow.h"
+#include "windows/startwindow.h"
 #include <QApplication>
 
 

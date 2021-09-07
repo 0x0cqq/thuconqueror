@@ -1,11 +1,11 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "basic/status.h"
-#include "graph/graphfield.h"
-#include "graph/menudialog.h"
+#include "../basic/status.h"
+#include "../graph/graphfield.h"
+#include "../graph/menudialog.h"
 #include "graphview.h"
-#include "logic/field.h"
+#include "../logic/field.h"
 #include <QGraphicsProxyWidget>
 #include <QLabel>
 #include <QMap>

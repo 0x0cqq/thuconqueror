@@ -69,4 +69,4 @@ class GraphField : public QGraphicsScene {
     void onBlockClicked(QPoint coord);
 };
 
-#endif
+#endif 

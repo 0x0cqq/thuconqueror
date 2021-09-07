@@ -1,7 +1,7 @@
 #ifndef STARTWINDOW_H
 #define STARTWINDOW_H
 
-#include "graph/choosedialog.h"
+#include "../graph/choosedialog.h"
 #include <QGraphicsPixmapItem>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsScene>

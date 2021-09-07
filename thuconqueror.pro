@@ -11,29 +11,29 @@ CONFIG += c++11
 
 SOURCES += \
     src/main.cpp \
-    src/mainwindow.cpp \
-    src/startwindow.cpp \
+    src/windows/mainwindow.cpp \
+    src/windows/startwindow.cpp \
     src/logic/unit.cpp \
     src/logic/block.cpp \
     src/logic/field.cpp \
-    src/game.cpp \
+    src/game/game.cpp \
     src/graph/graphunit.cpp \
     src/graph/graphblock.cpp \
     src/graph/graphfield.cpp \
     src/graph/unitdialog.cpp \
     src/graph/menudialog.cpp \
     src/graph/choosedialog.cpp \
-    src/graphview.cpp \
+    src/game/graphview.cpp \
     src/myapplication.cpp \
     src/basic/status.cpp
 
 
 HEADERS += \
     src/myapplication.h \
-    src/mainwindow.h \
-    src/startwindow.h \
+    src/windows/mainwindow.h \
+    src/windows/startwindow.h \
     src/graph/graphblock.h \
-    src/graphview.h \
+    src/game/graphview.h \
     src/graph/graphfield.h \
     src/graph/graphunit.h \
     src/graph/unitdialog.h \
@@ -42,7 +42,7 @@ HEADERS += \
     src/logic/unit.h \
     src/logic/block.h \ 
     src/logic/field.h \
-    src/game.h \
+    src/game/game.h \
     src/basic/status.h
 
 # Default rules for deployment.
