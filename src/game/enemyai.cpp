@@ -3,6 +3,7 @@
 #include "game.h"
 
 #include <QEventLoop>
+#include <QRandomGenerator>
 
 EnemyAI::EnemyAI(Game *game, qint32 player) : m_game(game), m_player(player) {}
 
@@ -61,12 +62,36 @@ bool EnemyAI::moveUnit() {
 
 // 计算一个格子附近的敌人数目
 // 不太会算，见鬼
-qreal EnemyAI::calculate(QPoint coord) {}
+qreal EnemyAI::calculate(QPoint coord) {
+    qreal ans = 0;
+    for(int i = 0; i < m_game->m_units.size(); i++) {
+        if(m_game->m_units[i]->m_player != m_player) {
+            ans -= (abs(coord.x() - m_game->m_units[i]->m_nowCoord.x()) +
+                    abs(coord.y() - m_game->m_units[i]->m_nowCoord.y()));
+        }
+    }
+    for(int i = 1; i <= m_game->width(); i++) {
+        for(int j = 1; j <= m_game->height(); j++) {
+            if(m_game->m_blocks[i][j]->m_type == peopleCampBlock) {
+                ans -= 50 * (abs(coord.x() - i) + abs(coord.y() - j));
+            }
+        }
+    }
+    return ans;
+}
 
 // 找到能去的格子里敌人最多的
 QPoint EnemyAI::findTargetBlock(qint32 uid) {
     QVector<QPoint> moveRange = m_game->m_field->__getUnitMoveRange(uid);
-    return moveRange.size() >= 1 ? moveRange[0] : QPoint(-1, -1);
+    if(moveRange.size() == 0)
+        return QPoint{-1, -1};
+    QPoint ans = moveRange[0];
+    for(int i = 1; i < moveRange.size(); i++) {
+        if(calculate(moveRange[i]) > calculate(ans)) {
+            ans = moveRange[i];
+        }
+    }
+    return ans;
 }
 
 void EnemyAI::doUnitMove(qint32 uid, QPoint coord) {
@@ -89,6 +114,20 @@ void EnemyAI::doUnitAttack(qint32 uid, QPoint coord) {
     m_game->m_graph->onBlockClicked(coord);
 }
 
+UnitType RandomType() {
+    int t = (QRandomGenerator::global()->generate() % 5);
+    switch(t) {
+        case 0:
+        case 1:
+            return alphaUnit;
+        case 2:
+        case 3:
+            return deltaUnit;
+        case 4:
+            return zetaUnit;
+    }
+}
+
 bool EnemyAI::newUnit() {
     for(int i = 1; i <= m_game->width(); i++) {
         for(int j = 1; j <= m_game->height(); j++) {
@@ -101,7 +140,8 @@ bool EnemyAI::newUnit() {
             if(blockStatus->m_unitOnBlock != -1)
                 continue;
             // 告诉他们，爷要开始新建 Unit 了！
-            doNewUnit(QPoint{i, j}, m_player == 1 ? studentUnit : zetaUnit);
+            doNewUnit(QPoint{i, j},
+                      m_player == 1 ? studentUnit : RandomType());
             return true;
         }
     }

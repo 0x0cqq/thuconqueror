@@ -210,7 +210,7 @@ void GraphField::onBlockClicked(QPoint coord) {
 }
 
 void GraphField::newUnit(UnitStatus *unitStatus) {
-    qDebug() << "new unit: " << unitStatus->m_nowCoord << Qt::endl;
+    // qDebug() << "new unit: " << unitStatus->m_nowCoord << Qt::endl;
     GraphUnit *newUnit =
         new GraphUnit(unitStatus, getBlockCenter(unitStatus->m_nowCoord));
     m_units.append(newUnit);

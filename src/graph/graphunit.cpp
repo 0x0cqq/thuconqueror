@@ -36,8 +36,8 @@ void GraphUnit::setMovie(QMovie *movie) {
     QObject::disconnect(mConnection);  // disconnect old object
     m_Movie = movie;
     if(m_Movie) {
-        qDebug() << "indeed scale size"
-                 << QRandomGenerator::global()->generate() << Qt::endl;
+        // qDebug() << "indeed scale size"
+        //          << QRandomGenerator::global()->generate() << Qt::endl;
         mConnection =
             QObject::connect(m_Movie, &QMovie::frameChanged, [=] { update(); });
         m_Movie->setScaledSize(

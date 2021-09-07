@@ -1,5 +1,5 @@
 #include "menudialog.h"
-#include "../game.h"
+#include "../game/game.h"
 
 #include <QBoxLayout>
 #include <QGroupBox>
