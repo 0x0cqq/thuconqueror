@@ -1,5 +1,6 @@
 #include "game.h"
 #include "../graph/menudialog.h"
+#include "enemyai.h"
 #include <QApplication>
 #include <QFile>
 #include <QJsonArray>
@@ -104,6 +105,10 @@ void Game::clearMemory() {
     for(int i = 0; i < m_units.size(); i++) {
         delete m_units[i];
     }
+    enemy->deleteLater();
+    m_view->deleteLater();
+    m_field->deleteLater();
+    m_graph->deleteLater();
 }
 
 Game::Game(const QString &filename)
@@ -171,6 +176,7 @@ Game::Game(const QJsonObject &json) {
     m_graph = new GraphField(m_gameInfo, m_blocks, m_units);
     m_view  = new GraphView;
     m_view->setScene(m_graph);
+    enemy = new EnemyAI(this, 2);
 }
 
 void Game::write(QJsonObject &json) {
@@ -375,6 +381,7 @@ void Game::usernextTurn() {
     QJsonObject json;
     write(json);
     writeJson("3.json", json);
+restart:
     if(m_gameInfo.playerNumbers == m_gameInfo.nowPlayer) {
         m_gameInfo.nowPlayer = 1;
         m_gameInfo.m_turnNumber++;
@@ -391,6 +398,10 @@ void Game::usernextTurn() {
             m_units[i]->setAttackState(false);
             m_units[i]->setMoveState(false);
         }
+    }
+    if(m_gameInfo.nowPlayer == enemy->m_player) {
+        enemy->play();
+        goto restart;
     }
     QMessageBox msgBox;
     msgBox.setText("进入下一玩家游戏。当前是第 " +
@@ -451,9 +462,9 @@ void Game::usernewUnit(QPoint coord, UnitType newUnitType) {
     BlockStatus *block = blocks(coord);
     Q_ASSERT(block != nullptr);
     Q_ASSERT(block->m_unitOnBlock == -1);
-    UnitStatus *unitStatus = new UnitStatus(
-        m_units.size(), newUnitType, &m_unitTypeInfo[newUnitType],
-        m_gameInfo.nowPlayer, coord);
+    UnitStatus *unitStatus = new UnitStatus(m_units.size(), newUnitType,
+                                            &m_unitTypeInfo[newUnitType],
+                                            m_gameInfo.nowPlayer, coord);
     m_units.push_back(unitStatus);
     unitStatus->setAttackState(false);
     unitStatus->setMoveState(false);

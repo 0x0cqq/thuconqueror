@@ -24,6 +24,7 @@ SOURCES += \
     src/graph/menudialog.cpp \
     src/graph/choosedialog.cpp \
     src/game/graphview.cpp \
+    src/game/enemyai.cpp \
     src/myapplication.cpp \
     src/basic/status.cpp
 
@@ -43,6 +44,7 @@ HEADERS += \
     src/logic/block.h \ 
     src/logic/field.h \
     src/game/game.h \
+    src/game/enemyai.h \
     src/basic/status.h
 
 # Default rules for deployment.

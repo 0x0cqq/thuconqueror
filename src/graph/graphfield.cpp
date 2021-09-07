@@ -87,9 +87,8 @@ void GraphField::moveUnit(GraphUnit *graphUnit, const QVector<QPoint> &path) {
                                  getBlockCenter(path[i]));
     }
     animation->start();
-    connect(animation, &QPropertyAnimation::finished,this,[=](){
-        // emit finishOrder();
-    });
+    connect(animation, &QPropertyAnimation::finished, this,
+            [=]() { emit finishOrder(); });
     emit needUpdateDetail();
 }
 
@@ -121,7 +120,8 @@ void GraphField::onBlockClicked(QPoint coord) {
                         // B 格子上没有棋子
                         if((blocks(coord)->m_status->m_type & campBlock) &&
                            blocks(coord)->m_status->getHP() > 0) {
-                            if(!notSameCamp(m_units[uidA]->m_status,
+                            if(blocks(coord)->m_isMoveRange &&
+                               !notSameCamp(m_units[uidA]->m_status,
                                             blocks(coord)->m_status)) {
                                 flag = 1;
                             }
@@ -224,10 +224,11 @@ void GraphField::attackUnit(qint32 uid, qint32 tarid) {
 void GraphField::attackUnit(GraphUnit *graphUnit, qint32 tarid) {
     graphUnit->update(graphUnit->boundingRect());
     m_units[tarid]->update(m_units[tarid]->boundingRect());
-    QMessageBox msgBox;
-    msgBox.setText("攻击！ " + QString::number(graphUnit->uid()) +
-                   " 号 Unit 攻击了 " + QString::number(tarid) + " 号 Unit 。");
-    msgBox.exec();
+    // QMessageBox msgBox;
+    qDebug() << ("攻击！ " + QString::number(graphUnit->uid()) +
+                 " 号 Unit 攻击了 " + QString::number(tarid) + " 号 Unit 。");
+    // msgBox.exec();
+    emit finishOrder();
     emit needUpdateDetail();
 }
 
@@ -236,12 +237,13 @@ void GraphField::attackCamp(qint32 uid, QPoint coord) {
     graphUnit->update(graphUnit->boundingRect());
     // 应该更新 block 的
     // m_units[tarid]->update(m_units[tarid]->boundingRect());
-    QMessageBox msgBox;
-    msgBox.setText("攻击！ " + QString::number(graphUnit->uid()) +
-                   " 号 Unit 攻击了 （" + QString::number(coord.x()) + "," +
-                   QString::number(coord.y()) + " ) 处的 Camp 。Camp 血量：" +
-                   QString::number(blocks(coord)->m_status->getHP()));
-    msgBox.exec();
+    // QMessageBox msgBox;
+    qDebug() << ("攻击！ " + QString::number(graphUnit->uid()) +
+                 " 号 Unit 攻击了 （" + QString::number(coord.x()) + "," +
+                 QString::number(coord.y()) + " ) 处的 Camp 。Camp 血量：" +
+                 QString::number(blocks(coord)->m_status->getHP()));
+    // msgBox.exec();
+    emit finishOrder();
     emit needUpdateDetail();
 }
 

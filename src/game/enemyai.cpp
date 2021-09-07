@@ -2,18 +2,31 @@
 
 #include "game.h"
 
+#include <QEventLoop>
+
 EnemyAI::EnemyAI(Game *game, qint32 player) : m_game(game), m_player(player) {}
 
 void EnemyAI::play() {
     Q_ASSERT(m_player == m_game->m_gameInfo.nowPlayer);
-    m_game->m_gameInfo.speed /= 10;
+    // m_game->m_gameInfo.speed /= 10;
+    bool       is_finished = false;
+    QEventLoop waiter;
+    auto       connection = connect(m_game->m_graph, &GraphField::finishOrder,
+                              &waiter, &QEventLoop::quit);
+    auto connection2 = connect(m_game->m_graph, &GraphField::finishOrder, this,
+                               [&]() { is_finished = true; });
     while(moveUnit()) {
-        ;
+        if(!is_finished)
+            waiter.exec();
+        is_finished = false;
     }
     while(newUnit()) {
         ;
     }
-    m_game->m_gameInfo.speed *= 10;
+    disconnect(connection);
+    disconnect(connection2);
+
+    // m_game->m_gameInfo.speed *= 10;
 }
 
 // 用 GraphField::onBlockClicked 来进行操作
@@ -37,6 +50,7 @@ bool EnemyAI::moveUnit() {
         }
         p = findTargetBlock(unitStatus->m_uid);
         if(unitStatus->canMove() && p != QPoint(-1, -1)) {
+            qDebug() << "Move:" << unitStatus->m_uid << " " << p;
             doUnitMove(unitStatus->m_uid, p);
             // 理论上应该这里再试图攻击一次的。
             return true;
@@ -61,8 +75,10 @@ void EnemyAI::doUnitMove(qint32 uid, QPoint coord) {
     Q_ASSERT(m_game->m_units[uid]->canMove());
     m_game->m_graph->onBlockClicked(m_game->m_units[uid]->m_nowCoord);
     Q_ASSERT(m_game->m_graph->blocks(coord)->m_isMoveRange);
+
+    // _sleep(10000);
     m_game->m_graph->onBlockClicked(coord);
-    Q_ASSERT(m_game->m_units[uid]->m_nowCoord == coord);
+    // Q_ASSERT(m_game->m_units[uid]->m_nowCoord == coord);
 }
 void EnemyAI::doUnitAttack(qint32 uid, QPoint coord) {
     Q_ASSERT(m_game->m_units[uid]->isAlive());
@@ -85,7 +101,7 @@ bool EnemyAI::newUnit() {
             if(blockStatus->m_unitOnBlock != -1)
                 continue;
             // 告诉他们，爷要开始新建 Unit 了！
-            doNewUnit(QPoint{i,j},m_player == 1 ? studentUnit : zetaUnit);
+            doNewUnit(QPoint{i, j}, m_player == 1 ? studentUnit : zetaUnit);
             return true;
         }
     }
@@ -93,5 +109,5 @@ bool EnemyAI::newUnit() {
 }
 
 void EnemyAI::doNewUnit(QPoint coord, UnitType type) {
-    m_game->usernewUnit(coord,type);
+    m_game->usernewUnit(coord, type);
 }

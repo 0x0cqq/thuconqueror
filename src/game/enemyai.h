@@ -1,6 +1,7 @@
 #ifndef ENEMYAI_H
 #define ENEMYAI_H
 
+#include "../basic/status.h"
 #include <QObject>
 
 class Game;
@@ -8,9 +9,9 @@ class Game;
 class EnemyAI : public QObject {
     Q_OBJECT
     Game *const  m_game;
-    const qint32 m_player;
 
   public:
+    const qint32 m_player;
     EnemyAI(Game *game, qint32 player);
     void   play();
     bool   moveUnit();

@@ -116,7 +116,7 @@ QPoint Field::__canAttackNearby(qint32 uid) {
     Unit * unit = m_units[uid];
     auto np = getNearbyPoint(unit->nowCoord());
     bool flag = false;  // 检测是否旁边一个可以攻击的敌方元素都没有
-    for(auto nearPoint : np) {
+    for(auto nearPoint : np) if(isValid(nearPoint)) {
         if(canUnitAttackBlock(unit->m_status, blocks(nearPoint)->m_status) ||
            ((blocks(nearPoint)->unitOnBlock() != -1) &&
             canUnitAttack(
@@ -220,10 +220,14 @@ QVector<QPoint> Field::__getUnitMoveRange(qint32 uid) {
         }
     }
     moveRange.erase(moveRange.begin());  // 抹掉本身
-
-    // qDebug() << moveRange.size() << Qt::endl;
-
-    return moveRange;
+    QVector<QPoint> _moveRange;
+    for(auto p : moveRange){
+        if(blocks(p)->unitOnBlock() == -1){
+            // 为了抹掉自己
+            _moveRange.push_back(p);
+        }
+    }
+    return _moveRange;
 }
 
 void Field::getUnitMoveRange(qint32 uid) {
