@@ -31,9 +31,8 @@ void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     else if(m_status->m_type == obstacleBlock) {
         painter->setFont(QFont("Microsoft YaHei", 40, 15));
     }
-    else{
+    else {
         painter->setFont(QFont("Microsoft YaHei", 20, 1));
-
     }
     if(m_status->m_type != plainBlock)
         painter->drawText(QPointF{-GraphInfo::blockSize / 2, 0},
@@ -55,7 +54,7 @@ void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
             painter->drawPolygon(GraphInfo::blockPoly);
         }
     }
-
+    bool canBeAttacked = false;
     if(unitOnBlock() != -1 && s->m_nowCheckedBlock != nullptr &&
        s->m_nowCheckedBlock->unitOnBlock() != -1) {
         GraphUnit *a = s->m_units[s->m_nowCheckedBlock->unitOnBlock()],
@@ -63,11 +62,23 @@ void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
         if(a->player() == s->m_gameInfo.nowPlayer &&
            canUnitAttack(a->m_status, b->m_status)) {
             // 可以攻击
-            QColor red40 = Qt::red;
-            red40.setAlphaF(0.4);
-            painter->setBrush(red40);
-            painter->drawPolygon(GraphInfo::blockPoly);
+            canBeAttacked = true;
         }
+    }
+    if(s->m_nowCheckedBlock != nullptr &&
+       s->m_nowCheckedBlock->unitOnBlock() != -1) {
+        GraphUnit *a = s->m_units[s->m_nowCheckedBlock->unitOnBlock()];
+        if(a->player() == s->m_gameInfo.nowPlayer &&
+           canUnitAttackBlock(a->m_status, m_status)) {
+            // 可以攻击
+            canBeAttacked = true;
+        }
+    }
+    if(canBeAttacked) {
+        QColor red40 = Qt::red;
+        red40.setAlphaF(0.4);
+        painter->setBrush(red40);
+        painter->drawPolygon(GraphInfo::blockPoly);
     }
 }
 

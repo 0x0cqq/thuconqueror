@@ -310,6 +310,7 @@ void Game::init() {
         QOverload<qint32, const QVector<QPoint> &>::of(&GraphField::moveUnit));
     connect(m_field, &Field::attackUnit, m_graph,
             QOverload<qint32, qint32>::of(&GraphField::attackUnit));
+    connect(m_field, &Field::attackCamp, m_graph, &GraphField::attackCamp);
     connect(m_field, &Field::unitMoveRangegot, m_graph,
             &GraphField::showMoveRange);
 

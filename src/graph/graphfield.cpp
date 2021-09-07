@@ -105,6 +105,8 @@ void GraphField::onBlockClicked(QPoint coord) {
             // flag == 0: 更换选择格
             // flag == 1: 移动
             // flag == 2: 攻击
+            // 1. 兵不能走到对方的兵营，除非对方的兵营已经没有血了
+            // 胜负判定：对方的军营全都没有了且兵都死了
             qint32 uidA = m_nowCheckedBlock->unitOnBlock(),
                    uidB = blocks(coord)->unitOnBlock();
             if(uidA != -1) {
@@ -114,12 +116,35 @@ void GraphField::onBlockClicked(QPoint coord) {
                     // A 格上是当前玩家的棋子 且没有死
                     if(uidB == -1) {
                         // B 格子上没有棋子
-                        if(blocks(coord)->m_isMoveRange &&
-                           m_units[uidA]->m_status->canMove()) {
-                            flag = 1;
+                        if((blocks(coord)->m_status->m_type & campBlock) &&
+                           blocks(coord)->m_status->getHP() > 0) {
+                            if(!notSameCamp(m_units[uidA]->m_status,
+                                            blocks(coord)->m_status)) {
+                                flag = 1;
+                            }
+                            else {
+                                // 有军营且需要攻击
+                                if(m_units[uidA]->m_status->canAttack() &&
+                                   isNearByPoint(coord,
+                                                 m_nowCheckedBlock->coord()) &&
+                                   m_units[uidA]->m_status->isAlive()) {
+                                    // 能攻击？
+                                    flag = 2;
+                                }
+                                else {
+                                    flag = 0;
+                                }
+                            }
                         }
                         else {
-                            flag = 0;
+                            // 没有军营 或者无法攻击
+                            if(blocks(coord)->m_isMoveRange &&
+                               m_units[uidA]->m_status->canMove()) {
+                                flag = 1;
+                            }
+                            else {
+                                flag = 0;
+                            }
                         }
                     }
                     else {
@@ -135,7 +160,7 @@ void GraphField::onBlockClicked(QPoint coord) {
                                isNearByPoint(coord,
                                              m_nowCheckedBlock->coord()) &&
                                m_units[uidA]->m_status->canAttack()) {
-                                // 活着 且 本单元格能攻击啊
+                                // 活着 且 本兵种能攻击啊
                                 flag = 2;
                             }
                             else {
@@ -199,6 +224,19 @@ void GraphField::attackUnit(GraphUnit *graphUnit, qint32 tarid) {
     QMessageBox msgBox;
     msgBox.setText("攻击！ " + QString::number(graphUnit->uid()) +
                    " 号 Unit 攻击了 " + QString::number(tarid) + " 号 Unit 。");
+    msgBox.exec();
+    emit needUpdateDetail();
+}
+
+void GraphField::attackCamp(qint32 uid, QPoint coord) {
+    GraphUnit *graphUnit = m_units[uid];
+    graphUnit->update(graphUnit->boundingRect());
+    // 应该更新 block 的
+    // m_units[tarid]->update(m_units[tarid]->boundingRect());
+    QMessageBox msgBox;
+    msgBox.setText("攻击！ " + QString::number(graphUnit->uid()) +
+                   " 号 Unit 攻击了 （" + QString::number(coord.x()) + "," +
+                   QString::number(coord.y()) + " ) 处的 Camp 。Camp 血量：" + QString::number(blocks(coord)->m_status->getHP()));
     msgBox.exec();
     emit needUpdateDetail();
 }

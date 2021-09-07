@@ -41,6 +41,7 @@ class GraphField : public QGraphicsScene {
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    // 辅助函数先放在这里
 
   signals:
     void checkStateChange(QPoint coord, bool state);
@@ -62,6 +63,7 @@ class GraphField : public QGraphicsScene {
     void dieUnit(qint32 uid);
     void moveUnit(qint32 uid, const QVector<QPoint> &path);
     void attackUnit(qint32 uid, qint32 tarid);
+    void attackCamp(qint32 uid, QPoint coord);
     void showMoveRange(qint32 uid, QVector<QPoint> range);
     void hideMoveRange();
     void onBlockClicked(QPoint coord);

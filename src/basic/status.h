@@ -36,12 +36,13 @@ class GameInfo {
 enum BlockType {
     yesUnitBlock    = 1,  // 可以去（对双方），而不是现在有没有
     noUnitBlock     = 1 << 1,
+    campBlock       = 1 << 8,
     plainBlock      = yesUnitBlock | 1 << 2,
     obstacleBlock   = noUnitBlock | 1 << 3,
     dampBlock       = yesUnitBlock | 1 << 4,
     roadBlock       = yesUnitBlock | 1 << 5,
-    virusCampBlock  = yesUnitBlock | 1 << 6,
-    peopleCampBlock = yesUnitBlock | 1 << 7
+    virusCampBlock  = yesUnitBlock | campBlock | 1 << 7,
+    peopleCampBlock = yesUnitBlock | campBlock | 1 << 6
 };
 
 class BlockInfo {
@@ -92,6 +93,8 @@ class BlockStatus : public QObject {
     void       write(QJsonObject &json);
     qreal      getHP() const { return m_info->HPfull * m_HPnow; }
     qint32     MPneed() const { return m_info->MPneed; }
+    bool       changeHP(qreal delta);
+
     BlockStatus() {}
     BlockStatus(BlockType type, BlockInfo *blockInfo, QPoint coord)
         : m_type(type), m_info(blockInfo), m_coord(coord), m_unitOnBlock(-1),
@@ -204,10 +207,14 @@ bool isNearByBlock(const BlockStatus *a, const BlockStatus *b);
 
 bool canUnitAttack(const UnitStatus *a, const UnitStatus *b);
 
+bool canUnitAttackBlock(const UnitStatus *a, const BlockStatus *b);
+
 QVector<QPoint> getNearbyPoint(const QPoint &a);
 
 QPointF getBlockCenter(qint32 r, qint32 c);
 
 QPointF getBlockCenter(QPoint coord);
+
+bool notSameCamp(const UnitStatus *unit, const BlockStatus *block);
 
 #endif

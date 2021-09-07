@@ -30,7 +30,7 @@ void BlockStatus::write(QJsonObject &json) {
     coord.append(m_coord.y());
     json["coord"]       = coord;
     json["unitOnBlock"] = m_unitOnBlock;
-    json["HPnow"] = m_HPnow;
+    json["HPnow"]       = m_HPnow;
 }
 void BlockStatus::read(const QJsonObject &json) {
     if(json.contains("type") && json["type"].isDouble())
@@ -42,6 +42,12 @@ void BlockStatus::read(const QJsonObject &json) {
         m_unitOnBlock = json["unitOnBlock"].toInt();
     if(json.contains("HPnow") && json["HPnow"].isDouble())
         m_HPnow = json["HPnow"].toDouble();
+}
+
+bool BlockStatus::changeHP(qreal delta) {
+    Q_ASSERT(m_info->HPfull != 0);
+    m_HPnow += delta / (m_info->HPfull);
+    return m_HPnow < 0;
 }
 
 UnitStatus::UnitStatus(const int &uid, const UnitType type, UnitInfo *uInfo,
@@ -125,6 +131,25 @@ bool isNearByBlock(const BlockStatus *a, const BlockStatus *b) {
     return isNearByPoint(a->m_coord, b->m_coord);
 }
 
+bool canUnitAttackBlock(const UnitStatus *a, const BlockStatus *b) {
+    if(!isNearByPoint(a->m_nowCoord, b->m_coord)) {
+        return false;
+    }
+    if((b->m_type & campBlock) == 0) {
+        return false;
+    }
+    if(!notSameCamp(a, b)) {
+        return false;
+    }
+    if(!a->isAlive() || b->getHP() < 0) {
+        return false;
+    }
+    if(!a->canAttack()) {
+        return false;
+    }
+    return true;
+}
+
 bool canUnitAttack(const UnitStatus *a, const UnitStatus *b) {
     // 没有检查 a 的主人是什么
     if(!isNearByPoint(a->m_nowCoord, b->m_nowCoord)) {
@@ -160,4 +185,10 @@ QPointF getBlockCenter(qint32 r, qint32 c) {
 
 QPointF getBlockCenter(QPoint coord) {
     return getBlockCenter(coord.x(), coord.y());
+}
+
+bool notSameCamp(const UnitStatus *unit, const BlockStatus *block) {
+    // uid 和 block 的 camp 相比
+    return ((unit->m_type & peopleUnit) && block->m_type == virusCampBlock) ||
+        ((unit->m_type & virusUnit) && block->m_type == peopleCampBlock);
 }

@@ -123,10 +123,11 @@ void Field::doUnitMove(Unit *unit, QPoint destCoord) {
     auto np = getNearbyPoint(unit->nowCoord());
     bool flag = false;  // 检测是否旁边一个可以攻击的敌方元素都没有
     for(auto nearPoint : np) {
-        if(blocks(nearPoint)->unitOnBlock() == -1)
-            continue;
-        if(canUnitAttack(unit->m_status,
-                         m_units[blocks(nearPoint)->unitOnBlock()]->m_status)) {
+        if(canUnitAttackBlock(unit->m_status, blocks(nearPoint)->m_status) ||
+           ((blocks(nearPoint)->unitOnBlock() != -1) &&
+            canUnitAttack(
+                unit->m_status,
+                m_units[blocks(nearPoint)->unitOnBlock()]->m_status))) {
             flag = true;
             break;
         }
@@ -138,18 +139,31 @@ void Field::doUnitMove(qint32 uid, QPoint coord) {
 }
 
 void Field::doUnitAttack(Unit *unit, QPoint coord) {
-    Q_ASSERT(blocks(coord)->unitOnBlock() != -1);
-    qint32 taruid = blocks(coord)->unitOnBlock();
-    auto   att    = calculateAttack(unit->m_status, m_units[taruid]->m_status);
-    bool   isAAlive = unit->m_status->changeHP(-att.first),
-         isBAlive   = m_units[taruid]->m_status->changeHP(-att.second);
-    if(!isAAlive)
-        emit unitDead(unit->uid());
-    if(!isBAlive)
-        emit unitDead(taruid);
-    unit->m_status->setAttackState(false);
-    unit->m_status->setMoveState(false);
-    emit attackUnit(unit->uid(), taruid);
+    if(((blocks(coord)->m_status->m_type & campBlock) != 0) &&
+       blocks(coord)->m_status->getHP() > 0) {
+        // 先攻击格子
+        blocks(coord)->m_status->changeHP(-unit->m_status->getCE());
+        unit->m_status->setAttackState(false);
+        unit->m_status->setMoveState(false);
+        emit attackCamp(unit->uid(), coord);
+    }
+    else if((blocks(coord)->unitOnBlock() != -1)) {
+        // 再攻击其中的单元
+        qint32 taruid = blocks(coord)->unitOnBlock();
+        auto   att = calculateAttack(unit->m_status, m_units[taruid]->m_status);
+        bool   isAAlive = unit->m_status->changeHP(-att.first),
+             isBAlive   = m_units[taruid]->m_status->changeHP(-att.second);
+        if(!isAAlive)
+            emit unitDead(unit->uid());
+        if(!isBAlive)
+            emit unitDead(taruid);
+        unit->m_status->setAttackState(false);
+        unit->m_status->setMoveState(false);
+        emit attackUnit(unit->uid(), taruid);
+    }
+    else {
+        Q_ASSERT(0);
+    }
 }
 void Field::doUnitAttack(qint32 uid, QPoint coord) {
     doUnitAttack(m_units[uid], coord);
