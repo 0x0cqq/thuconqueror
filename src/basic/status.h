@@ -29,6 +29,7 @@ class GameInfo {
     // 人类 1 病毒 2
     qint32 playerNumbers;
     qint32 nowPlayer;
+    qint32 speed;
     void   read(const QJsonObject &json);
     void   write(QJsonObject &json);
 };

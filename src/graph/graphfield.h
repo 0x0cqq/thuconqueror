@@ -53,7 +53,7 @@ class GraphField : public QGraphicsScene {
     void userShowMoveRange(qint32 uid);
     void userHideMoveRange();
     void needUpdateDetail();
-
+    void finishOrder();
     // 把 uid 的 unit 移动到 (posx, posy)
   protected slots:
     void moveUnit(GraphUnit *graphUnit, const QVector<QPoint> &path);
@@ -69,4 +69,4 @@ class GraphField : public QGraphicsScene {
     void onBlockClicked(QPoint coord);
 };
 
-#endif 
+#endif

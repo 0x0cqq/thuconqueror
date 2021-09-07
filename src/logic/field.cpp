@@ -112,14 +112,8 @@ QVector<QPoint> Field::getPath(qint32 uid, QPoint start, QPoint end) {
     return ans;
 }
 
-void Field::doUnitMove(Unit *unit, QPoint destCoord) {
-    qDebug() << "move unit" << Qt::endl;
-    emit moveUnit(unit->uid(),
-                  getPath(unit->uid(), unit->nowCoord(), destCoord));
-    blocks(unit->nowCoord())->unitOnBlock() = -1;
-    unit->nowCoord()                        = destCoord;
-    blocks(unit->nowCoord())->unitOnBlock() = unit->uid();
-    unit->m_status->setMoveState(false);
+QPoint Field::__canAttackNearby(qint32 uid) {
+    Unit * unit = m_units[uid];
     auto np = getNearbyPoint(unit->nowCoord());
     bool flag = false;  // 检测是否旁边一个可以攻击的敌方元素都没有
     for(auto nearPoint : np) {
@@ -128,11 +122,22 @@ void Field::doUnitMove(Unit *unit, QPoint destCoord) {
             canUnitAttack(
                 unit->m_status,
                 m_units[blocks(nearPoint)->unitOnBlock()]->m_status))) {
-            flag = true;
-            break;
+            return nearPoint;
         }
     }
-    unit->m_status->setAttackState(flag);
+    return QPoint{-1,-1};
+}
+
+void Field::doUnitMove(Unit *unit, QPoint destCoord) {
+    qDebug() << "move unit" << Qt::endl;
+    emit moveUnit(unit->uid(),
+                  getPath(unit->uid(), unit->nowCoord(), destCoord));
+    blocks(unit->nowCoord())->unitOnBlock() = -1;
+    unit->nowCoord()                        = destCoord;
+    blocks(unit->nowCoord())->unitOnBlock() = unit->uid();
+    unit->m_status->setMoveState(false);
+    QPoint point = __canAttackNearby(unit->uid());
+    unit->m_status->setAttackState(point != QPoint{-1,-1});
 }
 void Field::doUnitMove(qint32 uid, QPoint coord) {
     doUnitMove(m_units[uid], coord);
@@ -177,9 +182,7 @@ void Field::doNewUnit(UnitStatus *unitStatus) {
     emit newUnit(unitStatus);
 }
 
-void Field::getUnitMoveRange(qint32 uid) {
-    // distance, coord, last coord;
-    qDebug() << "calculate move range" << Qt::endl;
+QVector<QPoint> Field::__getUnitMoveRange(qint32 uid) {
     QVector<QPoint>        moveRange;
     QMap<distance, QPoint> q;
     QMap<QPoint, qreal>    dis;
@@ -217,6 +220,15 @@ void Field::getUnitMoveRange(qint32 uid) {
         }
     }
     moveRange.erase(moveRange.begin());  // 抹掉本身
-    emit unitMoveRangegot(uid, moveRange);
-    qDebug() << moveRange.size() << Qt::endl;
+
+    // qDebug() << moveRange.size() << Qt::endl;
+
+    return moveRange;
+}
+
+void Field::getUnitMoveRange(qint32 uid) {
+    // distance, coord, last coord;
+    qDebug() << "calculate move range" << Qt::endl;
+    QVector<QPoint> moveRange = __getUnitMoveRange(uid);
+    emit            unitMoveRangegot(uid, moveRange);
 }

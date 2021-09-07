@@ -1,10 +1,10 @@
 #ifndef FIELD_H
 #define FIELD_H
 
+#include "../basic/status.h"
 #include "block.h"
 #include "unit.h"
 #include <QObject>
-#include "../basic/status.h"
 
 class Field : public QObject {
     Q_OBJECT
@@ -34,6 +34,9 @@ class Field : public QObject {
           const QVector<QVector<BlockStatus *>> &blockStatus,
           const QVector<UnitStatus *> &          unitStatus);
     ~Field();
+    QVector<QPoint> __getUnitMoveRange(qint32 uid);
+    QPoint          __canAttackNearby(qint32 uid);
+
   signals:
     void newUnit(UnitStatus *unitStatus);
     void unitDead(qint32 uid);

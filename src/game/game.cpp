@@ -286,7 +286,7 @@ void Game::init() {
                 }
             });
 
-    // connect(m_graph, &GraphField::userNewUnit,m_field, &Field::newUnit);
+    // connect(m_graph, &GraphField::userNewUnit,m_field, &Field::doNewUnit);
     connect(m_graph, &GraphField::userMoveUnit, m_field,
             QOverload<qint32, QPoint>::of(&Field::doUnitMove));
     connect(m_graph, &GraphField::userAttackUnit, m_field,
@@ -431,37 +431,33 @@ void Game::setNewUnitButton() {
     // 初始时需要隐藏
     newUnitButtonWidget->hide();
 
-    connect(newUnitButton, &QPushButton::clicked, this, &Game::usernewUnit);
+    connect(newUnitButton, &QPushButton::clicked, this, [=]() {
+        NewUnitDialog *newunit     = new NewUnitDialog(this);
+        int            newUnitType = newunit->exec();
+        delete newunit;
+        if(newUnitType == 0)
+            return;
+        Q_ASSERT(m_graph->m_nowCheckedBlock != nullptr);
+        this->usernewUnit(m_graph->m_nowCheckedBlock->coord(),
+                          UnitType(newUnitType));
+        emit m_graph->checkStateChange(m_graph->m_nowCheckedBlock->coord(),
+                                       false);
+        m_graph->m_nowCheckedBlock = nullptr;
+    });
 }
 
-void Game::usernewUnit() {
+void Game::usernewUnit(QPoint coord, UnitType newUnitType) {
     // 需要当前位置没有Unit，否则会炸掉的
-    NewUnitDialog *newunit     = new NewUnitDialog(this);
-    int            newUnitType = newunit->exec();
-    if(newUnitType == 0)
-        return;
-    delete newunit;
-    Q_ASSERT(m_graph->m_nowCheckedBlock != nullptr);
-    /*{
-        QMessageBox msgBox;
-        msgBox.setText("没有选中Block!");
-        msgBox.exec();
-        return;
-    }*/
-    Q_ASSERT(m_graph->m_nowCheckedBlock->unitOnBlock() == -1);
-    /*{
-        QMessageBox msgBox;
-        msgBox.setText("当前Block已经有Unit了!");
-        msgBox.exec();
-        return;
-    }*/
+    BlockStatus *block = blocks(coord);
+    Q_ASSERT(block != nullptr);
+    Q_ASSERT(block->m_unitOnBlock == -1);
     UnitStatus *unitStatus = new UnitStatus(
-        m_units.size(), UnitType(newUnitType), &m_unitTypeInfo[newUnitType],
-        m_gameInfo.nowPlayer, m_graph->m_nowCheckedBlock->coord());
-
-    emit m_graph->checkStateChange(m_graph->m_nowCheckedBlock->coord(), false);
-    m_graph->m_nowCheckedBlock = nullptr;
+        m_units.size(), newUnitType, &m_unitTypeInfo[newUnitType],
+        m_gameInfo.nowPlayer, coord);
     m_units.push_back(unitStatus);
+    unitStatus->setAttackState(false);
+    unitStatus->setMoveState(false);
+
     m_field->doNewUnit(unitStatus);
 }
 

@@ -78,7 +78,7 @@ void GraphField::moveUnit(qint32 uid, const QVector<QPoint> &path) {
 // 不包括graphunit现在的点
 void GraphField::moveUnit(GraphUnit *graphUnit, const QVector<QPoint> &path) {
     QPropertyAnimation *animation = new QPropertyAnimation(graphUnit, "pos");
-    animation->setDuration(250 * path.size());
+    animation->setDuration(m_gameInfo.speed * path.size());
     animation->setStartValue(graphUnit->pos());
     animation->setEndValue(getBlockCenter(path.back()));
     qDebug() << "Path length:" << path.size() << Qt::endl;
@@ -87,6 +87,9 @@ void GraphField::moveUnit(GraphUnit *graphUnit, const QVector<QPoint> &path) {
                                  getBlockCenter(path[i]));
     }
     animation->start();
+    connect(animation, &QPropertyAnimation::finished,this,[=](){
+        // emit finishOrder();
+    });
     emit needUpdateDetail();
 }
 
@@ -236,7 +239,8 @@ void GraphField::attackCamp(qint32 uid, QPoint coord) {
     QMessageBox msgBox;
     msgBox.setText("攻击！ " + QString::number(graphUnit->uid()) +
                    " 号 Unit 攻击了 （" + QString::number(coord.x()) + "," +
-                   QString::number(coord.y()) + " ) 处的 Camp 。Camp 血量：" + QString::number(blocks(coord)->m_status->getHP()));
+                   QString::number(coord.y()) + " ) 处的 Camp 。Camp 血量：" +
+                   QString::number(blocks(coord)->m_status->getHP()));
     msgBox.exec();
     emit needUpdateDetail();
 }

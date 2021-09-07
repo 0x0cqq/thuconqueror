@@ -95,6 +95,7 @@ void GraphBlock::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 void GraphBlock::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
         qDebug() << "release block: " << coord().x() << coord().y() << Qt::endl;
+        // 就用这个函数？
         emit blockClicked(coord());
         // reverseCheck();
         QGraphicsObject::mouseReleaseEvent(event);

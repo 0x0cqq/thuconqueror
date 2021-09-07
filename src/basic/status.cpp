@@ -11,6 +11,8 @@ void GameInfo::read(const QJsonObject &json) {
         m_turnNumber = json["turnNumber"].toInt();
     if(json.contains("playerNumbers") && json["playerNumbers"].isDouble())
         playerNumbers = json["playerNumbers"].toInt();
+    if(json.contains("speed") && json["speed"].isDouble())
+        speed = json["speed"].toInt();
 }
 
 void GameInfo::write(QJsonObject &json) {
@@ -21,6 +23,7 @@ void GameInfo::write(QJsonObject &json) {
     json["nowPlayer"]     = nowPlayer;
     json["turnNumber"]    = m_turnNumber;
     json["playerNumbers"] = playerNumbers;
+    json["speed"] = speed;
 }
 
 void BlockStatus::write(QJsonObject &json) {

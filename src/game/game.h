@@ -4,8 +4,8 @@
 #include "../basic/status.h"
 #include "../graph/graphfield.h"
 #include "../graph/menudialog.h"
-#include "graphview.h"
 #include "../logic/field.h"
+#include "graphview.h"
 #include <QGraphicsProxyWidget>
 #include <QLabel>
 #include <QMap>
@@ -19,8 +19,8 @@
 class Game : public QObject {
     Q_OBJECT
   public:
-    GameInfo            m_gameInfo;
-    QMap<int, UnitInfo> m_unitTypeInfo;
+    GameInfo             m_gameInfo;
+    QMap<int, UnitInfo>  m_unitTypeInfo;
     QMap<int, BlockInfo> m_blockTypeInfo;
 
     // 两个玩家（or 一个玩家 vs 一个 AI）都玩完才算一个回合
@@ -31,11 +31,11 @@ class Game : public QObject {
     GraphField *                    m_graph;
     GraphView *                     m_view;
     // QGraphicsProxyWidget *          newUnitDialogWidget;
-    QGraphicsProxyWidget *          nextTurnButtonWidget;
-    QGraphicsProxyWidget *          newUnitButtonWidget;
-    QGraphicsProxyWidget *          pauseButtonWidget;
-    QGraphicsProxyWidget *          policyTreeButtonWidget;
-    QGraphicsProxyWidget *          gameStatusLabelWidget;
+    QGraphicsProxyWidget *nextTurnButtonWidget;
+    QGraphicsProxyWidget *newUnitButtonWidget;
+    QGraphicsProxyWidget *pauseButtonWidget;
+    QGraphicsProxyWidget *policyTreeButtonWidget;
+    QGraphicsProxyWidget *gameStatusLabelWidget;
 
     qint32 width() const { return m_gameInfo.map_size.x(); }
     qint32 height() const { return m_gameInfo.map_size.y(); }
@@ -62,7 +62,7 @@ class Game : public QObject {
     void setNextTurnButton();
     void usernextTurn();
     void setNewUnitButton();
-    void usernewUnit();
+    void usernewUnit(QPoint coord, UnitType newUnitType);
     void setPauseButton();
     void userPause();
     void setPolicyTreeButton();
