@@ -88,17 +88,6 @@ Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
     m_view  = new GraphView;
     m_view->setScene(m_graph);
 
-    connect(m_view, &GraphView::finishPainting, this, &Game::setFixedWidgetPos);
-
-    connect(m_graph, &GraphField::checkStateChange, this,
-            [=](QPoint, bool state) {
-                if(state == true) {
-                    showNewUnitButton();
-                }
-                else {
-                    hideNewUnitButton();
-                }
-            });
     usernextTurn();
 }
 
@@ -182,17 +171,6 @@ Game::Game(const QJsonObject &json) {
     m_graph = new GraphField(m_gameInfo, m_blocks, m_units);
     m_view  = new GraphView;
     m_view->setScene(m_graph);
-    connect(m_view, &GraphView::finishPainting, this, &Game::setFixedWidgetPos);
-
-    connect(m_graph, &GraphField::checkStateChange, this,
-            [=](QPoint, bool state) {
-                if(state == true) {
-                    showNewUnitButton();
-                }
-                else {
-                    hideNewUnitButton();
-                }
-            });
 }
 
 void Game::write(QJsonObject &json) {
@@ -295,6 +273,19 @@ void Game::setFixedWidgetPos() {
 }
 
 void Game::init() {
+    connect(m_view, &GraphView::finishPainting, this, &Game::setFixedWidgetPos);
+
+    connect(m_graph, &GraphField::checkStateChange, this,
+            [=](QPoint coord, bool state) {
+                if(state == true &&
+                   canNewUnitAt(m_gameInfo.nowPlayer, blocks(coord))) {
+                    showNewUnitButton();
+                }
+                else {
+                    hideNewUnitButton();
+                }
+            });
+
     // connect(m_graph, &GraphField::userNewUnit,m_field, &Field::newUnit);
     connect(m_graph, &GraphField::userMoveUnit, m_field,
             QOverload<qint32, QPoint>::of(&Field::doUnitMove));
@@ -450,24 +441,20 @@ void Game::usernewUnit() {
     if(newUnitType == 0)
         return;
     delete newunit;
-    if(m_graph->m_nowCheckedBlock == nullptr) {
+    Q_ASSERT(m_graph->m_nowCheckedBlock != nullptr);
+    /*{
         QMessageBox msgBox;
         msgBox.setText("没有选中Block!");
         msgBox.exec();
         return;
-    }
-    if(m_graph->m_nowCheckedBlock->unitOnBlock() != -1) {
+    }*/
+    Q_ASSERT(m_graph->m_nowCheckedBlock->unitOnBlock() == -1);
+    /*{
         QMessageBox msgBox;
         msgBox.setText("当前Block已经有Unit了!");
         msgBox.exec();
         return;
-    }
-    if(m_graph->m_nowCheckedBlock->m_status->m_type != plainBlock) {
-        QMessageBox msgBox;
-        msgBox.setText("当前 Block 的地形不能生产 Unit !");
-        msgBox.exec();
-        return;
-    }
+    }*/
     UnitStatus *unitStatus = new UnitStatus(
         m_units.size(), UnitType(newUnitType), &m_unitTypeInfo[newUnitType],
         m_gameInfo.nowPlayer, m_graph->m_nowCheckedBlock->coord());

@@ -131,6 +131,12 @@ bool isNearByBlock(const BlockStatus *a, const BlockStatus *b) {
     return isNearByPoint(a->m_coord, b->m_coord);
 }
 
+bool canNewUnitAt(qint32 nowPlayer, const BlockStatus *a) {
+    return ((nowPlayer == 1 && a->m_type == peopleCampBlock) ||
+            (nowPlayer == 2 && a->m_type == virusCampBlock)) &&
+        (a->m_unitOnBlock == -1);
+}
+
 bool canUnitAttackBlock(const UnitStatus *a, const BlockStatus *b) {
     if(!isNearByPoint(a->m_nowCoord, b->m_coord)) {
         return false;

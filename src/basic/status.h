@@ -205,6 +205,8 @@ bool isNearByPoint(const QPoint &a, const QPoint &b);
 
 bool isNearByBlock(const BlockStatus *a, const BlockStatus *b);
 
+bool canNewUnitAt(qint32 nowplayer, const BlockStatus *a);
+
 bool canUnitAttack(const UnitStatus *a, const UnitStatus *b);
 
 bool canUnitAttackBlock(const UnitStatus *a, const BlockStatus *b);
