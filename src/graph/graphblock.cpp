@@ -86,6 +86,9 @@ void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
         painter->setBrush(red40);
         painter->drawPolygon(GraphInfo::blockPoly);
     }
+    if(m_blockCampBlood){
+        m_blockCampBlood->setPercentage(m_status->m_HPnow);// 其实不应该在这里判断逻辑，不过差不多得了
+    }
 }
 
 void GraphBlock::mousePressEvent(QGraphicsSceneMouseEvent *event) {

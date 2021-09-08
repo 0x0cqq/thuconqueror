@@ -8,10 +8,11 @@
 
 class BloodBar : public QGraphicsObject {
     Q_OBJECT
-    qreal        percentange;
+    qreal m_bloodWidth, m_bloodHeight, m_pos;
+    qreal percentange;
 
   public:
-    BloodBar(QGraphicsObject *parent);
+    BloodBar(qreal p, qreal w, qreal h, QGraphicsObject *parent);
     void   paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                  QWidget *widget) override;
     void   setPercentage(qreal percentage);

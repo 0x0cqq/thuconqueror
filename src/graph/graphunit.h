@@ -33,7 +33,8 @@ class GraphUnit : public QGraphicsObject {
         this->setZValue(GraphInfo::unitZValue);
         m_unitDialog = new UnitDialog(status, nullptr);
         timer        = new QTimer(this);
-        m_bloodBar   = new BloodBar(this);
+        m_bloodBar   = new BloodBar(-GraphInfo::blockSize,GraphInfo::blockSize,20,this);
+        m_bloodBar->setPercentage(this->m_status->m_HPnow);
         // this->scene()
         this->setPos(getBlockCenter(nowCoord()));
         this->setFlag(ItemIsSelectable, true);

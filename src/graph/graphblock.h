@@ -2,6 +2,7 @@
 #define GRAPHBLOCK_H
 
 #include "../basic/status.h"
+#include "bloodbar.h"
 #include <QDebug>
 #include <QGraphicsObject>
 #include <QPainter>
@@ -11,13 +12,14 @@ class GraphBlock : public QGraphicsObject {
     Q_OBJECT
   public:
     QPixmap *          m_blockTexture;
+    BloodBar *         m_blockCampBlood;
     const BlockStatus *m_status;
     bool               m_isChecked;
     bool               m_isMoveRange;
     // GraphBlock() : QGraphicsObject() {}
     GraphBlock(BlockStatus *status, QPointF pos)
-        : QGraphicsObject(), m_blockTexture(nullptr), m_status(status),
-          m_isChecked(false), m_isMoveRange(false) {
+        : QGraphicsObject(), m_blockTexture(nullptr), m_blockCampBlood(nullptr),
+          m_status(status), m_isChecked(false), m_isMoveRange(false) {
         this->setZValue(GraphInfo::blockZValue);
 
         this->setPos(pos);
@@ -28,6 +30,12 @@ class GraphBlock : public QGraphicsObject {
                 [&]() { this->update(this->boundingRect()); });
         connect(this, &GraphBlock::moveRangeChanged, this,
                 [&]() { this->update(this->boundingRect()); });
+        // add blood bar?
+        if(this->m_status->m_type & campBlock) {
+            m_blockCampBlood = new BloodBar(GraphInfo::blockSize / 2,
+                                      GraphInfo::blockSize, 10, this);
+            m_blockCampBlood->setPercentage(this->m_status->m_HPnow);
+        }
     }
     // QPoint coord() const {return m_status->m_coord;}
     // qint32 unitOnBlock() { return m_status->m_unitOnBlock;}
