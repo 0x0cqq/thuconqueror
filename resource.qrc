@@ -17,5 +17,8 @@
         <file>images/obstacleblock.png</file>
         <file>images/peoplecampblock.png</file>
         <file>images/viruscampblock.png</file>
+        <file>images/childunit.gif</file>
+        <file>images/studentunit.gif</file>
+        <file>images/teacherunit.gif</file>
     </qresource>
 </RCC>

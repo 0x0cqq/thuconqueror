@@ -19,7 +19,7 @@ class GraphBlock : public QGraphicsObject {
         : QGraphicsObject(), m_blockTexture(nullptr), m_status(status),
           m_isChecked(false), m_isMoveRange(false) {
         this->setPos(pos);
-        qDebug() << "pos" << m_status->m_coord << "image" << m_status->m_info->image;
+        // qDebug() << "pos" << m_status->m_coord << "image" << m_status->m_info->image;
         m_blockTexture = new QPixmap(m_status->m_info->image);
         connect(this, &GraphBlock::checkChanged, this,
                 [&]() { this->update(this->boundingRect()); });
