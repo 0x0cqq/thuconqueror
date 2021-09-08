@@ -42,7 +42,7 @@ class GraphUnit : public QGraphicsObject {
         connect(m_status, &UnitStatus::unitStateChanged, this,
                 [=]() { this->update(this->boundingRect()); });
     }
-    ~GraphUnit() { delete m_unitDialog; }
+    ~GraphUnit() { delete m_unitDialog;delete timer; }
     QRectF       boundingRect() const override;
     void         setMovie(QMovie *unitMovie, QMovie *loopMovie);
     QPainterPath shape() const;

@@ -17,7 +17,7 @@ void BloodBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 }
 
 QRectF BloodBar::boundingRect() const {
-    return QRectF(-m_bloodWidth / 2, -m_pos, m_bloodWidth, m_bloodHeight);
+    return QRectF(-m_bloodWidth / 2, m_pos, m_bloodWidth, m_bloodHeight);
 }
 
 void BloodBar::setPercentage(qreal _percentage) {

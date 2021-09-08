@@ -88,6 +88,9 @@
         "qlayout": "cpp",
         "qgroupbox": "cpp",
         "qdialog": "cpp",
-        "qpixmap": "cpp"
+        "qpixmap": "cpp",
+        "qlabel": "cpp",
+        "qmediaplayer": "cpp",
+        "qmediaplaylist": "cpp"
     }
 }
