@@ -20,6 +20,12 @@ const QPolygonF    blockPoly =
                      QPointF{-qSqrt(3) / 2, -0.5} * blockSize,
                      QPointF{0.0, -1.0} * blockSize};
 const qreal penWidth = 5;
+const qreal bloodWidth = blockSize;
+const qreal bloodHeight = 15;
+const qint32 buttonZValue = 100;
+const qint32 unitZValue = 90;
+const qint32 blockZValue = 80;
+
 }  // namespace GraphInfo
 
 class GameInfo {

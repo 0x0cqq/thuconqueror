@@ -23,6 +23,7 @@ SOURCES += \
     src/graph/unitdialog.cpp \
     src/graph/menudialog.cpp \
     src/graph/choosedialog.cpp \
+    src/graph/bloodbar.cpp \
     src/game/graphview.cpp \
     src/game/enemyai.cpp \
     src/myapplication.cpp \
@@ -40,6 +41,7 @@ HEADERS += \
     src/graph/unitdialog.h \
     src/graph/menudialog.h \
     src/graph/choosedialog.h \
+    src/graph/bloodbar.h \
     src/logic/unit.h \
     src/logic/block.h \ 
     src/logic/field.h \

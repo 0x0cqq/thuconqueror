@@ -1,13 +1,14 @@
 #include "graphblock.h"
 #include "graphfield.h"
 #include <QGraphicsSceneMouseEvent>
+#include <QtMath>
 
 QRectF GraphBlock::boundingRect() const {
-    // return QRectF(-GraphInfo::blockSize - GraphInfo::penWidth,
-    //               -GraphInfo::blockSize - GraphInfo::penWidth,
-    //               2 * (GraphInfo::blockSize + GraphInfo::penWidth),
-    //               2 * (GraphInfo::blockSize + GraphInfo::penWidth));
-    return GraphInfo::blockPoly.boundingRect();
+    return  GraphInfo::blockPoly.boundingRect();
+    return QRectF(-qSqrt(3) / 2 * GraphInfo::blockSize - GraphInfo::penWidth,
+                  -GraphInfo::blockSize - GraphInfo::penWidth,
+                  qSqrt(3) * GraphInfo::blockSize + 2 * GraphInfo::penWidth,
+                  2 * GraphInfo::blockSize + 2 * GraphInfo::penWidth);
 }
 
 QPainterPath GraphBlock::shape() const {
@@ -18,14 +19,17 @@ QPainterPath GraphBlock::shape() const {
 
 void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                        QWidget *) {
-
     painter->setPen(QPen(Qt::black, GraphInfo::penWidth));
     painter->drawPixmap(boundingRect(), *m_blockTexture,
                         m_blockTexture->rect());
     painter->drawPolygon(GraphInfo::blockPoly);
     if(m_isChecked) {
+        this->setZValue(GraphInfo::blockZValue + 1);
         painter->setPen(QPen(Qt::red, GraphInfo::penWidth));
         painter->drawRect(GraphInfo::blockPoly.boundingRect());
+    }
+    else{
+        this->setZValue(GraphInfo::blockZValue);
     }
     // if(m_status->m_type == roadBlock) {
     //     painter->setFont(QFont("Microsoft YaHei", 10, 2));

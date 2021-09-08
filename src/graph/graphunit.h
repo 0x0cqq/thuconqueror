@@ -2,6 +2,7 @@
 #define GRAPHUNIT_H
 
 #include "../basic/status.h"
+#include "bloodbar.h"
 #include "unitdialog.h"
 #include <QDebug>
 #include <QGraphicsObject>
@@ -15,20 +16,25 @@ class GraphUnit : public QGraphicsObject {
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
   public:
-    QMovie *                m_loopMovie;
-    QMovie *                m_unitMovie;
-    const UnitStatus *      m_status;
-    UnitDialog *            w;
-    QGraphicsProxyWidget *  dialogWidget;
-    QMetaObject::Connection mConnection1; // 和 loop
-    QMetaObject::Connection mConnection2; // 和 l
+    QMovie *m_loopMovie;
+    QMovie *m_unitMovie;
 
-    QTimer *                timer;
+    const UnitStatus *      m_status;
+    UnitDialog *            m_unitDialog;
+    BloodBar *              m_bloodBar;
+    QGraphicsProxyWidget *  dialogWidget;
+    QMetaObject::Connection mConnection1;  // 和 loop
+    QMetaObject::Connection mConnection2;  // 和 l
+
+    QTimer *timer;
     GraphUnit(UnitStatus *status, const QPointF = QPoint(0, 0))
-        : QGraphicsObject(),m_status(status), w(nullptr),
-          dialogWidget(nullptr), timer(nullptr){
-        w     = new UnitDialog(status, nullptr);
-        timer = new QTimer(this);
+        : QGraphicsObject(), m_status(status), m_unitDialog(nullptr),
+          m_bloodBar(nullptr), dialogWidget(nullptr), timer(nullptr) {
+        this->setZValue(GraphInfo::unitZValue);
+        m_unitDialog = new UnitDialog(status, nullptr);
+        timer        = new QTimer(this);
+        m_bloodBar   = new BloodBar(this);
+        // this->scene()
         this->setPos(getBlockCenter(nowCoord()));
         this->setFlag(ItemIsSelectable, true);
         this->setAcceptHoverEvents(true);
@@ -38,7 +44,7 @@ class GraphUnit : public QGraphicsObject {
         connect(m_status, &UnitStatus::unitStateChanged, this,
                 [=]() { this->update(this->boundingRect()); });
     }
-    ~GraphUnit() { delete w; }
+    ~GraphUnit() { delete m_unitDialog; }
     QRectF       boundingRect() const override;
     void         setMovie(QMovie *unitMovie, QMovie *loopMovie);
     QPainterPath shape() const;

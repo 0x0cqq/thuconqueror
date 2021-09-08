@@ -250,31 +250,31 @@ void Game::setFixedWidgetPos() {
             QPoint(m_view->size().width(), m_view->height()) -
             QPoint(nextTurnButtonWidget->size().width(),
                    nextTurnButtonWidget->size().height())));
-        nextTurnButtonWidget->setZValue(100);
+        nextTurnButtonWidget->setZValue(GraphInfo::buttonZValue);
     }
     if(newUnitButtonWidget != nullptr) {
         newUnitButtonWidget->setPos(m_view->mapToScene(
             QPoint(m_view->size().width() / 2 -
                        newUnitButtonWidget->size().width() / 2,
                    m_view->height() - newUnitButtonWidget->size().height())));
-        newUnitButtonWidget->setZValue(100);
+        newUnitButtonWidget->setZValue(GraphInfo::buttonZValue);
     }
     if(pauseButtonWidget != nullptr) {
         pauseButtonWidget->setPos(
             m_view->mapToScene(QPoint(m_view->size().width() - 100, 0)));
-        pauseButtonWidget->setZValue(100);
+        pauseButtonWidget->setZValue(GraphInfo::buttonZValue);
     }
     if(policyTreeButtonWidget != nullptr) {
         policyTreeButtonWidget->setPos(
             m_view->mapToScene(QPoint(0, m_view->size().height() - 100)));
-        policyTreeButtonWidget->setZValue(100);
+        policyTreeButtonWidget->setZValue(GraphInfo::buttonZValue);
     }
     if(gameStatusLabelWidget != nullptr) {
         gameStatusLabelWidget->setPos(m_view->mapToScene(
             QPoint(m_view->size().width() / 2 -
                        gameStatusLabelWidget->size().width() / 2,
                    0)));
-        gameStatusLabelWidget->setZValue(100);
+        gameStatusLabelWidget->setZValue(GraphInfo::buttonZValue);
     }
 }
 

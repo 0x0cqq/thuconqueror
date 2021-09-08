@@ -102,6 +102,7 @@ void GraphUnit::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     if((m_status->canMove() || m_status->canAttack()) && m_status->isAlive()) {
         paintAroundLoop(painter);
     }
+    m_bloodBar->setPercentage(m_status->m_HPnow);// 其实不应该在这里判断逻辑，不过差不多得了
     // painter->drawRoundedRect(-100, -100, 200, 200, 50, 50);
     // painter->fillRect(0, 0, 100, 100, Qt::green);
 }
@@ -122,17 +123,18 @@ void GraphUnit::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     qDebug() << "hover!" << nowCoord();
     auto v = scene()->views().first();
     if(dialogWidget == nullptr) {
-        dialogWidget = scene()->addWidget(w);
+        dialogWidget = scene()->addWidget(m_unitDialog);
+        dialogWidget->setParent(this);
         dialogWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
-        dialogWidget->setZValue(100);
+        dialogWidget->setZValue(GraphInfo::buttonZValue);
         dialogWidget->hide();
     }
     timer->singleShot(500, [=]() {
         dialogWidget->setPos(this->mapToScene(100, 100));
-        w->updateInfo();
-        w->show();
-        // w->move(v->mapToGlobal(v->mapFromScene(this->mapToScene(100, 100))));
-        // w->show();
+        m_unitDialog->updateInfo();
+        m_unitDialog->show();
+        // m_unitDialog->move(v->mapToGlobal(v->mapFromScene(this->mapToScene(100, 100))));
+        // m_unitDialog->show();
     });
     QGraphicsObject::hoverEnterEvent(event);
 }
@@ -140,6 +142,6 @@ void GraphUnit::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 void GraphUnit::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     qDebug() << "hover leave" << nowCoord();
     // dialogWidget->hide();
-    w->hide();
+    m_unitDialog->hide();
     QGraphicsObject::hoverLeaveEvent(event);
 }

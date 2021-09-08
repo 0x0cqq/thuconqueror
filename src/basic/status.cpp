@@ -23,7 +23,7 @@ void GameInfo::write(QJsonObject &json) {
     json["nowPlayer"]     = nowPlayer;
     json["turnNumber"]    = m_turnNumber;
     json["playerNumbers"] = playerNumbers;
-    json["speed"] = speed;
+    json["speed"]         = speed;
 }
 
 void BlockStatus::write(QJsonObject &json) {
@@ -56,7 +56,7 @@ bool BlockStatus::changeHP(qreal delta) {
 UnitStatus::UnitStatus(const int &uid, const UnitType type, UnitInfo *uInfo,
                        qint32 player, QPoint coord)
     : m_uid(uid), m_info(uInfo), m_type(type), m_player(player),
-      m_nowCoord(coord), m_HPnow(1), m_canMove(true), m_canAttack(true) {}
+      m_nowCoord(coord), m_canMove(true), m_canAttack(true), m_HPnow(1) {}
 
 UnitStatus::UnitStatus() {}
 
