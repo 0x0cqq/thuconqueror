@@ -3,10 +3,11 @@
 #include <QGraphicsSceneMouseEvent>
 
 QRectF GraphBlock::boundingRect() const {
-    return QRectF(-GraphInfo::blockSize - GraphInfo::penWidth,
-                  -GraphInfo::blockSize - GraphInfo::penWidth,
-                  2 * (GraphInfo::blockSize + GraphInfo::penWidth),
-                  2 * (GraphInfo::blockSize + GraphInfo::penWidth));
+    // return QRectF(-GraphInfo::blockSize - GraphInfo::penWidth,
+    //               -GraphInfo::blockSize - GraphInfo::penWidth,
+    //               2 * (GraphInfo::blockSize + GraphInfo::penWidth),
+    //               2 * (GraphInfo::blockSize + GraphInfo::penWidth));
+    return GraphInfo::blockPoly.boundingRect();
 }
 
 QPainterPath GraphBlock::shape() const {
@@ -17,26 +18,27 @@ QPainterPath GraphBlock::shape() const {
 
 void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                        QWidget *) {
-    if(!m_isChecked) {
-        painter->setBrush(Qt::cyan);
-    }
-    else {
-        painter->setBrush(Qt::red);
-    }
+
     painter->setPen(QPen(Qt::black, GraphInfo::penWidth));
+    painter->drawPixmap(boundingRect(), *m_blockTexture,
+                        m_blockTexture->rect());
     painter->drawPolygon(GraphInfo::blockPoly);
-    if(m_status->m_type == roadBlock) {
-        painter->setFont(QFont("Microsoft YaHei", 10, 2));
+    if(m_isChecked) {
+        painter->setPen(QPen(Qt::red, GraphInfo::penWidth));
+        painter->drawRect(GraphInfo::blockPoly.boundingRect());
     }
-    else if(m_status->m_type == obstacleBlock) {
-        painter->setFont(QFont("Microsoft YaHei", 40, 15));
-    }
-    else {
-        painter->setFont(QFont("Microsoft YaHei", 20, 1));
-    }
-    if(m_status->m_type != plainBlock)
-        painter->drawText(QPointF{-GraphInfo::blockSize / 2, 0},
-                          QString::number(m_status->m_type));
+    // if(m_status->m_type == roadBlock) {
+    //     painter->setFont(QFont("Microsoft YaHei", 10, 2));
+    // }
+    // else if(m_status->m_type == obstacleBlock) {
+    //     painter->setFont(QFont("Microsoft YaHei", 40, 15));
+    // }
+    // else {
+    //     painter->setFont(QFont("Microsoft YaHei", 20, 1));
+    // }
+    // if(m_status->m_type != plainBlock)
+    //     painter->drawText(QPointF{-GraphInfo::blockSize / 2, 0},
+    //                       QString::number(m_status->m_type));
     auto s = static_cast<GraphField *>(scene());
     if(m_isMoveRange) {
         if(unitOnBlock() == -1) {

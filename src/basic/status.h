@@ -50,6 +50,7 @@ class BlockInfo {
   public:
     QString name;
     QString description;
+    QString image;
     qint32  HPfull;
     qint32  MPneed;
     void    read(const QJsonObject &json) {
@@ -61,18 +62,21 @@ class BlockInfo {
             description = json["description"].toString();
         if(json.contains("name") && json["name"].isString())
             name = json["name"].toString();
+        if(json.contains("image") && json["image"].isString())
+            image = json["image"].toString();
     }
     void write(QJsonObject &json) {
         json["HPfull"]      = HPfull;
         json["MPneed"]      = MPneed;
         json["description"] = description;
         json["name"]        = name;
+        json["image"]       = image;
     }
     BlockInfo() {}
-    BlockInfo(const QString &_name, const QString &_description, qint32 _HPfull,
-              qint32 _MPneed)
-        : name(_name), description(_description), HPfull(_HPfull),
-          MPneed(_MPneed) {}
+    BlockInfo(const QString &_name, const QString &_description,
+              const QString &_image, qint32 _HPfull, qint32 _MPneed)
+        : name(_name), description(_description), image(_image),
+          HPfull(_HPfull), MPneed(_MPneed) {}
 };
 
 #define blocks(point) m_blocks[(point).x()][(point).y()]

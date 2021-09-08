@@ -66,12 +66,12 @@ Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
     m_unitTypeInfo[deltaUnit]   = UnitInfo("Delta 病毒", "Delta", 5, 1, 5);
     m_unitTypeInfo[zetaUnit]    = UnitInfo("Zeta 病毒", "Boss", 15, 3, 3);
 
-    m_blockTypeInfo[plainBlock]     = BlockInfo("平地", "平地", 0, 2);
-    m_blockTypeInfo[obstacleBlock]  = BlockInfo("障碍", "障碍", 0, 10000);
-    m_blockTypeInfo[roadBlock]      = BlockInfo("平地", "平地", 0, 1);
-    m_blockTypeInfo[dampBlock]      = BlockInfo("泥地", "平地", 0, 3);
-    m_blockTypeInfo[virusCampBlock] = BlockInfo("人类营地", "平地", 30, 2);
-    m_blockTypeInfo[peopleCampBlock] = BlockInfo("病毒营地", "平地", 30, 2);
+    m_blockTypeInfo[plainBlock]    = BlockInfo("平地", "平地", "", 0, 2);
+    m_blockTypeInfo[obstacleBlock] = BlockInfo("障碍", "障碍", "", 0, 10000);
+    m_blockTypeInfo[roadBlock]     = BlockInfo("平地", "平地", "", 0, 1);
+    m_blockTypeInfo[dampBlock]     = BlockInfo("泥地", "平地", "", 0, 3);
+    m_blockTypeInfo[virusCampBlock] = BlockInfo("人类营地", "平地", "", 30, 2);
+    m_blockTypeInfo[peopleCampBlock] = BlockInfo("病毒营地", "平地", "", 30, 2);
 
     for(int i = 1; i <= width(); i++) {
         m_blocks[i].resize(height() + 2);

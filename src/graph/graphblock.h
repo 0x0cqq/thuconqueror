@@ -5,18 +5,22 @@
 #include <QDebug>
 #include <QGraphicsObject>
 #include <QPainter>
+#include <QPixmap>
 
 class GraphBlock : public QGraphicsObject {
     Q_OBJECT
   public:
+    QPixmap *          m_blockTexture;
     const BlockStatus *m_status;
     bool               m_isChecked;
     bool               m_isMoveRange;
-    GraphBlock() : QGraphicsObject() {}
+    // GraphBlock() : QGraphicsObject() {}
     GraphBlock(BlockStatus *status, QPointF pos)
-        : QGraphicsObject(), m_status(status), m_isChecked(false),
-          m_isMoveRange(false) {
+        : QGraphicsObject(), m_blockTexture(nullptr), m_status(status),
+          m_isChecked(false), m_isMoveRange(false) {
         this->setPos(pos);
+        qDebug() << "pos" << m_status->m_coord << "image" << m_status->m_info->image;
+        m_blockTexture = new QPixmap(m_status->m_info->image);
         connect(this, &GraphBlock::checkChanged, this,
                 [&]() { this->update(this->boundingRect()); });
         connect(this, &GraphBlock::moveRangeChanged, this,

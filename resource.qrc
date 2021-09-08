@@ -11,5 +11,11 @@
         <file>images/virus1.gif</file>
         <file>images/virus2.gif</file>
         <file>images/virus3.gif</file>
+        <file>images/plainblock.png</file>
+        <file>images/dampblock.png</file>
+        <file>images/roadblock.png</file>
+        <file>images/obstacleblock.png</file>
+        <file>images/peoplecampblock.png</file>
+        <file>images/viruscampblock.png</file>
     </qresource>
 </RCC>
