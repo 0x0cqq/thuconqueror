@@ -2,7 +2,9 @@
 #define STATUS_H
 
 #include <QJsonObject>
+#include <QMovie>
 #include <QObject>
+#include <QPixMap>
 #include <QPoint>
 #include <QPolygon>
 #include <QString>
@@ -19,12 +21,12 @@ const QPolygonF    blockPoly =
                      QPointF{-qSqrt(3) / 2, 0.5} * blockSize,
                      QPointF{-qSqrt(3) / 2, -0.5} * blockSize,
                      QPointF{0.0, -1.0} * blockSize};
-const qreal penWidth = 5;
-const qreal bloodWidth = blockSize;
-const qreal bloodHeight = 15;
+const qreal  penWidth     = 5;
+const qreal  bloodWidth   = blockSize;
+const qreal  bloodHeight  = 15;
 const qint32 buttonZValue = 100;
-const qint32 unitZValue = 90;
-const qint32 blockZValue = 80;
+const qint32 unitZValue   = 90;
+const qint32 blockZValue  = 80;
 
 }  // namespace GraphInfo
 
@@ -54,12 +56,13 @@ enum BlockType {
 
 class BlockInfo {
   public:
-    QString name;
-    QString description;
-    QString image;
-    qint32  HPfull;
-    qint32  MPneed;
-    void    read(const QJsonObject &json) {
+    QString  name;
+    QString  description;
+    QString  image;
+    qint32   HPfull;
+    qint32   MPneed;
+    QPixmap *pixmap;
+    void     read(const QJsonObject &json) {
         if(json.contains("HPfull") && json["HPfull"].isDouble())
             HPfull = json["HPfull"].toInt();
         if(json.contains("MPneed") && json["MPneed"].isDouble())
@@ -70,6 +73,12 @@ class BlockInfo {
             name = json["name"].toString();
         if(json.contains("image") && json["image"].isString())
             image = json["image"].toString();
+        Q_ASSERT(image != "");
+        qDebug() << "image" << image;
+        if(image != "") {
+            pixmap = new QPixmap(image);
+            qDebug() << pixmap;
+        }
     }
     void write(QJsonObject &json) {
         json["HPfull"]      = HPfull;
@@ -78,11 +87,18 @@ class BlockInfo {
         json["name"]        = name;
         json["image"]       = image;
     }
-    BlockInfo() {}
-    BlockInfo(const QString &_name, const QString &_description,
-              const QString &_image, qint32 _HPfull, qint32 _MPneed)
-        : name(_name), description(_description), image(_image),
-          HPfull(_HPfull), MPneed(_MPneed) {}
+    BlockInfo()
+        : name(""), description(""), image(""), HPfull(0), MPneed(10000),
+          pixmap(nullptr) {}
+    // BlockInfo(const QString &_name, const QString &_description,
+    //           const QString &_image, qint32 _HPfull, qint32 _MPneed)
+    //     : name(_name), description(_description), image(_image),
+    //       HPfull(_HPfull), MPneed(_MPneed) {
+    //     if(image != "") {
+    //         pixmap = new QPixmap(image);
+    //     }
+    // }
+    ~BlockInfo() { delete pixmap; }
 };
 
 #define blocks(point) m_blocks[(point).x()][(point).y()]
@@ -108,8 +124,10 @@ class BlockStatus : public QObject {
 
     BlockStatus() {}
     BlockStatus(BlockType type, BlockInfo *blockInfo, QPoint coord)
-        : m_type(type), m_info(blockInfo), m_coord(coord), m_unitOnBlock(-1),
-          m_HPnow(1) {}
+        : m_type(type), m_info(blockInfo),
+          m_coord(coord), m_unitOnBlock(-1), m_HPnow(1) {
+    }
+    ~BlockStatus() {  }
 };
 
 class UnitInfo {
@@ -124,7 +142,9 @@ class UnitInfo {
     qint32 CEfull;
     qreal  CEratio;
     // movePoint
-    qint32 MPfull;
+    qint32  MPfull;
+    QMovie *m_loopMovie;
+    QMovie *m_unitMovie;
 
     void read(const QJsonObject &json) {
         if(json.contains("HPfull") && json["HPfull"].isDouble())
@@ -143,6 +163,22 @@ class UnitInfo {
             name = json["name"].toString();
         if(json.contains("image") && json["image"].isString())
             image = json["image"].toString();
+        if(image != "") {
+            if(m_unitMovie != nullptr)
+                delete m_unitMovie;
+            m_unitMovie = new QMovie(image);
+        }
+        m_unitMovie->setScaledSize(
+            QSize(3 * GraphInfo::unitSize, 3 * GraphInfo::unitSize));
+        m_unitMovie->start();
+        if(m_loopMovie != nullptr)
+            delete m_loopMovie;
+        m_loopMovie = new QMovie(":/images/loop.gif");
+        if(m_loopMovie != nullptr) {
+            m_loopMovie->setScaledSize(
+                QSize(4 * GraphInfo::unitSize, 4 * GraphInfo::unitSize));
+            m_loopMovie->start();
+        }
     }
     void write(QJsonObject &json) {
         json["HPfull"]      = HPfull;
@@ -154,16 +190,23 @@ class UnitInfo {
         json["name"]        = name;
         json["image"]       = image;
     }
-    UnitInfo() {
-        HPfull = CEfull = MPfull = 0;
-        HPratio = CEratio = 1;
+    UnitInfo()
+        : name(""), description(""), image(""), HPfull(0), HPratio(1),
+          CEfull(0), CEratio(1), MPfull(0), m_loopMovie(nullptr),
+          m_unitMovie(nullptr) {}
+    ~UnitInfo(){
+        delete m_loopMovie;
+        delete m_unitMovie;
     }
-    UnitInfo(const QString &_name, const QString &_description, qint32 _HPfull,
-             qint32 _CEfull, qint32 _MPfull)
-        : name(_name), description(_description), image(""), HPfull(_HPfull),
-          CEfull(_CEfull), MPfull(_MPfull) {
-        HPratio = CEratio = 1;
-    }
+    // UnitInfo(const QString &_name, const QString &_description, qint32
+    // _HPfull,
+    //          qint32 _CEfull, qint32 _MPfull)
+    //     : name(_name), description(_description), image(""), HPfull(_HPfull),
+    //       CEfull(_CEfull),
+    //       MPfull(_MPfull),m_loopMovie(nullptr),m_unitMovie(nullptr) {
+    //     HPratio = CEratio = 1;
+
+    // }
 };
 
 enum UnitType {
@@ -192,7 +235,6 @@ class UnitStatus : public QObject {
     qint32    m_player;
     QPoint    m_nowCoord;
     qreal     m_HPnow;  // [0,1]
-
     qreal getHP() const { return m_info->HPfull * m_info->HPratio * m_HPnow; }
     qreal getCE() const { return m_info->CEfull * m_info->CEratio * m_HPnow; }
     qreal getMP() const { return m_info->MPfull; }

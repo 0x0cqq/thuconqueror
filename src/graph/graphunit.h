@@ -16,8 +16,6 @@ class GraphUnit : public QGraphicsObject {
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
   public:
-    QMovie *m_loopMovie;
-    QMovie *m_unitMovie;
 
     const UnitStatus *      m_status;
     UnitDialog *            m_unitDialog;
@@ -40,8 +38,7 @@ class GraphUnit : public QGraphicsObject {
         this->setFlag(ItemIsSelectable, true);
         this->setAcceptHoverEvents(true);
         qDebug() << "New unit " << m_status->m_uid << Qt::endl;
-        setMovie(new QMovie(m_status->m_info->image),
-                 new QMovie(":/images/loop.gif"));
+        setMovie(m_status->m_info->m_unitMovie,m_status->m_info->m_loopMovie);
         connect(m_status, &UnitStatus::unitStateChanged, this,
                 [=]() { this->update(this->boundingRect()); });
     }

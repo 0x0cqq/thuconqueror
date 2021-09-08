@@ -2,6 +2,7 @@
 #include "graphfield.h"
 #include <QGraphicsSceneMouseEvent>
 #include <QtMath>
+#include <QPainterPath>
 
 QRectF GraphBlock::boundingRect() const {
     return  GraphInfo::blockPoly.boundingRect();
@@ -20,8 +21,8 @@ QPainterPath GraphBlock::shape() const {
 void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                        QWidget *) {
     painter->setPen(QPen(Qt::black, GraphInfo::penWidth));
-    painter->drawPixmap(boundingRect(), *m_blockTexture,
-                        m_blockTexture->rect());
+    painter->drawPixmap(boundingRect(), *(m_status->m_info->pixmap),
+                        m_status->m_info->pixmap->rect());
     painter->drawPolygon(GraphInfo::blockPoly);
     if(m_isChecked) {
         this->setZValue(GraphInfo::blockZValue + 1);

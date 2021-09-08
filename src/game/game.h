@@ -42,7 +42,7 @@ class Game : public QObject {
 
     qint32 width() const { return m_gameInfo.map_size.x(); }
     qint32 height() const { return m_gameInfo.map_size.y(); }
-    Game(QPoint map_size, QObject *parent = nullptr);
+    // Game(QPoint map_size, QObject *parent = nullptr);
     Game(const QJsonObject &json);
     Game(const QString &filename);
     Game(const qint32 &level);

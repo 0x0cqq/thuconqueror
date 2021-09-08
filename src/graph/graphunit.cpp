@@ -9,9 +9,9 @@
 #include <QRandomGenerator>
 
 QRectF GraphUnit::boundingRect() const {
-    if(m_loopMovie) {
+    if(m_status->m_info->m_loopMovie) {
         // qDebug() << m_loopMovie->frameRect();
-        auto tmp = m_loopMovie->frameRect();
+        auto tmp = m_status->m_info->m_loopMovie->frameRect();
         tmp.moveCenter(QPoint(0, 0));
         return tmp;
     }
@@ -34,45 +34,34 @@ QPainterPath GraphUnit::shape() const {
 void GraphUnit::setMovie(QMovie *unitMovie, QMovie *loopMovie) {
     prepareGeometryChange();
     QObject::disconnect(mConnection1);  // disconnect old object
-
-    m_loopMovie = loopMovie;
-    if(m_loopMovie) {
-        // qDebug() << "indeed scale size"
-        //          << QRandomGenerator::global()->generate() << Qt::endl;
-        mConnection1 = QObject::connect(m_loopMovie, &QMovie::frameChanged,
+    if(loopMovie) {
+        mConnection1 = QObject::connect(loopMovie, &QMovie::frameChanged,
                                         [=] { update(); });
-        m_loopMovie->setScaledSize(
-            QSize(4 * GraphInfo::unitSize, 4 * GraphInfo::unitSize));
-        m_loopMovie->start();
     }
     QObject::disconnect(mConnection2);  // disconnect old object
-    m_unitMovie = unitMovie;
-    if(m_unitMovie) {
-        // qDebug() << "indeed scale size"
-        //          << QRandomGenerator::global()->generate() << Qt::endl;
-        mConnection2 = QObject::connect(m_unitMovie, &QMovie::frameChanged,
+    if(unitMovie) {
+        mConnection2 = QObject::connect(unitMovie, &QMovie::frameChanged,
                                         [=] { update(); });
-        m_unitMovie->setScaledSize(
-            QSize(3 * GraphInfo::unitSize, 3 * GraphInfo::unitSize));
-        m_unitMovie->start();
     }
 }
 
 void GraphUnit::paintAroundLoop(QPainter *painter) {
-    if(m_loopMovie != nullptr) {
+    if(m_status->m_info->m_loopMovie != nullptr) {
         // qDebug() << "indeed paint around loop"
         //          << QRandomGenerator::global()->generate() << Qt::endl;
-        painter->drawPixmap(-m_loopMovie->frameRect().bottomRight() / 2,
-                            m_loopMovie->currentPixmap(),
-                            m_loopMovie->frameRect());
+        painter->drawPixmap(
+            -m_status->m_info->m_loopMovie->frameRect().bottomRight() / 2,
+            m_status->m_info->m_loopMovie->currentPixmap(),
+            m_status->m_info->m_loopMovie->frameRect());
     }
 }
 
 void GraphUnit::paintUnit(QPainter *painter) {
-    if(m_unitMovie != nullptr) {
-        painter->drawPixmap(-m_unitMovie->frameRect().bottomRight() / 2,
-                            m_unitMovie->currentPixmap(),
-                            m_unitMovie->frameRect());
+    if(m_status->m_info->m_unitMovie != nullptr) {
+        painter->drawPixmap(
+            -m_status->m_info->m_unitMovie->frameRect().bottomRight() / 2,
+            m_status->m_info->m_unitMovie->currentPixmap(),
+            m_status->m_info->m_unitMovie->frameRect());
     }
 }
 
@@ -102,7 +91,8 @@ void GraphUnit::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     if((m_status->canMove() || m_status->canAttack()) && m_status->isAlive()) {
         paintAroundLoop(painter);
     }
-    m_bloodBar->setPercentage(m_status->m_HPnow);// 其实不应该在这里判断逻辑，不过差不多得了
+    m_bloodBar->setPercentage(
+        m_status->m_HPnow);  // 其实不应该在这里判断逻辑，不过差不多得了
     // painter->drawRoundedRect(-100, -100, 200, 200, 50, 50);
     // painter->fillRect(0, 0, 100, 100, Qt::green);
 }
@@ -133,8 +123,8 @@ void GraphUnit::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
         dialogWidget->setPos(this->mapToScene(100, 100));
         m_unitDialog->updateInfo();
         m_unitDialog->show();
-        // m_unitDialog->move(v->mapToGlobal(v->mapFromScene(this->mapToScene(100, 100))));
-        // m_unitDialog->show();
+        // m_unitDialog->move(v->mapToGlobal(v->mapFromScene(this->mapToScene(100,
+        // 100)))); m_unitDialog->show();
     });
     QGraphicsObject::hoverEnterEvent(event);
 }
