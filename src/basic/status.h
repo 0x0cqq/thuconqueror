@@ -106,6 +106,7 @@ class UnitInfo {
   public:
     QString name;
     QString description;
+    QString image;
     // HP == Health Point
     qint32 HPfull;
     qreal  HPratio;
@@ -130,6 +131,8 @@ class UnitInfo {
             description = json["description"].toString();
         if(json.contains("name") && json["name"].isString())
             name = json["name"].toString();
+        if(json.contains("image") && json["image"].isString())
+            image = json["image"].toString();
     }
     void write(QJsonObject &json) {
         json["HPfull"]      = HPfull;
@@ -139,6 +142,7 @@ class UnitInfo {
         json["MPfull"]      = MPfull;
         json["description"] = description;
         json["name"]        = name;
+        json["image"]       = image;
     }
     UnitInfo() {
         HPfull = CEfull = MPfull = 0;
@@ -146,7 +150,7 @@ class UnitInfo {
     }
     UnitInfo(const QString &_name, const QString &_description, qint32 _HPfull,
              qint32 _CEfull, qint32 _MPfull)
-        : name(_name), description(_description), HPfull(_HPfull),
+        : name(_name), description(_description), image(""), HPfull(_HPfull),
           CEfull(_CEfull), MPfull(_MPfull) {
         HPratio = CEratio = 1;
     }

@@ -64,7 +64,7 @@ bool UnitStatus::changeHP(qreal delta) {
     Q_ASSERT(m_info->HPfull != 0);
     Q_ASSERT(m_info->HPratio != 0);
     m_HPnow += delta / (m_info->HPfull * m_info->HPratio);
-    return m_HPnow < 0;
+    return !isAlive();
 }
 
 void UnitStatus::read(const QJsonObject &json) {

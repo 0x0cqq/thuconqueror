@@ -51,6 +51,7 @@ class Field : public QObject {
     void doNewUnit(UnitStatus *unitStatus);
     void doUnitMove(qint32 uid, QPoint coord);
     void doUnitAttack(qint32 uid, QPoint coord);
+    void doUnitDie(qint32 uid);
     void getUnitMoveRange(qint32 uid);
 };
 

@@ -113,19 +113,21 @@ QVector<QPoint> Field::getPath(qint32 uid, QPoint start, QPoint end) {
 }
 
 QPoint Field::__canAttackNearby(qint32 uid) {
-    Unit * unit = m_units[uid];
-    auto np = getNearbyPoint(unit->nowCoord());
+    Unit *unit = m_units[uid];
+    auto  np   = getNearbyPoint(unit->nowCoord());
     bool flag = false;  // 检测是否旁边一个可以攻击的敌方元素都没有
-    for(auto nearPoint : np) if(isValid(nearPoint)) {
-        if(canUnitAttackBlock(unit->m_status, blocks(nearPoint)->m_status) ||
-           ((blocks(nearPoint)->unitOnBlock() != -1) &&
-            canUnitAttack(
-                unit->m_status,
-                m_units[blocks(nearPoint)->unitOnBlock()]->m_status))) {
-            return nearPoint;
+    for(auto nearPoint : np)
+        if(isValid(nearPoint)) {
+            if(canUnitAttackBlock(unit->m_status,
+                                  blocks(nearPoint)->m_status) ||
+               ((blocks(nearPoint)->unitOnBlock() != -1) &&
+                canUnitAttack(
+                    unit->m_status,
+                    m_units[blocks(nearPoint)->unitOnBlock()]->m_status))) {
+                return nearPoint;
+            }
         }
-    }
-    return QPoint{-1,-1};
+    return QPoint{-1, -1};
 }
 
 void Field::doUnitMove(Unit *unit, QPoint destCoord) {
@@ -137,7 +139,7 @@ void Field::doUnitMove(Unit *unit, QPoint destCoord) {
     blocks(unit->nowCoord())->unitOnBlock() = unit->uid();
     unit->m_status->setMoveState(false);
     QPoint point = __canAttackNearby(unit->uid());
-    unit->m_status->setAttackState(point != QPoint{-1,-1});
+    unit->m_status->setAttackState(point != QPoint{-1, -1});
 }
 void Field::doUnitMove(qint32 uid, QPoint coord) {
     doUnitMove(m_units[uid], coord);
@@ -156,12 +158,12 @@ void Field::doUnitAttack(Unit *unit, QPoint coord) {
         // 再攻击其中的单元
         qint32 taruid = blocks(coord)->unitOnBlock();
         auto   att = calculateAttack(unit->m_status, m_units[taruid]->m_status);
-        bool   isAAlive = unit->m_status->changeHP(-att.first),
-             isBAlive   = m_units[taruid]->m_status->changeHP(-att.second);
-        if(!isAAlive)
-            emit unitDead(unit->uid());
-        if(!isBAlive)
-            emit unitDead(taruid);
+        bool   isADead = unit->m_status->changeHP(-att.first),
+             isBDead   = m_units[taruid]->m_status->changeHP(-att.second);
+        if(isADead)
+            doUnitDie(unit->uid());
+        if(isBDead)
+            doUnitDie(taruid);
         unit->m_status->setAttackState(false);
         unit->m_status->setMoveState(false);
         emit attackUnit(unit->uid(), taruid);
@@ -221,8 +223,8 @@ QVector<QPoint> Field::__getUnitMoveRange(qint32 uid) {
     }
     moveRange.erase(moveRange.begin());  // 抹掉本身
     QVector<QPoint> _moveRange;
-    for(auto p : moveRange){
-        if(blocks(p)->unitOnBlock() == -1){
+    for(auto p : moveRange) {
+        if(blocks(p)->unitOnBlock() == -1) {
             // 为了抹掉自己
             _moveRange.push_back(p);
         }
@@ -235,4 +237,10 @@ void Field::getUnitMoveRange(qint32 uid) {
     qDebug() << "calculate move range" << Qt::endl;
     QVector<QPoint> moveRange = __getUnitMoveRange(uid);
     emit            unitMoveRangegot(uid, moveRange);
+}
+
+void Field::doUnitDie(qint32 uid) {
+    // 处理后事
+    blocks(m_units[uid]->m_status->m_nowCoord)->unitOnBlock() = -1;
+    emit unitDead(uid);
 }

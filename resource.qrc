@@ -8,6 +8,8 @@
         <file>images/cover.jpg</file>
         <file>images/chooselevel.jpg</file>
         <file>images/loop.gif</file>
-
+        <file>images/virus1.gif</file>
+        <file>images/virus2.gif</file>
+        <file>images/virus3.gif</file>
     </qresource>
 </RCC>

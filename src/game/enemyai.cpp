@@ -140,8 +140,7 @@ bool EnemyAI::newUnit() {
             if(blockStatus->m_unitOnBlock != -1)
                 continue;
             // 告诉他们，爷要开始新建 Unit 了！
-            doNewUnit(QPoint{i, j},
-                      m_player == 1 ? studentUnit : RandomType());
+            doNewUnit(QPoint{i, j}, m_player == 1 ? studentUnit : RandomType());
             return true;
         }
     }

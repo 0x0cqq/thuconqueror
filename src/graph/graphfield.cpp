@@ -249,6 +249,8 @@ void GraphField::attackCamp(qint32 uid, QPoint coord) {
 
 void GraphField::dieUnit(qint32 uid) {
     m_units[uid]->update(m_units[uid]->boundingRect());
+    m_units[uid]->hide();
+    qDebug() << "die" << uid;
     emit needUpdateDetail();
 }
 
