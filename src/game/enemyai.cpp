@@ -115,15 +115,17 @@ void EnemyAI::doUnitAttack(qint32 uid, QPoint coord) {
 }
 
 UnitType RandomType() {
-    int t = (QRandomGenerator::global()->generate() % 5);
+    int t = (QRandomGenerator::global()->generate() % 7);
     switch(t) {
         case 0:
         case 1:
-            return alphaUnit;
         case 2:
+            return alphaUnit;
         case 3:
-            return deltaUnit;
         case 4:
+        case 5:
+            return deltaUnit;
+        case 6:
             return zetaUnit;
     }
 }

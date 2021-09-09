@@ -5,13 +5,17 @@
 #include <QDialog>
 #include <QDebug>
 #include <QLabel>
+#include <QMovie>
 #include <QTimer>
+
+namespace Ui {class UnitDialog; }
 
 class UnitDialog : public QDialog {
     Q_OBJECT
   public:
+    Ui::UnitDialog *ui;
     const UnitStatus *m_status;
-    QLabel *          detailLabel;
+    QMovie * m_movie;
     int               showTimes;
     UnitDialog(const UnitStatus *unitStatus, QWidget *parent = nullptr);
     void show();

@@ -24,6 +24,16 @@ class PolicyTreeDialog : public MenuDialog {
     PolicyTreeDialog(Game *game, QWidget *parent = nullptr);
 };
 
+namespace Ui {
+class SingleUnitInfo;
+};
+class SingleUnitInfo : public QWidget {
+    Q_OBJECT
+  public:
+    Ui::SingleUnitInfo *ui;
+    SingleUnitInfo(QWidget *parent = nullptr);
+};
+
 class NewUnitDialog : public MenuDialog {
     Q_OBJECT
   public:
