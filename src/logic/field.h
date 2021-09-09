@@ -41,8 +41,8 @@ class Field : public QObject {
     void newUnit(UnitStatus *unitStatus);
     void unitDead(qint32 uid);
     void moveUnit(qint32 uid, QVector<QPoint> path);
-    void attackUnit(qint32 uid, qint32 taruid);
-    void attackCamp(qint32 uid, QPoint coord);
+    void attackUnit(qint32 uid, qint32 taruid, QPair<qreal, qreal> delta);
+    void attackCamp(qint32 uid, QPoint coord, QPair<qreal, qreal> delta);
     void unitMoveRangegot(qint32 uid, QVector<QPoint> moveRange);
   protected slots:
     void doUnitMove(Unit *unit, QPoint coord);

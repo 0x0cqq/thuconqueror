@@ -148,11 +148,12 @@ void Field::doUnitMove(qint32 uid, QPoint coord) {
 void Field::doUnitAttack(Unit *unit, QPoint coord) {
     if(((blocks(coord)->m_status->m_type & campBlock) != 0) &&
        blocks(coord)->m_status->getHP() > 0) {
-        // 先攻击格子
+        // 格子和单元一起攻击（还没实现）
         blocks(coord)->m_status->changeHP(-unit->m_status->getCE());
         unit->m_status->setAttackState(false);
         unit->m_status->setMoveState(false);
-        emit attackCamp(unit->uid(), coord);
+        emit attackCamp(unit->uid(), coord,
+                        qMakePair(unit->m_status->getCE(), 0));
     }
     else if((blocks(coord)->unitOnBlock() != -1)) {
         // 再攻击其中的单元
@@ -166,7 +167,7 @@ void Field::doUnitAttack(Unit *unit, QPoint coord) {
             doUnitDie(taruid);
         unit->m_status->setAttackState(false);
         unit->m_status->setMoveState(false);
-        emit attackUnit(unit->uid(), taruid);
+        emit attackUnit(unit->uid(), taruid, att);
     }
     else {
         Q_ASSERT(0);

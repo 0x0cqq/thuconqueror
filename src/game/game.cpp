@@ -70,8 +70,9 @@ bool writeJson(const QString &filename, const QJsonObject &json) {
 //     m_blockTypeInfo[obstacleBlock] = BlockInfo("障碍", "障碍", "", 0, 10000);
 //     m_blockTypeInfo[roadBlock]     = BlockInfo("平地", "平地", "", 0, 1);
 //     m_blockTypeInfo[dampBlock]     = BlockInfo("泥地", "平地", "", 0, 3);
-//     m_blockTypeInfo[virusCampBlock] = BlockInfo("人类营地", "平地", "", 30, 2);
-//     m_blockTypeInfo[peopleCampBlock] = BlockInfo("病毒营地", "平地", "", 30, 2);
+//     m_blockTypeInfo[virusCampBlock] = BlockInfo("人类营地", "平地", "", 30,
+//     2); m_blockTypeInfo[peopleCampBlock] = BlockInfo("病毒营地", "平地", "",
+//     30, 2);
 
 //     for(int i = 1; i <= width(); i++) {
 //         m_blocks[i].resize(height() + 2);
@@ -302,7 +303,8 @@ void Game::init() {
         m_field, &Field::moveUnit, m_graph,
         QOverload<qint32, const QVector<QPoint> &>::of(&GraphField::moveUnit));
     connect(m_field, &Field::attackUnit, m_graph,
-            QOverload<qint32, qint32>::of(&GraphField::attackUnit));
+            QOverload<qint32, qint32, QPair<qreal, qreal>>::of(
+                &GraphField::attackUnit));
     connect(m_field, &Field::attackCamp, m_graph, &GraphField::attackCamp);
     connect(m_field, &Field::unitMoveRangegot, m_graph,
             &GraphField::showMoveRange);

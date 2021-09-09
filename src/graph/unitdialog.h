@@ -3,6 +3,7 @@
 
 #include "../basic/status.h"
 #include <QDialog>
+#include <QDebug>
 #include <QLabel>
 #include <QTimer>
 
@@ -22,18 +23,9 @@ class AttackLabel : public QLabel {
     Q_OBJECT
   public:
     QTimer *timer;
-
-    AttackLabel(qreal delta) : QLabel(), timer(nullptr) {
-        this->setText("-" + QString::number(delta));
-        timer = new QTimer;
-    }
+    AttackLabel(qreal delta);
     ~AttackLabel() { delete timer; }
-    void show() {
-        QLabel::show();
-        timer->singleShot(1000, [=]() {
-            this->hide();
-        });
-    }
+    void show();
 };
 
 #endif

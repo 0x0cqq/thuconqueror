@@ -2,11 +2,8 @@
 #include <QRandomGenerator>
 
 MyApplication::MyApplication(int &argc, char *argv[])
-    : QApplication(argc, argv), startWindow(nullptr), mainWindow(nullptr) {   createStartWindow();
-    // connect(startWindow, &StartWindow::userStartGame, this,
-    //         &MyApplication::changeToMainWindow);
-    connect(startWindow->m_chooseLevelView, &ChooseLevelView::userStartLevel,
-            this, &MyApplication::changeToMainWindow);
+    : QApplication(argc, argv), startWindow(nullptr), mainWindow(nullptr) {
+    createStartWindow();
     welcomelist   = new QMediaPlaylist(this);
     playlist      = new QMediaPlaylist(this);
     welcome_music = new QMediaPlayer(this);
@@ -17,7 +14,7 @@ MyApplication::MyApplication(int &argc, char *argv[])
     }
     playlist->setPlaybackMode(QMediaPlaylist::Random);
     welcomelist->addMedia(QUrl("qrc:/audios/1.wav"));
-    playlist->setPlaybackMode(QMediaPlaylist::Random);
+    welcomelist->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
     play_music->setPlaylist(playlist);
     welcome_music->setPlaylist(welcomelist);
     welcome_music->play();
@@ -26,6 +23,8 @@ MyApplication::MyApplication(int &argc, char *argv[])
 void MyApplication::createStartWindow() {
     startWindow = new StartWindow;
     startWindow->show();
+    connect(startWindow, &StartWindow::userChooseLevel, this,
+            &MyApplication::changeToMainWindow);
 }
 
 void MyApplication::changeToMainWindow(qint32 gameLevel) {

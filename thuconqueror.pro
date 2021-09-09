@@ -22,7 +22,6 @@ SOURCES += \
     src/graph/graphfield.cpp \
     src/graph/unitdialog.cpp \
     src/graph/menudialog.cpp \
-    src/graph/choosedialog.cpp \
     src/graph/bloodbar.cpp \
     src/game/graphview.cpp \
     src/game/enemyai.cpp \
@@ -40,7 +39,6 @@ HEADERS += \
     src/graph/graphunit.h \
     src/graph/unitdialog.h \
     src/graph/menudialog.h \
-    src/graph/choosedialog.h \
     src/graph/bloodbar.h \
     src/logic/unit.h \
     src/logic/block.h \ 
@@ -49,10 +47,16 @@ HEADERS += \
     src/game/enemyai.h \
     src/basic/status.h
 
+FORMS += \
+    src/forms/startwindow.ui \
+    src/forms/chooselevelwindow.ui
+
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    resource.qrc
+    resource.qrc \
+    audio.qrc

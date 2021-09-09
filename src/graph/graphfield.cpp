@@ -218,12 +218,18 @@ void GraphField::newUnit(UnitStatus *unitStatus) {
     emit needUpdateDetail();
 }
 
-void GraphField::attackUnit(qint32 uid, qint32 tarid) {
-    attackUnit(m_units[uid], tarid);
+void GraphField::attackUnit(qint32 uid, qint32 tarid,
+                            QPair<qreal, qreal> delta) {
+    attackUnit(m_units[uid], tarid, delta);
 }
-void GraphField::attackUnit(GraphUnit *graphUnit, qint32 tarid) {
+void GraphField::attackUnit(GraphUnit *graphUnit, qint32 tarid,
+                            QPair<qreal, qreal> delta) {
     graphUnit->update(graphUnit->boundingRect());
     m_units[tarid]->update(m_units[tarid]->boundingRect());
+    showUnitAttackLabel(graphUnit->uid(), delta.first);
+
+    showUnitAttackLabel(tarid, delta.second);
+
     // QMessageBox msgBox;
     qDebug() << ("攻击！ " + QString::number(graphUnit->uid()) +
                  " 号 Unit 攻击了 " + QString::number(tarid) + " 号 Unit 。");
@@ -232,17 +238,27 @@ void GraphField::attackUnit(GraphUnit *graphUnit, qint32 tarid) {
     emit needUpdateDetail();
 }
 
-void GraphField::attackCamp(qint32 uid, QPoint coord) {
+void GraphField::showUnitAttackLabel(qint32 uid, qreal delta) {
+    GraphUnit *  graphUnit = m_units[uid];
+    AttackLabel *labela    = new AttackLabel(delta);
+    auto         it        = this->addWidget(labela);
+    it->setZValue(1000);
+    it->setPos(getBlockCenter(graphUnit->nowCoord()) -
+               QPointF(0, 1.5 * GraphInfo::blockSize));
+    dynamic_cast<AttackLabel *>(it->widget())->show();
+}
+
+void GraphField::attackCamp(qint32 uid, QPoint coord,
+                            QPair<qreal, qreal> delta) {
     GraphUnit *graphUnit = m_units[uid];
     graphUnit->update(graphUnit->boundingRect());
+    showUnitAttackLabel(uid, delta.first);
     // 应该更新 block 的
-    // m_units[tarid]->update(m_units[tarid]->boundingRect());
     // QMessageBox msgBox;
     qDebug() << ("攻击！ " + QString::number(graphUnit->uid()) +
                  " 号 Unit 攻击了 （" + QString::number(coord.x()) + "," +
                  QString::number(coord.y()) + " ) 处的 Camp 。Camp 血量：" +
                  QString::number(blocks(coord)->m_status->getHP()));
-    // msgBox.exec();
     emit finishOrder();
     emit needUpdateDetail();
 }

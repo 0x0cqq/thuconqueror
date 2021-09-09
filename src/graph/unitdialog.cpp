@@ -35,3 +35,15 @@ void UnitDialog::hide() {
         QDialog::hide();
     }
 }
+
+AttackLabel::AttackLabel(qreal delta) : QLabel(), timer(nullptr) {
+    this->setText("-" + QString::number(delta));
+    this->setFont(QFont("微软雅黑", 15, 3));
+    timer = new QTimer;
+}
+
+void AttackLabel::show() {
+    qDebug() << "show label";
+    QLabel::show();
+    timer->singleShot(2000, [=]() { this->hide(); });
+}

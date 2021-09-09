@@ -38,6 +38,7 @@ class GraphField : public QGraphicsScene {
     ~GraphField();
     qint32 width() const { return m_gameInfo.map_size.x(); }
     qint32 height() const { return m_gameInfo.map_size.y(); }
+    void   showUnitAttackLabel(qint32 uid, qreal delta);
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
@@ -57,13 +58,14 @@ class GraphField : public QGraphicsScene {
     // 把 uid 的 unit 移动到 (posx, posy)
   protected slots:
     void moveUnit(GraphUnit *graphUnit, const QVector<QPoint> &path);
-    void attackUnit(GraphUnit *graphUnit, qint32 tarid);
+    void attackUnit(GraphUnit *graphUnit, qint32 tarid,
+                    QPair<qreal, qreal> delta);
   public slots:
     void newUnit(UnitStatus *unitStatus);
     void dieUnit(qint32 uid);
     void moveUnit(qint32 uid, const QVector<QPoint> &path);
-    void attackUnit(qint32 uid, qint32 tarid);
-    void attackCamp(qint32 uid, QPoint coord);
+    void attackUnit(qint32 uid, qint32 tarid, QPair<qreal, qreal> delta);
+    void attackCamp(qint32 uid, QPoint coord, QPair<qreal, qreal> delta);
     void showMoveRange(qint32 uid, QVector<QPoint> range);
     void hideMoveRange();
     void onBlockClicked(QPoint coord);
