@@ -26,7 +26,7 @@ void GraphView::setTranslateSpeed(qreal speed) {
 }
 void GraphView::mousePressEvent(QMouseEvent *event) {
     if(event->button() == m_translateButton) {
-        qDebug() << "mouse move";
+        // qDebug() << "mouse move";
         m_bMouseTranslate = true;
         m_lastMousePos    = event->pos();
     }

@@ -229,7 +229,6 @@ QVector<QPoint> Field::__getUnitMoveRange(qint32 uid) {
         QVector<QPoint> nearby = getNearbyPoint(pos);
         for(auto p : nearby) {
             // qDebug() << "\t" << p << Qt::endl;
-
             if(isValid(p)) {
                 qreal newdist = dist - blocks(p)->m_status->MPneed();
                 if((!dis.contains(p) || newdist > dis[p]) &&
@@ -253,7 +252,7 @@ QVector<QPoint> Field::__getUnitMoveRange(qint32 uid) {
 
 void Field::getUnitMoveRange(qint32 uid) {
     // distance, coord, last coord;
-    qDebug() << "calculate move range" << Qt::endl;
+    // qDebug() << "calculate move range" << Qt::endl;
     QVector<QPoint> moveRange = __getUnitMoveRange(uid);
     emit            unitMoveRangegot(uid, moveRange);
 }

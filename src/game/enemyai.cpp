@@ -151,6 +151,7 @@ bool EnemyAI::newUnit() {
 }
 
 void EnemyAI::doNewUnit(QPoint coord, UnitType type) {
-    if(type == noType) return;
+    if(type == noType)
+        return;
     m_game->usernewUnit(coord, type);
 }

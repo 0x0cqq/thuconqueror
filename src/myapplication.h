@@ -4,20 +4,16 @@
 #include "windows/mainwindow.h"
 #include "windows/startwindow.h"
 #include <QApplication>
-#include <QMediaPlayer>
 #include <QMediaPLaylist>
+#include <QMediaPlayer>
 #include <QTimer>
-
 
 class MyApplication : public QApplication {
     Q_OBJECT
-    StartWindow *startWindow;
-    Mainwindow * mainWindow;
+    StartWindow *   startWindow;
+    Mainwindow *    mainWindow;
     QMediaPlaylist *welcomelist;
-
-    QMediaPlaylist *playlist;
-    QMediaPlayer *welcome_music;
-    QMediaPlayer *play_music;
+    QMediaPlayer *  welcomemusic;
     // QTimer *timer;
   public:
     MyApplication(int &argc, char *argv[]);
@@ -25,7 +21,6 @@ class MyApplication : public QApplication {
   public slots:
     void createStartWindow();
     void changeToMainWindow(qint32 gameLevel);
-
 };
 
 #endif

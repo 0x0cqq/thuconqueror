@@ -75,11 +75,11 @@ class BlockInfo {
             name = json["name"].toString();
         if(json.contains("image") && json["image"].isString())
             image = json["image"].toString();
-        Q_ASSERT(image != "");
-        qDebug() << "image" << image;
+        // Q_ASSERT(image != "");
+        // qDebug() << "image" << image;
         if(image != "") {
             pixmap = new QPixmap(image);
-            qDebug() << pixmap;
+            // qDebug() << pixmap;
         }
     }
     void write(QJsonObject &json) {

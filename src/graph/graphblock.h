@@ -5,19 +5,22 @@
 #include "bloodbar.h"
 #include <QDebug>
 #include <QGraphicsObject>
+#include <QMovie>
 #include <QPainter>
 #include <QPixmap>
 
 class GraphBlock : public QGraphicsObject {
     Q_OBJECT
   public:
-    BloodBar *         m_blockCampBlood;
-    const BlockStatus *m_status;
-    bool               m_isChecked;
-    bool               m_isMoveRange;
+    QMovie *                m_fire_movie;
+    BloodBar *              m_blockCampBlood;
+    const BlockStatus *     m_status;
+    bool                    m_isChecked;
+    bool                    m_isMoveRange;
+    QMetaObject::Connection mConnection;
     // GraphBlock() : QGraphicsObject() {}
     GraphBlock(BlockStatus *status, QPointF pos)
-        : QGraphicsObject(), m_blockCampBlood(nullptr),
+        : QGraphicsObject(), m_fire_movie(nullptr), m_blockCampBlood(nullptr),
           m_status(status), m_isChecked(false), m_isMoveRange(false) {
         this->setZValue(GraphInfo::blockZValue);
 
@@ -28,17 +31,26 @@ class GraphBlock : public QGraphicsObject {
                 [&]() { this->update(this->boundingRect()); });
         connect(this, &GraphBlock::moveRangeChanged, this,
                 [&]() { this->update(this->boundingRect()); });
-        // add blood bar?
+        // add blood bar? and movie?
         if(this->m_status->m_type & campBlock) {
             m_blockCampBlood = new BloodBar(GraphInfo::blockSize / 2,
-                                      GraphInfo::blockSize, 10, this);
+                                            GraphInfo::blockSize, 10, this);
             m_blockCampBlood->setPercentage(this->m_status->m_HPnow);
+            m_fire_movie = new QMovie(":/images/fire.gif");
+            m_fire_movie->start();
+            setMovie();
         }
+    }
+    ~GraphBlock() {
+        m_fire_movie->deleteLater();
+        m_blockCampBlood->deleteLater();
     }
     // QPoint coord() const {return m_status->m_coord;}
     // qint32 unitOnBlock() { return m_status->m_unitOnBlock;}
     QRectF       boundingRect() const override;
     QPainterPath shape() const override;
+    void         setMovie();
+    void         paintFire(QPainter *painter);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

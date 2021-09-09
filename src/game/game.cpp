@@ -490,14 +490,15 @@ void Game::usernewUnit(QPoint coord, UnitType newUnitType) {
 }
 
 void Game::setPolicyTreeButton() {
+    // 暂时不加了
     QPushButton *policyTreeButton = new QPushButton();
     policyTreeButton->setGeometry(QRect(0, -100, 100, 100));
     policyTreeButton->setIcon(QIcon(":/icons/policytree.png"));
     policyTreeButton->setIconSize(QSize(85, 85));
     policyTreeButton->setContentsMargins(5, 5, 5, 5);
-    policyTreeButtonWidget = m_graph->addWidget(policyTreeButton);
-    policyTreeButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
-                                    true);
+    // policyTreeButtonWidget = m_graph->addWidget(policyTreeButton);
+    // policyTreeButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
+    // true);
     connect(policyTreeButton, &QPushButton::clicked, this,
             &Game::usershowPolicyTree);
 }

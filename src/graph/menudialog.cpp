@@ -11,7 +11,7 @@ MenuDialog::MenuDialog(Game *game, QWidget *parent)
     : QDialog(parent), m_game(game) {}
 
 PauseMenuDialog::PauseMenuDialog(Game *game, QWidget *parent)
-    : MenuDialog(game, parent) {}
+    : MenuDialog(game, parent), ui(nullptr) {}
 
 PolicyTreeDialog::PolicyTreeDialog(Game *game, QWidget *parent)
     : MenuDialog(game, parent) {

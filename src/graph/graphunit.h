@@ -16,7 +16,6 @@ class GraphUnit : public QGraphicsObject {
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
   public:
-
     const UnitStatus *      m_status;
     UnitDialog *            m_unitDialog;
     BloodBar *              m_bloodBar;
@@ -31,18 +30,22 @@ class GraphUnit : public QGraphicsObject {
         this->setZValue(GraphInfo::unitZValue);
         m_unitDialog = new UnitDialog(status, nullptr);
         timer        = new QTimer(this);
-        m_bloodBar   = new BloodBar(-GraphInfo::blockSize,GraphInfo::blockSize,20,this);
+        m_bloodBar =
+            new BloodBar(-GraphInfo::blockSize, GraphInfo::blockSize, 20, this);
         m_bloodBar->setPercentage(this->m_status->m_HPnow);
         // this->scene()
         this->setPos(getBlockCenter(nowCoord()));
         this->setFlag(ItemIsSelectable, true);
         this->setAcceptHoverEvents(true);
-        qDebug() << "New unit " << m_status->m_uid << Qt::endl;
-        setMovie(m_status->m_info->m_unitMovie,m_status->m_info->m_loopMovie);
+        qDebug() << "New unit " << m_status->m_uid;
+        setMovie(m_status->m_info->m_unitMovie, m_status->m_info->m_loopMovie);
         connect(m_status, &UnitStatus::unitStateChanged, this,
                 [=]() { this->update(this->boundingRect()); });
     }
-    ~GraphUnit() { delete m_unitDialog;delete timer; }
+    ~GraphUnit() {
+        m_unitDialog->deleteLater();
+        timer->deleteLater();
+    }
     QRectF       boundingRect() const override;
     void         setMovie(QMovie *unitMovie, QMovie *loopMovie);
     QPainterPath shape() const;

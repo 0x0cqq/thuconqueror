@@ -12,9 +12,15 @@ class MenuDialog : public QDialog {
     MenuDialog(Game *game, QWidget *parent = nullptr);
 };
 
+namespace Ui {
+class SingleUnitInfo;
+class PauseDialog;
+};  // namespace Ui
+
 class PauseMenuDialog : public MenuDialog {
     Q_OBJECT
   public:
+    Ui::PauseDialog *ui;
     PauseMenuDialog(Game *game, QWidget *parent = nullptr);
 };
 
@@ -24,9 +30,6 @@ class PolicyTreeDialog : public MenuDialog {
     PolicyTreeDialog(Game *game, QWidget *parent = nullptr);
 };
 
-namespace Ui {
-class SingleUnitInfo;
-};
 class SingleUnitInfo : public QWidget {
     Q_OBJECT
   public:

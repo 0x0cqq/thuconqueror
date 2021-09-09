@@ -7,12 +7,12 @@
 namespace Ui {
 class StartWindow;
 class ChooseLevelWindow;
-}
+}  // namespace Ui
 
 class StartWindow : public QMainWindow {
     Q_OBJECT
   public:
-    Ui::StartWindow *startview_ui;
+    Ui::StartWindow *      startview_ui;
     Ui::ChooseLevelWindow *chooselevelview_ui;
 
     StartWindow(QWidget *parent = nullptr);

@@ -1,11 +1,11 @@
 #include "graphblock.h"
 #include "graphfield.h"
 #include <QGraphicsSceneMouseEvent>
-#include <QtMath>
 #include <QPainterPath>
+#include <QtMath>
 
 QRectF GraphBlock::boundingRect() const {
-    return  GraphInfo::blockPoly.boundingRect();
+    return GraphInfo::blockPoly.boundingRect();
     return QRectF(-qSqrt(3) / 2 * GraphInfo::blockSize - GraphInfo::penWidth,
                   -GraphInfo::blockSize - GraphInfo::penWidth,
                   qSqrt(3) * GraphInfo::blockSize + 2 * GraphInfo::penWidth,
@@ -16,6 +16,29 @@ QPainterPath GraphBlock::shape() const {
     QPainterPath path;
     path.addPolygon(GraphInfo::blockPoly);
     return path;
+}
+void GraphBlock::setMovie() {
+    prepareGeometryChange();
+    QObject::disconnect(mConnection);  // disconnect old object
+    if(m_fire_movie) {
+        mConnection =
+            QObject::connect(m_fire_movie, &QMovie::frameChanged, [=]() {
+                update(QRect(-m_fire_movie->frameRect().width() / 2,
+                             -m_fire_movie->frameRect().height() / 2,
+                             m_fire_movie->frameRect().width(),
+                             m_fire_movie->frameRect().height()));
+            });
+    }
+}
+
+void GraphBlock::paintFire(QPainter *painter) {
+    if(m_fire_movie != nullptr) {
+        // qDebug() << "indeed paint fire";
+        //          << QRandomGenerator::global()->generate() << Qt::endl;
+        painter->drawPixmap(-m_fire_movie->frameRect().bottomRight() / 2,
+                            m_fire_movie->currentPixmap(),
+                            m_fire_movie->frameRect());
+    }
 }
 
 void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
@@ -29,7 +52,7 @@ void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
         painter->setPen(QPen(Qt::red, GraphInfo::penWidth));
         painter->drawRect(GraphInfo::blockPoly.boundingRect());
     }
-    else{
+    else {
         this->setZValue(GraphInfo::blockZValue);
     }
     // if(m_status->m_type == roadBlock) {
@@ -61,6 +84,11 @@ void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
             painter->drawPolygon(GraphInfo::blockPoly);
         }
     }
+    // 死掉的营地就要画火
+    if((m_status->m_type & campBlock) && m_status->getHP() < 0) {
+        m_blockCampBlood->hide();
+        paintFire(painter);
+    }
     bool canBeAttacked = false;
     if(unitOnBlock() != -1 && s->m_nowCheckedBlock != nullptr &&
        s->m_nowCheckedBlock->unitOnBlock() != -1) {
@@ -87,16 +115,16 @@ void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
         painter->setBrush(red40);
         painter->drawPolygon(GraphInfo::blockPoly);
     }
-    if(m_blockCampBlood){
-        m_blockCampBlood->setPercentage(m_status->m_HPnow);// 其实不应该在这里判断逻辑，不过差不多得了
+    if(m_blockCampBlood) {
+        m_blockCampBlood->setPercentage(
+            m_status->m_HPnow);  // 其实不应该在这里判断逻辑，不过差不多得了
     }
 }
 
 void GraphBlock::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
-        qDebug() << "press block: " << coord().x() << coord().y() << Qt::endl;
-        // emit blockClicked(coord());
-        // reverseCheck();
+        // qDebug() << "press block: " << coord().x() << coord().y() <<
+        // Qt::endl; emit blockClicked(coord()); reverseCheck();
         QGraphicsObject::mousePressEvent(event);
         event->accept();
     }
@@ -104,8 +132,8 @@ void GraphBlock::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
 void GraphBlock::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
-        qDebug() << "release block: " << coord().x() << coord().y() << Qt::endl;
-        // 就用这个函数？
+        // qDebug() << "release block: " << coord().x() << coord().y() <<
+        // Qt::endl; 就用这个函数？
         emit blockClicked(coord());
         // reverseCheck();
         QGraphicsObject::mouseReleaseEvent(event);

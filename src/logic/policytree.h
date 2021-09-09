@@ -5,9 +5,8 @@
 
 class PolicyTree : public QObject {
     Q_OBJECT
-    public:
+  public:
     PolicyTree();
-    
 };
 
-#endif // POLICYTREE_H
+#endif  // POLICYTREE_H

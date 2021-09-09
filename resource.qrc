@@ -20,6 +20,7 @@
         <file>images/childunit.gif</file>
         <file>images/studentunit.gif</file>
         <file>images/teacherunit.gif</file>
+        <file>images/fire.gif</file>
 
     </qresource>
 </RCC>

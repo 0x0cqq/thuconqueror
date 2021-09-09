@@ -21,6 +21,7 @@ class EnemyAI;
 class Game : public QObject {
     Q_OBJECT
   public:
+    bool readyToPlay;
     GameInfo             m_gameInfo;
     QMap<int, UnitInfo>  m_unitTypeInfo;
     QMap<int, BlockInfo> m_blockTypeInfo;

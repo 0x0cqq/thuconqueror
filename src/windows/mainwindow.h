@@ -5,6 +5,8 @@
 #include <QBoxLayout>
 #include <QLabel>
 #include <QMainWindow>
+#include <QMediaPlayer>
+#include <QMediaPlaylist>
 #include <QPushButton>
 
 class Mainwindow : public QMainWindow {
@@ -13,14 +15,16 @@ class Mainwindow : public QMainWindow {
   public:
     Mainwindow(qint32 gamelevel, QWidget *parent = nullptr);
     ~Mainwindow();
-    QHBoxLayout *hBox;
-    QVBoxLayout *hvBox;
-    QLabel *     gameStatusLabel;
-    QLabel *     detailLabel;
-    QLabel *     policyTreeLabel;
-    GraphView *  graphView;
-    Game *       game;
-    void         closeEvent(QCloseEvent *event) override;
+    QHBoxLayout *   hBox;
+    QVBoxLayout *   hvBox;
+    QLabel *        gameStatusLabel;
+    QLabel *        detailLabel;
+    QLabel *        policyTreeLabel;
+    GraphView *     graphView;
+    QMediaPlayer *  play_music;
+    QMediaPlaylist *playlist;
+    Game *          game;
+    void            closeEvent(QCloseEvent *event) override;
   signals:
     void mainWindowClosed();
 };

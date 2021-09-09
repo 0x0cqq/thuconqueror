@@ -8,7 +8,7 @@ class Game;
 
 class EnemyAI : public QObject {
     Q_OBJECT
-    Game *const  m_game;
+    Game *const m_game;
 
   public:
     const qint32 m_player;

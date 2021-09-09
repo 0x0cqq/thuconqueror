@@ -13,10 +13,11 @@ UnitDialog::UnitDialog(const UnitStatus *unitStatus, QWidget *parent)
 }
 
 void UnitDialog::updateInfo() {
-    qDebug() << m_status->m_info->image << Qt::endl;
+    // qDebug() << m_status->m_info->image << Qt::endl;
     ui->name->setText(m_status->m_info->name);
     ui->noLabel->setText("No. " + QString::number(uid()));
-    ui->hpLabel->setText("血量：" + QString::number(m_status->getHP(),char(103),2));
+    ui->hpLabel->setText("血量：" +
+                         QString::number(m_status->getHP(), char(103), 2));
     ui->mpLabel->setText("移动力：" + QString::number(m_status->getMP()));
     ui->ceLabel->setText("攻击力：" + QString::number(m_status->getCE()));
 }
@@ -44,7 +45,7 @@ AttackLabel::AttackLabel(qreal delta) : QLabel(), timer(nullptr) {
 }
 
 void AttackLabel::show() {
-    qDebug() << "show label";
+    // qDebug() << "show label";
     QLabel::show();
     timer->singleShot(2000, [=]() { this->hide(); });
 }
