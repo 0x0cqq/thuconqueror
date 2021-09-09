@@ -148,12 +148,30 @@ void Field::doUnitMove(qint32 uid, QPoint coord) {
 void Field::doUnitAttack(Unit *unit, QPoint coord) {
     if(((blocks(coord)->m_status->m_type & campBlock) != 0) &&
        blocks(coord)->m_status->getHP() > 0) {
-        // 格子和单元一起攻击（还没实现）
-        blocks(coord)->m_status->changeHP(-unit->m_status->getCE());
-        unit->m_status->setAttackState(false);
-        unit->m_status->setMoveState(false);
-        emit attackCamp(unit->uid(), coord,
-                        qMakePair(unit->m_status->getCE(), 0));
+        if((blocks(coord)->unitOnBlock() != -1)) {
+            // Camp 和 单元 一起攻击（还没实现）
+            // 攻击的是camp，但会受到 unit 的反击
+            qint32 taruid = blocks(coord)->unitOnBlock();
+            auto   att =
+                calculateAttack(unit->m_status, m_units[taruid]->m_status);
+            bool isUnitDead = unit->m_status->changeHP(-att.first);
+            if(isUnitDead)
+                doUnitDie(unit->uid());
+            bool isCampDead = blocks(coord)->m_status->changeHP(-att.second);
+            if(isCampDead)
+                doCampDie(coord);
+            unit->m_status->setAttackState(false);
+            unit->m_status->setMoveState(false);
+            emit attackCamp(unit->uid(), coord, att);
+        }
+        else {
+            // 只攻击 Camp
+            blocks(coord)->m_status->changeHP(-unit->m_status->getCE());
+            unit->m_status->setAttackState(false);
+            unit->m_status->setMoveState(false);
+            emit attackCamp(unit->uid(), coord,
+                            qMakePair(0, unit->m_status->getCE()));
+        }
     }
     else if((blocks(coord)->unitOnBlock() != -1)) {
         // 再攻击其中的单元
@@ -244,4 +262,9 @@ void Field::doUnitDie(qint32 uid) {
     // 处理后事
     blocks(m_units[uid]->m_status->m_nowCoord)->unitOnBlock() = -1;
     emit unitDead(uid);
+}
+
+void Field::doCampDie(QPoint coord) {
+    // 你都是个成熟的Camp了，怎么还不会自己去死？
+    emit campDead(coord);
 }

@@ -15,27 +15,19 @@ Mainwindow::Mainwindow(qint32 gamelevel, QWidget *parent)
     game->setPolicyTreeButton();
     game->setPauseButton();
 
-    auto it = new QLabel("滚轮缩放地图，右键点击可以拖动地图。\n移动范围目前是 "
-                         "5 ，攻击范围是 1 。\n移动、攻击次数均不限。\n");
-    // gameStatusLabel = new QLabel("游戏信息占位");
-    detailLabel = new QLabel("详细信息占位");
-
     game->setgameStatusLabel();
-    game->setDetailedLabel(detailLabel);
     game->init();
 
     this->setCentralWidget(new QWidget(this));
     hBox      = new QHBoxLayout(this->centralWidget());
     graphView = game->m_view;
     hBox->addWidget(graphView);
-    // hvBox = new QVBoxLayout();
-    // hBox->addLayout(hvBox);
-
-    // hvBox->addWidget(it);
-    // hvBox->addWidget(gameStatusLabel);
-    // hvBox->addWidget(detailLabel);
-    // hvBox->addWidget(policyTreeLabel);
     this->resize(1920, 1080);
+    connect(game, &Game::lose, this, [=](int player) {
+        QMessageBox::information(this->centralWidget(), "游戏结束",
+                                 "玩家" + QString::number(player) + "输了!");
+        this->close();
+    });
 }
 
 Mainwindow::~Mainwindow() {}

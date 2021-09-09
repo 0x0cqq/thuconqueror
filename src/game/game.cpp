@@ -6,6 +6,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMessageBox>
 #include <QRandomGenerator>
 #include <QString>
 #include <QThread>
@@ -225,8 +226,7 @@ void Game::write(QJsonObject &json) {
 void Game::setgameStatusLabel() {
     // 应该重载一下那个 Label 的，不过之后再说吧，现在先写一个能用的
     QLabel *gameStatusLabel = new QLabel();
-    gameStatusLabel->setStyleSheet(
-        "font-size: 40px; background-color: rgba(244,244,244,100)");
+    gameStatusLabel->setStyleSheet("font: 15pt ;");
     connect(this, &Game::gameStatusUpdated, this,
             [=]() { this->updateGameStatus(gameStatusLabel); });
     gameStatusLabelWidget = m_graph->addWidget(gameStatusLabel);
@@ -237,8 +237,9 @@ void Game::setgameStatusLabel() {
 
 void Game::updateGameStatus(QLabel *gameStatusLabel) {
     gameStatusLabel->setText(
-        "回合数：" + QString::number(m_gameInfo.m_turnNumber) +
-        " 现在正在操作的玩家：" + QString::number(m_gameInfo.nowPlayer));
+        "  || 回合数：" + QString::number(m_gameInfo.m_turnNumber) +
+        " || 我方存留 " + QString::number(m_gameInfo.m_campNumbers[0]) +
+        " || 敌方存留" + QString::number(m_gameInfo.m_campNumbers[1]) + "||  ");
 }
 
 void Game::setFixedWidgetPos() {
@@ -299,6 +300,24 @@ void Game::init() {
 
     connect(m_field, &Field::newUnit, m_graph, &GraphField::newUnit);
     connect(m_field, &Field::unitDead, m_graph, &GraphField::dieUnit);
+    connect(m_field, &Field::campDead, this, [=](QPoint coord) {
+        if(blocks(coord)->m_type == peopleCampBlock) {
+            m_gameInfo.m_campNumbers[0]--;
+        }
+        else if(blocks(coord)->m_type == virusCampBlock) {
+            m_gameInfo.m_campNumbers[1]--;
+        }
+        else {
+            Q_ASSERT(0);
+        }
+        emit gameStatusUpdated();
+        if(m_gameInfo.m_campNumbers[0] <= 0) {
+            emit lose(1);
+        }
+        if(m_gameInfo.m_campNumbers[1] <= 0) {
+            emit lose(2);
+        }
+    });
     connect(
         m_field, &Field::moveUnit, m_graph,
         QOverload<qint32, const QVector<QPoint> &>::of(&GraphField::moveUnit));

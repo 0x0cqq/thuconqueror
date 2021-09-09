@@ -120,9 +120,10 @@ UnitType RandomType() {
         case 0:
         case 1:
         case 2:
-            return alphaUnit;
         case 3:
+            return noType;
         case 4:
+            return alphaUnit;
         case 5:
             return deltaUnit;
         case 6:
@@ -150,5 +151,6 @@ bool EnemyAI::newUnit() {
 }
 
 void EnemyAI::doNewUnit(QPoint coord, UnitType type) {
+    if(type == noType) return;
     m_game->usernewUnit(coord, type);
 }

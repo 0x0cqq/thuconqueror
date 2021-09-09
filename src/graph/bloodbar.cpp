@@ -12,9 +12,13 @@ void BloodBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     painter->setBrush(Qt::white);
     painter->drawRect(-m_bloodWidth / 2, m_pos, m_bloodWidth, m_bloodHeight);
     painter->setBrush(Qt::red);
-    painter->drawRect(QRectF(-m_bloodWidth / 2, m_pos,
-                             percentange * m_bloodWidth, m_bloodHeight));
+    if(percentange > 0) {
+        painter->drawRect(QRectF(-m_bloodWidth / 2, m_pos,
+                                 percentange * m_bloodWidth, m_bloodHeight));
+    }
 }
+
+
 
 QRectF BloodBar::boundingRect() const {
     return QRectF(-m_bloodWidth / 2, m_pos, m_bloodWidth, m_bloodHeight);

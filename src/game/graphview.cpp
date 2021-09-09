@@ -10,15 +10,10 @@ void GraphView::mouseMoveEvent(QMouseEvent *event) {
             mapToScene(event->pos()) - mapToScene(m_lastMousePos);
         translate(mouseDelta);
     }
-
     m_lastMousePos = event->pos();
-
     QGraphicsView::mouseMoveEvent(event);
 }
 void GraphView::resizeEvent(QResizeEvent *event) {
-    // if(this->scene() != nullptr) {
-    //     this->fitInView(this->scene()->sceneRect(), Qt::KeepAspectRatio);
-    // }
     qDebug() << event->size();
     this->QGraphicsView::resizeEvent(event);
 }

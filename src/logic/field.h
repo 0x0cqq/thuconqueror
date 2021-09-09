@@ -37,9 +37,12 @@ class Field : public QObject {
     QVector<QPoint> __getUnitMoveRange(qint32 uid);
     QPoint          __canAttackNearby(qint32 uid);
 
+    void doUnitDie(qint32 uid);
+    void doCampDie(QPoint coord);
   signals:
     void newUnit(UnitStatus *unitStatus);
     void unitDead(qint32 uid);
+    void campDead(QPoint coord);
     void moveUnit(qint32 uid, QVector<QPoint> path);
     void attackUnit(qint32 uid, qint32 taruid, QPair<qreal, qreal> delta);
     void attackCamp(qint32 uid, QPoint coord, QPair<qreal, qreal> delta);
@@ -51,7 +54,6 @@ class Field : public QObject {
     void doNewUnit(UnitStatus *unitStatus);
     void doUnitMove(qint32 uid, QPoint coord);
     void doUnitAttack(qint32 uid, QPoint coord);
-    void doUnitDie(qint32 uid);
     void getUnitMoveRange(qint32 uid);
 };
 

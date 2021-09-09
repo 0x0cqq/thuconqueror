@@ -226,9 +226,9 @@ void GraphField::attackUnit(GraphUnit *graphUnit, qint32 tarid,
                             QPair<qreal, qreal> delta) {
     graphUnit->update(graphUnit->boundingRect());
     m_units[tarid]->update(m_units[tarid]->boundingRect());
-    showUnitAttackLabel(graphUnit->uid(), delta.first);
+    showUnitAttackLabel(graphUnit->nowCoord(), delta.first);
 
-    showUnitAttackLabel(tarid, delta.second);
+    showUnitAttackLabel(m_units[tarid]->nowCoord(), delta.second);
 
     // QMessageBox msgBox;
     qDebug() << ("攻击！ " + QString::number(graphUnit->uid()) +
@@ -238,13 +238,11 @@ void GraphField::attackUnit(GraphUnit *graphUnit, qint32 tarid,
     emit needUpdateDetail();
 }
 
-void GraphField::showUnitAttackLabel(qint32 uid, qreal delta) {
-    GraphUnit *  graphUnit = m_units[uid];
-    AttackLabel *labela    = new AttackLabel(delta);
-    auto         it        = this->addWidget(labela);
+void GraphField::showUnitAttackLabel(QPoint coord, qreal delta, qreal pos) {
+    AttackLabel *labela = new AttackLabel(delta);
+    auto         it     = this->addWidget(labela);
     it->setZValue(1000);
-    it->setPos(getBlockCenter(graphUnit->nowCoord()) -
-               QPointF(0, 1.5 * GraphInfo::blockSize));
+    it->setPos(getBlockCenter(coord) - QPointF(0, pos * GraphInfo::blockSize));
     dynamic_cast<AttackLabel *>(it->widget())->show();
 }
 
@@ -252,7 +250,9 @@ void GraphField::attackCamp(qint32 uid, QPoint coord,
                             QPair<qreal, qreal> delta) {
     GraphUnit *graphUnit = m_units[uid];
     graphUnit->update(graphUnit->boundingRect());
-    showUnitAttackLabel(uid, delta.first);
+    if(delta.first != 0)
+        showUnitAttackLabel(graphUnit->nowCoord(), delta.first);
+    showUnitAttackLabel(coord, delta.second);
     // 应该更新 block 的
     // QMessageBox msgBox;
     qDebug() << ("攻击！ " + QString::number(graphUnit->uid()) +

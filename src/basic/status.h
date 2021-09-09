@@ -8,6 +8,7 @@
 #include <QPoint>
 #include <QPolygon>
 #include <QString>
+#include <QVector>
 #include <QtGlobal>
 #include <QtMath>
 
@@ -35,11 +36,12 @@ class GameInfo {
     QPoint map_size;
     qint32 m_turnNumber;
     // 人类 1 病毒 2
-    qint32 playerNumbers;
-    qint32 nowPlayer;
-    qint32 speed;
-    void   read(const QJsonObject &json);
-    void   write(QJsonObject &json);
+    qint32       playerNumbers;
+    QVector<int> m_campNumbers;
+    qint32       nowPlayer;
+    qint32       speed;
+    void         read(const QJsonObject &json);
+    void         write(QJsonObject &json);
 };
 
 enum BlockType {
@@ -124,10 +126,9 @@ class BlockStatus : public QObject {
 
     BlockStatus() {}
     BlockStatus(BlockType type, BlockInfo *blockInfo, QPoint coord)
-        : m_type(type), m_info(blockInfo),
-          m_coord(coord), m_unitOnBlock(-1), m_HPnow(1) {
-    }
-    ~BlockStatus() {  }
+        : m_type(type), m_info(blockInfo), m_coord(coord), m_unitOnBlock(-1),
+          m_HPnow(1) {}
+    ~BlockStatus() {}
 };
 
 class UnitInfo {
@@ -194,7 +195,7 @@ class UnitInfo {
         : name(""), description(""), image(""), HPfull(0), HPratio(1),
           CEfull(0), CEratio(1), MPfull(0), m_loopMovie(nullptr),
           m_unitMovie(nullptr) {}
-    ~UnitInfo(){
+    ~UnitInfo() {
         delete m_loopMovie;
         delete m_unitMovie;
     }
@@ -210,6 +211,7 @@ class UnitInfo {
 };
 
 enum UnitType {
+    noType      = 0,
     peopleUnit  = 1 << 1,  // 人类是 1 号玩家
     virusUnit   = 1 << 2,  // 病毒是 2 号玩家（x）
     studentUnit = peopleUnit | 1 << 3,

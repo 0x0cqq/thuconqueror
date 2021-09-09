@@ -38,8 +38,8 @@ class GraphField : public QGraphicsScene {
     ~GraphField();
     qint32 width() const { return m_gameInfo.map_size.x(); }
     qint32 height() const { return m_gameInfo.map_size.y(); }
-    void   showUnitAttackLabel(qint32 uid, qreal delta);
-
+void showUnitAttackLabel(QPoint coord, qreal delta,
+                                     qreal pos = 1.4);
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     // 辅助函数先放在这里

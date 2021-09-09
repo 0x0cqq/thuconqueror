@@ -53,6 +53,7 @@ class Game : public QObject {
     void write(QJsonObject &json);
   signals:
     void gameStatusUpdated();
+    void lose(int player);
   public slots:
     void init();
 
