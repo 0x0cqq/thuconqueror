@@ -41,7 +41,8 @@ class GraphBlock : public QGraphicsObject {
             // m_fire_movie->start();
             setMovie();
         }
-        // according to https://stackoverflow.com/questions/43826317/how-to-optimize-qgraphicsviews-performance
+        // according to
+        // https://stackoverflow.com/questions/43826317/how-to-optimize-qgraphicsviews-performance
         path.addPolygon(GraphInfo::blockPoly);
     }
     ~GraphBlock() {

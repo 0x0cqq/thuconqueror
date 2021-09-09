@@ -9,7 +9,7 @@ EnemyAI::EnemyAI(Game *game, qint32 player) : m_game(game), m_player(player) {}
 
 void EnemyAI::play() {
     Q_ASSERT(m_player == m_game->m_gameInfo.nowPlayer);
-    // m_game->m_gameInfo.speed /= 10;
+    m_game->m_gameInfo.speed /= 2;
     bool       is_finished = false;
     QEventLoop waiter;
     auto       connection = connect(m_game->m_graph, &GraphField::finishOrder,
@@ -17,6 +17,8 @@ void EnemyAI::play() {
     auto connection2 = connect(m_game->m_graph, &GraphField::finishOrder, this,
                                [&]() { is_finished = true; });
     while(moveUnit()) {
+        // 这块是一个阻塞的技巧
+        // 这个 if 是防止提前就建完了
         if(!is_finished)
             waiter.exec();
         is_finished = false;
@@ -27,7 +29,7 @@ void EnemyAI::play() {
     disconnect(connection);
     disconnect(connection2);
 
-    // m_game->m_gameInfo.speed *= 10;
+    m_game->m_gameInfo.speed *= 2;
 }
 
 // 用 GraphField::onBlockClicked 来进行操作
@@ -101,15 +103,12 @@ void EnemyAI::doUnitMove(qint32 uid, QPoint coord) {
     m_game->m_graph->onBlockClicked(m_game->m_units[uid]->m_nowCoord);
     Q_ASSERT(m_game->m_graph->blocks(coord)->m_isMoveRange);
 
-    // _sleep(10000);
     m_game->m_graph->onBlockClicked(coord);
-    // Q_ASSERT(m_game->m_units[uid]->m_nowCoord == coord);
 }
 void EnemyAI::doUnitAttack(qint32 uid, QPoint coord) {
     Q_ASSERT(m_game->m_units[uid]->isAlive());
     Q_ASSERT(m_game->m_units[uid]->m_player == m_player);
     Q_ASSERT(m_game->m_units[uid]->canAttack());
-    // 如何确定一定能攻击呢？
     m_game->m_graph->onBlockClicked(m_game->m_units[uid]->m_nowCoord);
     m_game->m_graph->onBlockClicked(coord);
 }

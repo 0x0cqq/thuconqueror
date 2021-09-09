@@ -1,8 +1,8 @@
 #ifndef STATUS_H
 #define STATUS_H
 
-#include <QFile>
 #include <QApplication>
+#include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMovie>
@@ -15,11 +15,13 @@
 #include <QtGlobal>
 #include <QtMath>
 
+// 以下四个函数参考：https://www.cnblogs.com/lifexy/p/11930436.html
+// 从绝对路径打开 jsonobject
 bool openJsonAbsPath(const QString &filename, QJsonObject &json);
 
+// 向绝对路径写 jsonobject
 bool writeJsonAbsPath(const QString &filename, const QJsonObject &json);
 
-// https://www.cnblogs.com/lifexy/p/11930436.html
 bool openJson(const QString &filename, QJsonObject &json);
 
 bool writeJson(const QString &filename, const QJsonObject &json);
@@ -52,9 +54,10 @@ class GameInfo {
     qint32       playerNumbers;
     QVector<int> m_campNumbers;
     qint32       nowPlayer;
-    qint32       speed;
-    void         read(const QJsonObject &json);
-    void         write(QJsonObject &json);
+    // 动画的速度
+    qint32 speed;
+    void   read(const QJsonObject &json);
+    void   write(QJsonObject &json);
 };
 
 enum BlockType {
@@ -157,7 +160,9 @@ class UnitInfo {
     qreal  CEratio;
     // movePoint
     qint32  MPfull;
+    // 周围那个代表行动和攻击能力的框的 gif
     QMovie *m_loopMovie;
+    // 自己本来的 gif
     QMovie *m_unitMovie;
 
     void read(const QJsonObject &json) {
@@ -279,16 +284,20 @@ bool isNearByBlock(const BlockStatus *a, const BlockStatus *b);
 
 bool canNewUnitAt(qint32 nowplayer, const BlockStatus *a);
 
+// Unit Attack Unit
 bool canUnitAttack(const UnitStatus *a, const UnitStatus *b);
 
+// Unit Attack Block(maybe have a camp)
 bool canUnitAttackBlock(const UnitStatus *a, const BlockStatus *b);
 
 QVector<QPoint> getNearbyPoint(const QPoint &a);
 
+// into scene
 QPointF getBlockCenter(qint32 r, qint32 c);
 
 QPointF getBlockCenter(QPoint coord);
 
+// not in the same player
 bool notSameCamp(const UnitStatus *unit, const BlockStatus *block);
 
 #endif

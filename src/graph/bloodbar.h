@@ -12,9 +12,11 @@ class BloodBar : public QGraphicsObject {
     qreal percentange;
 
   public:
+    // p 是在上下什么位置放，Camp的就在底下，Unit 就在上面
     BloodBar(qreal p, qreal w, qreal h, QGraphicsObject *parent);
     void   paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                  QWidget *widget) override;
+    // 设置血条的百分比
     void   setPercentage(qreal percentage);
     QRectF boundingRect() const override;
 

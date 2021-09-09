@@ -23,7 +23,6 @@ bool openJsonAbsPath(const QString &filename, QJsonObject &json) {
     return true;
 }
 
-
 bool openJson(const QString &filename, QJsonObject &json) {
     //打开文件
     QFile file(QApplication::applicationDirPath() + "/" + filename);
@@ -63,7 +62,6 @@ bool writeJsonAbsPath(const QString &filename, const QJsonObject &json) {
     file.close();
     return false;
 }
-
 
 bool writeJson(const QString &filename, const QJsonObject &json) {
     //打开文件
@@ -162,6 +160,7 @@ UnitStatus::UnitStatus() {}
 bool UnitStatus::changeHP(qreal delta) {
     Q_ASSERT(m_info->HPfull != 0);
     Q_ASSERT(m_info->HPratio != 0);
+    // 预备了一个技能树调整的“比例”，没有用的机会
     m_HPnow += delta / (m_info->HPfull * m_info->HPratio);
     return !isAlive();
 }
@@ -169,9 +168,6 @@ bool UnitStatus::changeHP(qreal delta) {
 void UnitStatus::read(const QJsonObject &json) {
     if(json.contains("uid") && json["uid"].isDouble())
         m_uid = json["uid"].toInt();
-    // if(json.contains("info") && json["info"].isObject())
-    //     m_info.read(json["info"].toObject());
-    // ???
     if(json.contains("type") && json["type"].isDouble())
         m_type = UnitType(json["type"].toInt());
     if(json.contains("player") && json["player"].isDouble())
@@ -189,9 +185,6 @@ void UnitStatus::read(const QJsonObject &json) {
 
 void UnitStatus::write(QJsonObject &json) const {
     json["uid"] = m_uid;
-    // QJsonObject info;
-    // m_info.write(info);
-    // json["info"]   = info;
     json["type"]   = m_type;
     json["player"] = m_player;
     QJsonArray nowCoord;
@@ -217,6 +210,7 @@ QPair<qreal, qreal> calculateAttack(UnitStatus *source, UnitStatus *target) {
     return qMakePair(b, a);
 }
 
+// 手绘周围的点，需要分奇偶讨论
 QPoint nearby[2][6] = {{{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {1, -1}, {1, 1}},
                        {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}}};
 

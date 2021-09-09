@@ -12,6 +12,8 @@
 #include <QThread>
 #include <QWindow>
 
+
+// 这个函数目前不用了
 // Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
 //     m_gameInfo.m_turnNumber = 0, m_gameInfo.map_size = map_size,
 //     m_gameInfo.nowPlayer = 0, m_gameInfo.playerNumbers = 2;
@@ -215,7 +217,7 @@ void Game::updateGameStatus(QLabel *gameStatusLabel) {
     gameStatusLabel->setText(
         "  || 回合数：" + QString::number(m_gameInfo.m_turnNumber) +
         " || 我方存留 " + QString::number(m_gameInfo.m_campNumbers[0]) +
-        " || 敌方存留" + QString::number(m_gameInfo.m_campNumbers[1]) + "||  ");
+        " || 敌方存留 " + QString::number(m_gameInfo.m_campNumbers[1]) + " ||  ");
 }
 
 void Game::setFixedWidgetPos() {
