@@ -91,6 +91,8 @@
         "qpixmap": "cpp",
         "qlabel": "cpp",
         "qmediaplayer": "cpp",
-        "qmediaplaylist": "cpp"
+        "qmediaplaylist": "cpp",
+        "qfile": "cpp",
+        "qdatetime": "cpp"
     }
 }

@@ -1,6 +1,88 @@
 #include "status.h"
 #include <QJsonArray>
 
+bool openJsonAbsPath(const QString &filename, QJsonObject &json) {
+    //打开文件
+    QFile file(filename);
+    if(!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "File open failed!";
+    }
+    else {
+        qDebug() << "File open successfully!";
+    }
+    QJsonParseError *error = new QJsonParseError;
+    QJsonDocument    jdc   = QJsonDocument::fromJson(file.readAll(), error);
+
+    //判断文件是否完整
+    if(error->error != QJsonParseError::NoError) {
+        qDebug() << "parseJson:" << error->errorString();
+        return false;
+    }
+
+    json = jdc.object();  //获取对象
+    return true;
+}
+
+
+bool openJson(const QString &filename, QJsonObject &json) {
+    //打开文件
+    QFile file(QApplication::applicationDirPath() + "/" + filename);
+    if(!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "File open failed!";
+    }
+    else {
+        qDebug() << "File open successfully!";
+    }
+    QJsonParseError *error = new QJsonParseError;
+    QJsonDocument    jdc   = QJsonDocument::fromJson(file.readAll(), error);
+
+    //判断文件是否完整
+    if(error->error != QJsonParseError::NoError) {
+        qDebug() << "parseJson:" << error->errorString();
+        return false;
+    }
+
+    json = jdc.object();  //获取对象
+    return true;
+}
+
+bool writeJsonAbsPath(const QString &filename, const QJsonObject &json) {
+    //打开文件
+    QFile file("/" + filename);
+    if(!file.open(QIODevice::WriteOnly)) {
+        qDebug() << "File open failed!";
+        return false;
+    }
+    else {
+        qDebug() << "File open successfully!";
+    }
+    QJsonDocument jdoc;
+    jdoc.setObject(json);
+    file.write(
+        jdoc.toJson(QJsonDocument::Compact));  // Indented:表示自动添加/n回车符
+    file.close();
+    return false;
+}
+
+
+bool writeJson(const QString &filename, const QJsonObject &json) {
+    //打开文件
+    QFile file(QApplication::applicationDirPath() + "/" + filename);
+    if(!file.open(QIODevice::WriteOnly)) {
+        qDebug() << "File open failed!";
+        return false;
+    }
+    else {
+        qDebug() << "File open successfully!";
+    }
+    QJsonDocument jdoc;
+    jdoc.setObject(json);
+    file.write(
+        jdoc.toJson(QJsonDocument::Compact));  // Indented:表示自动添加/n回车符
+    file.close();
+    return false;
+}
+
 void GameInfo::read(const QJsonObject &json) {
     if(json.contains("map_size") && json["map_size"].isArray())
         map_size = QPoint{json["map_size"].toArray()[0].toInt(),
@@ -11,6 +93,8 @@ void GameInfo::read(const QJsonObject &json) {
         m_turnNumber = json["turnNumber"].toInt();
     if(json.contains("playerNumbers") && json["playerNumbers"].isDouble())
         playerNumbers = json["playerNumbers"].toInt();
+    if(json.contains("level") && json["level"].isDouble())
+        level = json["level"].toInt();
     if(json.contains("speed") && json["speed"].isDouble())
         speed = json["speed"].toInt();
 
@@ -38,6 +122,7 @@ void GameInfo::write(QJsonObject &json) {
     for(auto num : m_campNumbers)
         arr.push_back(num);
     json["campNumbers"] = arr;
+    json["level"]       = level;
 }
 
 void BlockStatus::write(QJsonObject &json) {

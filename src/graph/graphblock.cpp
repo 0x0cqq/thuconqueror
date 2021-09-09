@@ -13,8 +13,6 @@ QRectF GraphBlock::boundingRect() const {
 }
 
 QPainterPath GraphBlock::shape() const {
-    QPainterPath path;
-    path.addPolygon(GraphInfo::blockPoly);
     return path;
 }
 void GraphBlock::setMovie() {
@@ -22,11 +20,12 @@ void GraphBlock::setMovie() {
     QObject::disconnect(mConnection);  // disconnect old object
     if(m_fire_movie) {
         mConnection =
-            QObject::connect(m_fire_movie, &QMovie::frameChanged, [=]() {
-                update(QRect(-m_fire_movie->frameRect().width() / 2,
-                             -m_fire_movie->frameRect().height() / 2,
-                             m_fire_movie->frameRect().width(),
-                             m_fire_movie->frameRect().height()));
+            QObject::connect(m_fire_movie, &QMovie::frameChanged, [=](int frameNumber) {
+                if(frameNumber % 2 == 0 && m_status->getHP() < 0)
+                    update(QRect(-m_fire_movie->frameRect().width() / 2,
+                                 -m_fire_movie->frameRect().height() / 2,
+                                 m_fire_movie->frameRect().width(),
+                                 m_fire_movie->frameRect().height()));
             });
     }
 }
@@ -80,7 +79,6 @@ void GraphBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
             color40.setAlphaF(0.4);
             painter->setBrush(color40);
             // painter->setPen(QPen(Qt::black, 0));
-
             painter->drawPolygon(GraphInfo::blockPoly);
         }
     }

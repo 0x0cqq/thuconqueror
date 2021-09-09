@@ -24,6 +24,8 @@ class Mainwindow : public QMainWindow {
     QMediaPlayer *  play_music;
     QMediaPlaylist *playlist;
     Game *          game;
+    void            addGame(int gameLevel);
+    void            addMusic();
     void            closeEvent(QCloseEvent *event) override;
   signals:
     void mainWindowClosed();

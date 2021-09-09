@@ -21,10 +21,11 @@ class EnemyAI;
 class Game : public QObject {
     Q_OBJECT
   public:
-    bool readyToPlay;
-    GameInfo             m_gameInfo;
-    QMap<int, UnitInfo>  m_unitTypeInfo;
-    QMap<int, BlockInfo> m_blockTypeInfo;
+    bool                             readyToPlay;
+    QVector<QMetaObject::Connection> connection;
+    GameInfo                         m_gameInfo;
+    QMap<int, UnitInfo>              m_unitTypeInfo;
+    QMap<int, BlockInfo>             m_blockTypeInfo;
 
     EnemyAI *enemy;
     // 两个玩家（or 一个玩家 vs 一个 AI）都玩完才算一个回合
@@ -44,12 +45,13 @@ class Game : public QObject {
     qint32 width() const { return m_gameInfo.map_size.x(); }
     qint32 height() const { return m_gameInfo.map_size.y(); }
     // Game(QPoint map_size, QObject *parent = nullptr);
-    Game(const QJsonObject &json);
-    Game(const QString &filename);
-    Game(const qint32 &level);
+    Game(const QJsonObject &json, QObject *parent = nullptr);
+    Game(const QString &filename, QObject *parent = nullptr);
+    Game(const qint32 &level, QObject *parent = nullptr);
     ~Game();
-
+    void readAgain(const QJsonObject &json);
     void clearMemory();
+    void clearConnection();
     void read(const QJsonObject &json);
     void write(QJsonObject &json);
   signals:

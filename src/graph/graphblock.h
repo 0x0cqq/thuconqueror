@@ -18,6 +18,7 @@ class GraphBlock : public QGraphicsObject {
     bool                    m_isChecked;
     bool                    m_isMoveRange;
     QMetaObject::Connection mConnection;
+    QPainterPath            path;
     // GraphBlock() : QGraphicsObject() {}
     GraphBlock(BlockStatus *status, QPointF pos)
         : QGraphicsObject(), m_fire_movie(nullptr), m_blockCampBlood(nullptr),
@@ -37,9 +38,11 @@ class GraphBlock : public QGraphicsObject {
                                             GraphInfo::blockSize, 10, this);
             m_blockCampBlood->setPercentage(this->m_status->m_HPnow);
             m_fire_movie = new QMovie(":/images/fire.gif");
-            m_fire_movie->start();
+            // m_fire_movie->start();
             setMovie();
         }
+        // according to https://stackoverflow.com/questions/43826317/how-to-optimize-qgraphicsviews-performance
+        path.addPolygon(GraphInfo::blockPoly);
     }
     ~GraphBlock() {
         m_fire_movie->deleteLater();

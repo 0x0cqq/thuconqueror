@@ -2,8 +2,22 @@
 #define MENUDIALOG_H
 
 #include <QDialog>
+#include <QString>
 
 class Game;
+
+namespace Ui {
+class SingleUnitInfo;
+class PauseDialog;
+class ChooseFileDialog;
+};  // namespace Ui
+
+class ChooseFileDialog : public QDialog {
+    Q_OBJECT
+  public:
+    Ui::ChooseFileDialog *ui;
+    ChooseFileDialog(QStringList filelist, QWidget *parent = nullptr);
+};
 
 class MenuDialog : public QDialog {
     Q_OBJECT
@@ -12,16 +26,12 @@ class MenuDialog : public QDialog {
     MenuDialog(Game *game, QWidget *parent = nullptr);
 };
 
-namespace Ui {
-class SingleUnitInfo;
-class PauseDialog;
-};  // namespace Ui
-
 class PauseMenuDialog : public MenuDialog {
     Q_OBJECT
   public:
     Ui::PauseDialog *ui;
     PauseMenuDialog(Game *game, QWidget *parent = nullptr);
+    bool save();
 };
 
 class PolicyTreeDialog : public MenuDialog {

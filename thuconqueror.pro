@@ -51,7 +51,9 @@ FORMS += \
     src/forms/startwindow.ui \
     src/forms/chooselevelwindow.ui \
     src/forms/unitdialog.ui \
-    src/forms/newunitwidget.ui
+    src/forms/newunitwidget.ui \
+    src/forms/pausedialog.ui \
+    src/forms/choosefiledialog.ui 
 
 
 # Default rules for deployment.

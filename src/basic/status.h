@@ -1,6 +1,9 @@
 #ifndef STATUS_H
 #define STATUS_H
 
+#include <QFile>
+#include <QApplication>
+#include <QJsonDocument>
 #include <QJsonObject>
 #include <QMovie>
 #include <QObject>
@@ -11,6 +14,15 @@
 #include <QVector>
 #include <QtGlobal>
 #include <QtMath>
+
+bool openJsonAbsPath(const QString &filename, QJsonObject &json);
+
+bool writeJsonAbsPath(const QString &filename, const QJsonObject &json);
+
+// https://www.cnblogs.com/lifexy/p/11930436.html
+bool openJson(const QString &filename, QJsonObject &json);
+
+bool writeJson(const QString &filename, const QJsonObject &json);
 
 namespace GraphInfo {
 const static qreal blockSize = 100.0;
@@ -33,6 +45,7 @@ const qint32 blockZValue  = 80;
 
 class GameInfo {
   public:
+    qint32 level;
     QPoint map_size;
     qint32 m_turnNumber;
     // 人类 1 病毒 2

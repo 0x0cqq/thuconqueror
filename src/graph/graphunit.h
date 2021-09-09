@@ -16,6 +16,8 @@ class GraphUnit : public QGraphicsObject {
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
   public:
+    QPainterPath path;
+
     const UnitStatus *      m_status;
     UnitDialog *            m_unitDialog;
     BloodBar *              m_bloodBar;
@@ -41,6 +43,8 @@ class GraphUnit : public QGraphicsObject {
         setMovie(m_status->m_info->m_unitMovie, m_status->m_info->m_loopMovie);
         connect(m_status, &UnitStatus::unitStateChanged, this,
                 [=]() { this->update(this->boundingRect()); });
+        // according to https://stackoverflow.com/questions/43826317/how-to-optimize-qgraphicsviews-performance
+        path.addEllipse({0, 0}, GraphInfo::unitSize, GraphInfo::unitSize);
     }
     ~GraphUnit() {
         m_unitDialog->deleteLater();

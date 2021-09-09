@@ -23,8 +23,6 @@ QRectF GraphUnit::boundingRect() const {
 }
 
 QPainterPath GraphUnit::shape() const {
-    QPainterPath path;
-    path.addEllipse({0, 0}, GraphInfo::unitSize, GraphInfo::unitSize);
     return path;
 }
 
@@ -35,13 +33,19 @@ void GraphUnit::setMovie(QMovie *unitMovie, QMovie *loopMovie) {
     prepareGeometryChange();
     QObject::disconnect(mConnection1);  // disconnect old object
     if(loopMovie) {
-        mConnection1 = QObject::connect(loopMovie, &QMovie::frameChanged,
-                                        [=] { update(); });
+        mConnection1 =
+            QObject::connect(loopMovie, &QMovie::frameChanged, [=](int f) {
+                if(f % 2 == 0)
+                    update();
+            });
     }
     QObject::disconnect(mConnection2);  // disconnect old object
     if(unitMovie) {
-        mConnection2 = QObject::connect(unitMovie, &QMovie::frameChanged,
-                                        [=] { update(); });
+        mConnection2 =
+            QObject::connect(unitMovie, &QMovie::frameChanged, [=](int f) {
+                if(f % 2 == 0)
+                    update();
+            });
     }
 }
 

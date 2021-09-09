@@ -12,47 +12,6 @@
 #include <QThread>
 #include <QWindow>
 
-// https://www.cnblogs.com/lifexy/p/11930436.html
-bool openJson(const QString &filename, QJsonObject &json) {
-    //打开文件
-    QFile file(QApplication::applicationDirPath() + "/" + filename);
-    if(!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "File open failed!";
-    }
-    else {
-        qDebug() << "File open successfully!";
-    }
-    QJsonParseError *error = new QJsonParseError;
-    QJsonDocument    jdc   = QJsonDocument::fromJson(file.readAll(), error);
-
-    //判断文件是否完整
-    if(error->error != QJsonParseError::NoError) {
-        qDebug() << "parseJson:" << error->errorString();
-        return false;
-    }
-
-    json = jdc.object();  //获取对象
-    return true;
-}
-
-bool writeJson(const QString &filename, const QJsonObject &json) {
-    //打开文件
-    QFile file(QApplication::applicationDirPath() + "/" + filename);
-    if(!file.open(QIODevice::WriteOnly)) {
-        qDebug() << "File open failed!";
-        return false;
-    }
-    else {
-        qDebug() << "File open successfully!";
-    }
-    QJsonDocument jdoc;
-    jdoc.setObject(json);
-    file.write(
-        jdoc.toJson(QJsonDocument::Compact));  // Indented:表示自动添加/n回车符
-    file.close();
-    return false;
-}
-
 // Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
 //     m_gameInfo.m_turnNumber = 0, m_gameInfo.map_size = map_size,
 //     m_gameInfo.nowPlayer = 0, m_gameInfo.playerNumbers = 2;
@@ -98,39 +57,54 @@ Game::~Game() {
     clearMemory();
 }
 
+void Game::clearConnection() {
+    for(auto item : connection) {
+        disconnect(item);
+    }
+    connection.clear();
+}
+
 void Game::clearMemory() {
     for(int i = 1; i <= width(); i++) {
         for(int j = 1; j <= height(); j++) {
             delete m_blocks[i][j];
         }
     }
+    m_blocks.clear();
     for(int i = 0; i < m_units.size(); i++) {
         delete m_units[i];
     }
+    m_units.clear();
     enemy->deleteLater();
     m_view->deleteLater();
     m_field->deleteLater();
     m_graph->deleteLater();
 }
 
-Game::Game(const QString &filename)
+Game::Game(const QString &filename, QObject *parent)
     : Game([](const QString &filename) -> QJsonObject {
           QJsonObject json;
           openJson(filename, json);
           return json;
-      }(filename)) {}
+      }(filename),parent) {}
 
-Game::Game(const qint32 &level)
+Game::Game(const qint32 &level, QObject *parent)
     : Game([](qint32 level) -> QString {
           return "json/level" + QString::number(level) + ".json";
-      }(level)) {}
+      }(level),parent) {}
 
-Game::Game(const QJsonObject &json) {
+Game::Game(const QJsonObject &json, QObject *parent)
+    : QObject(parent), policyTreeButtonWidget(nullptr) {
+    read(json);
+}
+
+void Game::read(const QJsonObject &json) {
     // 本质上是一个 read 函数
     if(json.contains("gameInfo") && json["gameInfo"].isObject()) {
         m_gameInfo.read(json["gameInfo"].toObject());
     }
     if(json.contains("unitTypeInfo") && json["unitTypeInfo"].isObject()) {
+        m_unitTypeInfo.clear();
         QJsonObject unitTypeInfo = json["unitTypeInfo"].toObject();
         for(auto it = unitTypeInfo.begin(); it != unitTypeInfo.end(); it++) {
             QJsonObject unitInfo = it.value().toObject();
@@ -138,6 +112,7 @@ Game::Game(const QJsonObject &json) {
         }
     }
     if(json.contains("blockTypeInfo") && json["blockTypeInfo"].isObject()) {
+        m_blockTypeInfo.clear();
         QJsonObject blockTypeInfo = json["blockTypeInfo"].toObject();
         for(auto it = blockTypeInfo.begin(); it != blockTypeInfo.end(); it++) {
             QJsonObject blockInfo = it.value().toObject();
@@ -227,8 +202,9 @@ void Game::setgameStatusLabel() {
     // 应该重载一下那个 Label 的，不过之后再说吧，现在先写一个能用的
     QLabel *gameStatusLabel = new QLabel();
     gameStatusLabel->setStyleSheet("font: 15pt ;");
-    connect(this, &Game::gameStatusUpdated, this,
-            [=]() { this->updateGameStatus(gameStatusLabel); });
+    connection.append(connect(this, &Game::gameStatusUpdated, this, [=]() {
+        this->updateGameStatus(gameStatusLabel);
+    }));
     gameStatusLabelWidget = m_graph->addWidget(gameStatusLabel);
     gameStatusLabelWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
                                    true);
@@ -277,66 +253,83 @@ void Game::setFixedWidgetPos() {
 }
 
 void Game::init() {
-    connect(m_view, &GraphView::finishPainting, this, &Game::setFixedWidgetPos);
+    setNewUnitButton();
+    setNextTurnButton();
+    setPolicyTreeButton();
+    setPauseButton();
+    setgameStatusLabel();
+    connection.append(connect(m_view, &GraphView::finishPainting, this,
+                              &Game::setFixedWidgetPos));
 
-    connect(m_graph, &GraphField::checkStateChange, this,
-            [=](QPoint coord, bool state) {
-                if(state == true &&
-                   canNewUnitAt(m_gameInfo.nowPlayer, blocks(coord))) {
-                    showNewUnitButton();
-                }
-                else {
-                    hideNewUnitButton();
-                }
-            });
+    connection.append(
+        connect(m_graph, &GraphField::checkStateChange, this,
+                [=](QPoint coord, bool state) {
+                    if(state == true &&
+                       canNewUnitAt(m_gameInfo.nowPlayer, blocks(coord))) {
+                        showNewUnitButton();
+                    }
+                    else {
+                        hideNewUnitButton();
+                    }
+                }));
 
-    // connect(m_graph, &GraphField::userNewUnit,m_field, &Field::doNewUnit);
-    connect(m_graph, &GraphField::userMoveUnit, m_field,
-            QOverload<qint32, QPoint>::of(&Field::doUnitMove));
-    connect(m_graph, &GraphField::userAttackUnit, m_field,
-            QOverload<qint32, QPoint>::of(&Field::doUnitAttack));
-    connect(m_graph, &GraphField::userShowMoveRange, m_field,
-            &Field::getUnitMoveRange);
+    // connection.append(connect(m_graph, &GraphField::userNewUnit,m_field,
+    // &Field::doNewUnit);
+    connection.append(
+        connect(m_graph, &GraphField::userMoveUnit, m_field,
+                QOverload<qint32, QPoint>::of(&Field::doUnitMove)));
+    connection.append(
+        connect(m_graph, &GraphField::userAttackUnit, m_field,
+                QOverload<qint32, QPoint>::of(&Field::doUnitAttack)));
+    connection.append(connect(m_graph, &GraphField::userShowMoveRange, m_field,
+                              &Field::getUnitMoveRange));
 
-    connect(m_field, &Field::newUnit, m_graph, &GraphField::newUnit);
-    connect(m_field, &Field::unitDead, m_graph, &GraphField::dieUnit);
-    connect(m_field, &Field::campDead, this, [=](QPoint coord) {
-        if(blocks(coord)->m_type == peopleCampBlock) {
-            m_gameInfo.m_campNumbers[0]--;
-        }
-        else if(blocks(coord)->m_type == virusCampBlock) {
-            m_gameInfo.m_campNumbers[1]--;
-        }
-        else {
-            Q_ASSERT(0);
-        }
-        emit gameStatusUpdated();
-        if(m_gameInfo.m_campNumbers[0] <= 0) {
-            emit lose(1);
-        }
-        if(m_gameInfo.m_campNumbers[1] <= 0) {
-            emit lose(2);
-        }
-    });
-    connect(
+    connection.append(
+        connect(m_field, &Field::newUnit, m_graph, &GraphField::newUnit));
+    connection.append(
+        connect(m_field, &Field::unitDead, m_graph, &GraphField::dieUnit));
+    connection.append(
+        connect(m_field, &Field::campDead, this, [=](QPoint coord) {
+            if(blocks(coord)->m_type == peopleCampBlock) {
+                m_gameInfo.m_campNumbers[0]--;
+            }
+            else if(blocks(coord)->m_type == virusCampBlock) {
+                m_gameInfo.m_campNumbers[1]--;
+            }
+            else {
+                Q_ASSERT(0);
+            }
+            emit gameStatusUpdated();
+            if(m_gameInfo.m_campNumbers[0] <= 0) {
+                emit lose(1);
+            }
+            if(m_gameInfo.m_campNumbers[1] <= 0) {
+                emit lose(2);
+            }
+        }));
+    connection.append(connect(
         m_field, &Field::moveUnit, m_graph,
-        QOverload<qint32, const QVector<QPoint> &>::of(&GraphField::moveUnit));
-    connect(m_field, &Field::attackUnit, m_graph,
-            QOverload<qint32, qint32, QPair<qreal, qreal>>::of(
-                &GraphField::attackUnit));
-    connect(m_field, &Field::attackCamp, m_graph, &GraphField::attackCamp);
-    connect(m_field, &Field::unitMoveRangegot, m_graph,
-            &GraphField::showMoveRange);
+        QOverload<qint32, const QVector<QPoint> &>::of(&GraphField::moveUnit)));
+    connection.append(
+        connect(m_field, &Field::attackUnit, m_graph,
+                QOverload<qint32, qint32, QPair<qreal, qreal>>::of(
+                    &GraphField::attackUnit)));
+    connection.append(
+        connect(m_field, &Field::attackCamp, m_graph, &GraphField::attackCamp));
+    connection.append(connect(m_field, &Field::unitMoveRangegot, m_graph,
+                              &GraphField::showMoveRange));
 
-    connect(m_graph, &GraphField::userHideMoveRange, m_graph,
-            &GraphField::hideMoveRange);
+    connection.append(connect(m_graph, &GraphField::userHideMoveRange, m_graph,
+                              &GraphField::hideMoveRange));
 }
 
 void Game::setDetailedLabel(QLabel *detailedLabel) {
-    connect(m_graph, &GraphField::checkStateChange, this,
-            [=]() { this->updateDetailedStatus(detailedLabel); });
-    connect(m_graph, &GraphField::needUpdateDetail, this,
-            [=]() { this->updateDetailedStatus(detailedLabel); });
+    connection.append(
+        connect(m_graph, &GraphField::checkStateChange, this,
+                [=]() { this->updateDetailedStatus(detailedLabel); }));
+    // connection.append(
+    //     connect(m_graph, &GraphField::needUpdateDetail, this,
+    //             [=]() { this->updateDetailedStatus(detailedLabel); }));
 
     this->updateDetailedStatus(detailedLabel);
 }
@@ -390,7 +383,8 @@ void Game::setNextTurnButton() {
                                   true);
 
     nextTurnButtonWidget->setGeometry(QRect(QPoint(0, 0), QPoint(100, 100)));
-    connect(nextTurnButton, &QPushButton::clicked, this, &Game::usernextTurn);
+    connection.append(connect(nextTurnButton, &QPushButton::clicked, this,
+                              &Game::usernextTurn));
     emit gameStatusUpdated();
 }
 
@@ -438,12 +432,20 @@ void Game::setPauseButton() {
     pauseButton->setContentsMargins(5, 5, 10, 10);
     pauseButtonWidget = m_graph->addWidget(pauseButton);
     pauseButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
-    connect(pauseButton, &QPushButton::clicked, this, &Game::userPause);
+    connection.append(
+        connect(pauseButton, &QPushButton::clicked, this, &Game::userPause));
 }
 
 void Game::userPause() {
-    QDialog window;
-    window.exec();
+    PauseMenuDialog *window = new PauseMenuDialog(this);
+    int              t      = window->exec();
+    if(t == 1) {
+        // theoritically 应该退出
+    }
+    else {
+        // 正常
+    }
+    window->deleteLater();
     // window->show();
     // m_graph->addWidget(window);
 }
@@ -459,19 +461,20 @@ void Game::setNewUnitButton() {
     // 初始时需要隐藏
     newUnitButtonWidget->hide();
 
-    connect(newUnitButton, &QPushButton::clicked, this, [=]() {
-        NewUnitDialog *newunit     = new NewUnitDialog(this);
-        int            newUnitType = newunit->exec();
-        delete newunit;
-        if(newUnitType == 0)
-            return;
-        Q_ASSERT(m_graph->m_nowCheckedBlock != nullptr);
-        this->usernewUnit(m_graph->m_nowCheckedBlock->coord(),
-                          UnitType(newUnitType));
-        emit m_graph->checkStateChange(m_graph->m_nowCheckedBlock->coord(),
-                                       false);
-        m_graph->m_nowCheckedBlock = nullptr;
-    });
+    connection.append(
+        connect(newUnitButton, &QPushButton::clicked, this, [=]() {
+            NewUnitDialog *newunit     = new NewUnitDialog(this);
+            int            newUnitType = newunit->exec();
+            delete newunit;
+            if(newUnitType == 0)
+                return;
+            Q_ASSERT(m_graph->m_nowCheckedBlock != nullptr);
+            this->usernewUnit(m_graph->m_nowCheckedBlock->coord(),
+                              UnitType(newUnitType));
+            emit m_graph->checkStateChange(m_graph->m_nowCheckedBlock->coord(),
+                                           false);
+            m_graph->m_nowCheckedBlock = nullptr;
+        }));
 }
 
 void Game::usernewUnit(QPoint coord, UnitType newUnitType) {
@@ -499,8 +502,8 @@ void Game::setPolicyTreeButton() {
     // policyTreeButtonWidget = m_graph->addWidget(policyTreeButton);
     // policyTreeButtonWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations,
     // true);
-    connect(policyTreeButton, &QPushButton::clicked, this,
-            &Game::usershowPolicyTree);
+    connection.append(connect(policyTreeButton, &QPushButton::clicked, this,
+                              &Game::usershowPolicyTree));
 }
 
 void Game::usershowPolicyTree() {

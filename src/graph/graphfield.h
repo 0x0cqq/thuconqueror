@@ -52,7 +52,7 @@ class GraphField : public QGraphicsScene {
     void userAttackUnit(qint32 uid, QPoint destCoord);
     void userShowMoveRange(qint32 uid);
     void userHideMoveRange();
-    void needUpdateDetail();
+    // void needUpdateDetail();
     void finishOrder();
     // 把 uid 的 unit 移动到 (posx, posy)
   protected slots:

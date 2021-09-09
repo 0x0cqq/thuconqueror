@@ -89,7 +89,7 @@ void GraphField::moveUnit(GraphUnit *graphUnit, const QVector<QPoint> &path) {
     animation->start();
     connect(animation, &QPropertyAnimation::finished, this,
             [=]() { emit finishOrder(); });
-    emit needUpdateDetail();
+    // emit needUpdateDetail();
 }
 
 void GraphField::onBlockClicked(QPoint coord) {
@@ -215,7 +215,7 @@ void GraphField::newUnit(UnitStatus *unitStatus) {
         new GraphUnit(unitStatus, getBlockCenter(unitStatus->m_nowCoord));
     m_units.append(newUnit);
     this->addItem(newUnit);
-    emit needUpdateDetail();
+    // emit needUpdateDetail();
 }
 
 void GraphField::attackUnit(qint32 uid, qint32 tarid,
@@ -235,7 +235,7 @@ void GraphField::attackUnit(GraphUnit *graphUnit, qint32 tarid,
                  " 号 Unit 攻击了 " + QString::number(tarid) + " 号 Unit 。");
     // msgBox.exec();
     emit finishOrder();
-    emit needUpdateDetail();
+    // emit needUpdateDetail();
 }
 
 void GraphField::showUnitAttackLabel(QPoint coord, qreal delta, qreal pos) {
@@ -260,7 +260,7 @@ void GraphField::attackCamp(qint32 uid, QPoint coord,
                  QString::number(coord.y()) + " ) 处的 Camp 。Camp 血量：" +
                  QString::number(blocks(coord)->m_status->getHP()));
     emit finishOrder();
-    emit needUpdateDetail();
+    // emit needUpdateDetail();
 }
 
 void GraphField::dieUnit(qint32 uid) {
@@ -268,7 +268,7 @@ void GraphField::dieUnit(qint32 uid) {
     m_units[uid]->hide();
     dynamic_cast<UnitDialog *>(m_units[uid]->dialogWidget->widget())->hide();
     qDebug() << "die" << uid;
-    emit needUpdateDetail();
+    // emit needUpdateDetail();
 }
 
 void GraphField::showMoveRange(qint32 uid, QVector<QPoint> range) {

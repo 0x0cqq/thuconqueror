@@ -7,22 +7,13 @@
 
 Mainwindow::Mainwindow(qint32 gamelevel, QWidget *parent)
     : QMainWindow(parent) {
-    // add scene
-    // game = new Game(QPoint(15, 14), this);
-    game = new Game(gamelevel);
-    game->setNewUnitButton();
-    game->setNextTurnButton();
-    game->setPolicyTreeButton();
-    game->setPauseButton();
-
-    game->setgameStatusLabel();
-    game->init();
-
     this->setCentralWidget(new QWidget(this));
-    hBox      = new QHBoxLayout(this->centralWidget());
-    graphView = game->m_view;
-    hBox->addWidget(graphView);
-    this->resize(1920, 1080);
+    hBox = new QHBoxLayout(this->centralWidget());
+    addGame(gamelevel);
+    addMusic();
+}
+
+void Mainwindow::addMusic() {
     play_music = new QMediaPlayer(this);
     playlist   = new QMediaPlaylist(this);
     for(int i = 1; i <= 5; i++) {
@@ -32,6 +23,15 @@ Mainwindow::Mainwindow(qint32 gamelevel, QWidget *parent)
     playlist->setPlaybackMode(QMediaPlaylist::Random);
     play_music->setPlaylist(playlist);
     play_music->play();
+}
+
+void Mainwindow::addGame(int gameLevel) {
+    game = new Game(gameLevel, this);
+    game->init();
+
+    graphView = game->m_view;
+    hBox->addWidget(graphView);
+    this->resize(1920, 1080);
     connect(game, &Game::lose, this, [=](int player) {
         QString text;
         if(player == 1)
