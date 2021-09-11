@@ -10,6 +10,8 @@ https://github.com/ChenQiqian/thuconqueror
 
 ### 编译注意
 
+可以使用 Qt Creator 编译。
+
 编译完成后需要把主文件夹下的 json 文件夹移动到可执行文件所在的文件夹。
 
 ## 游戏设定

@@ -1,5 +1,5 @@
 build/
-*.exe
+!bin
+cloc.exe
 .VSCodeCounter
-release/
 *.lnk
