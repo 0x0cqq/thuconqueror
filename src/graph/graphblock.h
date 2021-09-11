@@ -38,7 +38,7 @@ class GraphBlock : public QGraphicsObject {
                                             GraphInfo::blockSize, 10, this);
             m_blockCampBlood->setPercentage(this->m_status->m_HPnow);
             m_fire_movie = new QMovie(":/images/fire.gif");
-            // m_fire_movie->start();
+            m_fire_movie->start();
             setMovie();
         }
         // according to
