@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>audios/1.wav</file>
+        <file>audios/viruslose.wav</file>
+        <file>audios/peoplelose.wav</file>
+
+        <file>audios/short-1.wav</file>
+        <file>audios/short-2.wav</file>
+        <file>audios/short-3.wav</file>
+        <file>audios/short-4.wav</file>
+        <file>audios/short-5.wav</file>
+
+    </qresource>
+</RCC>

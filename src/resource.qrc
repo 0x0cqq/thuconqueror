@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/stop.svg</file>
+        <file>icons/nextturn.svg</file>
+        <file>icons/pause.png</file>
+        <file>icons/policytree.png</file>
+        <file>icons/startbutton.png</file>
+        <file>images/cover.jpg</file>
+        <file>images/chooselevel.jpg</file>
+        <file>images/loop.gif</file>
+        <file>images/virus1.gif</file>
+        <file>images/virus2.gif</file>
+        <file>images/virus3.gif</file>
+        <file>images/plainblock.png</file>
+        <file>images/dampblock.png</file>
+        <file>images/roadblock.png</file>
+        <file>images/obstacleblock.png</file>
+        <file>images/peoplecampblock.png</file>
+        <file>images/viruscampblock.png</file>
+        <file>images/childunit.gif</file>
+        <file>images/studentunit.gif</file>
+        <file>images/teacherunit.gif</file>
+        <file>images/fire.gif</file>
+
+    </qresource>
+</RCC>
