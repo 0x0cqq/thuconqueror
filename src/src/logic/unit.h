@@ -16,7 +16,7 @@ class Unit : public QObject {
     bool isSamePlayer(Unit *target) const {
         return m_status->m_type & target->m_status->m_type;
     }
-    Unit(UnitStatus *unitStatus, QObject *parent = nullptr)
+    Unit(UnitStatus *unitStatus, QObject *parent)
         : QObject(parent), m_status(unitStatus) {}
 };
 

@@ -25,13 +25,33 @@ void Mainwindow::addMusic() {
     play_music->play();
 }
 
+void Mainwindow::addGame(QString fileName) {
+    game = new Game(fileName, this);
+    game->init();
+    hBox->addWidget(game);
+    connect(game, &Game::loadGame, this, [&](QString filename) {
+        hBox->removeWidget(game);
+        game->deleteLater();
+        addGame(filename);
+    });
+    this->resize(1920, 1080);
+    addGameLose();
+}
+
 void Mainwindow::addGame(int gameLevel) {
     game = new Game(gameLevel, this);
     game->init();
-
-    graphView = game->m_view;
-    hBox->addWidget(graphView);
+    hBox->addWidget(game);
+    connect(game, &Game::loadGame, this, [&](QString filename) {
+        hBox->removeWidget(game);
+        game->deleteLater();
+        addGame(filename);
+    });
     this->resize(1920, 1080);
+    addGameLose();
+}
+
+void Mainwindow::addGameLose() {
     connect(game, &Game::lose, this, [=](int player) {
         QString text;
         if(player == 1)
@@ -44,7 +64,9 @@ void Mainwindow::addGame(int gameLevel) {
                 "输了!\n是的，疫情防控保卫战不会有胜者。\n窗外传来了广播...("
                 "请等 "
                 "25 秒)",
-            QMessageBox::Ok, this);
+            QMessageBox::Ok, this,
+            Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint |
+                Qt::FramelessWindowHint);
         msgbox->button(QMessageBox::Ok)->setDisabled(true);
         msgbox->show();
         QTimer *      timer = new QTimer;

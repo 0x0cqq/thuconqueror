@@ -150,12 +150,15 @@ bool BlockStatus::changeHP(qreal delta) {
     return m_HPnow < 0;
 }
 
+UnitStatus::UnitStatus(QJsonObject json, QObject *parent) : QObject(parent){
+    this->read(json);
+}
+
 UnitStatus::UnitStatus(const int &uid, const UnitType type, UnitInfo *uInfo,
-                       qint32 player, QPoint coord)
-    : m_uid(uid), m_info(uInfo), m_type(type), m_player(player),
+                       qint32 player, QPoint coord ,QObject * parent)
+    : QObject(parent), m_uid(uid), m_info(uInfo), m_type(type), m_player(player),
       m_nowCoord(coord), m_canMove(true), m_canAttack(true), m_HPnow(1) {}
 
-UnitStatus::UnitStatus() {}
 
 bool UnitStatus::changeHP(qreal delta) {
     Q_ASSERT(m_info->HPfull != 0);
@@ -227,12 +230,14 @@ bool isNearByBlock(const BlockStatus *a, const BlockStatus *b) {
     return isNearByPoint(a->m_coord, b->m_coord);
 }
 
+// 只能在 camp 生成
 bool canNewUnitAt(qint32 nowPlayer, const BlockStatus *a) {
     return ((nowPlayer == 1 && a->m_type == peopleCampBlock) ||
             (nowPlayer == 2 && a->m_type == virusCampBlock)) &&
         (a->m_unitOnBlock == -1);
 }
 
+// 看看一个 Unit 能否攻击周围的 Block，主要是有 Camp 或者 Unit
 bool canUnitAttackBlock(const UnitStatus *a, const BlockStatus *b) {
     if(!isNearByPoint(a->m_nowCoord, b->m_coord)) {
         return false;
@@ -269,6 +274,7 @@ bool canUnitAttack(const UnitStatus *a, const UnitStatus *b) {
     return true;
 }
 
+// 获得所有周围的点的 Vector
 QVector<QPoint> getNearbyPoint(const QPoint &a) {
     QVector<QPoint> ans;
     for(int i = 0; i < 6; i++) {
@@ -277,6 +283,7 @@ QVector<QPoint> getNearbyPoint(const QPoint &a) {
     return ans;
 }
 
+// 获取在 scene 里面的 center
 QPointF getBlockCenter(qint32 r, qint32 c) {
     // Q_ASSERT(1 <= r && r <= width());
     // Q_ASSERT(1 <= c && c <= height());
@@ -293,4 +300,8 @@ bool notSameCamp(const UnitStatus *unit, const BlockStatus *block) {
     // uid 和 block 的 camp 相比
     return ((unit->m_type & peopleUnit) && block->m_type == virusCampBlock) ||
         ((unit->m_type & virusUnit) && block->m_type == peopleCampBlock);
+}
+
+BlockStatus::BlockStatus(const QJsonObject &json, QObject *parent) : QObject(parent) {
+    this->read(json);
 }

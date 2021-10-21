@@ -20,7 +20,6 @@
 
 // 所以 Signals 的抽象就是：“用户做了什么事”
 // 所以 Slots 的抽象就是：“棋盘要怎么办？”
-// 但是 其实 Unit 也可以 Catch 一些 Signal ，比如显示
 
 #define blocks(point) m_blocks[(point).x()][(point).y()]
 
@@ -34,7 +33,7 @@ class GraphField : public QGraphicsScene {
 
     GraphField(const GameInfo &                 gameInfo,
                QVector<QVector<BlockStatus *>> &blockStatus,
-               QVector<UnitStatus *> &          unitStatus);
+               QVector<UnitStatus *> &unitStatus, QObject *parent);
     ~GraphField();
     qint32 width() const { return m_gameInfo.map_size.x(); }
     qint32 height() const { return m_gameInfo.map_size.y(); }

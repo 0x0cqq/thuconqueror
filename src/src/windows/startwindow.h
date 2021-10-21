@@ -15,7 +15,7 @@ class StartWindow : public QMainWindow {
     Ui::StartWindow *      startview_ui;
     Ui::ChooseLevelWindow *chooselevelview_ui;
 
-    StartWindow(QWidget *parent = nullptr);
+    StartWindow(QWidget *parent);
     ~StartWindow();
     void addLevelInfo(int level);
     // bool eventFilter(QObject *object, QEvent *event);

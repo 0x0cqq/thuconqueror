@@ -6,6 +6,7 @@
 #include "../basic/status.h"
 #include <QGraphicsObject>
 
+// 血条
 class BloodBar : public QGraphicsObject {
     Q_OBJECT
     qreal m_bloodWidth, m_bloodHeight, m_pos;

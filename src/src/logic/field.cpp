@@ -6,17 +6,17 @@
 
 Field::Field(const GameInfo &                       gameInfo,
              const QVector<QVector<BlockStatus *>> &blockStatus,
-             const QVector<UnitStatus *> &          unitStatus)
+             const QVector<UnitStatus *> &unitStatus, QObject *parent)
     : m_gameInfo(gameInfo) {
     m_blocks.resize(width() + 2);
     for(int i = 1; i <= width(); i++) {
         m_blocks[i].resize(height() + 2);
         for(int j = 1; j <= height(); j++) {
-            m_blocks[i][j] = new Block(blockStatus[i][j]);
+            m_blocks[i][j] = new Block(blockStatus[i][j],this);
         }
     }
     for(int i = 0; i < unitStatus.size(); i++) {
-        m_units.push_back(new Unit(unitStatus[i]));
+        m_units.push_back(new Unit(unitStatus[i],this));
     }
 }
 
@@ -197,7 +197,7 @@ void Field::doUnitAttack(qint32 uid, QPoint coord) {
 
 void Field::doNewUnit(UnitStatus *unitStatus) {
     Q_ASSERT(unitStatus->m_uid == m_units.size());
-    Unit *newunit = new Unit(unitStatus);
+    Unit *newunit = new Unit(unitStatus,this);
     m_units.append(newunit);
     blocks(newunit->nowCoord())->unitOnBlock() = newunit->uid();
     emit newUnit(unitStatus);

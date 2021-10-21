@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+
+// 预留的政策树
 class PolicyTree : public QObject {
     Q_OBJECT
   public:

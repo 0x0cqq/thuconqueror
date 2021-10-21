@@ -5,8 +5,8 @@
 
 GraphField::GraphField(const GameInfo &                 gameInfo,
                        QVector<QVector<BlockStatus *>> &blockStatus,
-                       QVector<UnitStatus *> &          unitStatus)
-    : QGraphicsScene(), m_gameInfo(gameInfo), m_nowCheckedBlock(nullptr) {
+                       QVector<UnitStatus *> &unitStatus, QObject *parent)
+    : QGraphicsScene(parent), m_gameInfo(gameInfo), m_nowCheckedBlock(nullptr) {
     this->setSceneRect(
         QRectF(-qSqrt(3) / 2 * GraphInfo::blockSize, -1 * GraphInfo::blockSize,
                (qSqrt(3) * (width() + 0.5)) * GraphInfo::blockSize,
@@ -239,7 +239,7 @@ void GraphField::attackUnit(GraphUnit *graphUnit, qint32 tarid,
 }
 
 void GraphField::showUnitAttackLabel(QPoint coord, qreal delta, qreal pos) {
-    AttackLabel *labela = new AttackLabel(delta);
+    AttackLabel *labela = new AttackLabel(delta,nullptr);
     auto         it     = this->addWidget(labela);
     it->setZValue(1000);
     it->setPos(getBlockCenter(coord) - QPointF(0, pos * GraphInfo::blockSize));

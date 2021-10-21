@@ -12,7 +12,7 @@ class Block : public QObject {
     BlockStatus *m_status;
 
   public:
-    Block(BlockStatus *status, QObject *parent = nullptr)
+    Block(BlockStatus *status, QObject *parent)
         : QObject(parent), m_status(status) {}
   public slots:
 };

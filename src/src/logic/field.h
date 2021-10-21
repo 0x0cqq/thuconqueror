@@ -32,7 +32,7 @@ class Field : public QObject {
     QVector<QPoint> getPath(qint32 uid, QPoint start, QPoint end);
     Field(const GameInfo &                       gameInfo,
           const QVector<QVector<BlockStatus *>> &blockStatus,
-          const QVector<UnitStatus *> &          unitStatus);
+          const QVector<UnitStatus *> &unitStatus, QObject *parent);
     ~Field();
     QVector<QPoint> __getUnitMoveRange(qint32 uid);
     QPoint          __canAttackNearby(qint32 uid);

@@ -24,8 +24,8 @@ class GraphView : public QGraphicsView {
     void finishPainting();
 
   public:
-    GraphView()
-        : QGraphicsView(), m_scale(1.0), m_zoomDelta(0.1), m_lastMousePos(0, 0),
+    GraphView(QWidget *parent)
+        : QGraphicsView(parent), m_scale(1.0), m_zoomDelta(0.1), m_lastMousePos(0, 0),
           m_translateButton(Qt::RightButton), m_translateSpeed(1.0),
           m_bMouseTranslate(false) {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -36,6 +36,7 @@ class GraphView : public QGraphicsView {
         // setSceneRect(INT_MIN / 2, INT_MIN / 2, INT_MAX, INT_MAX);
         centerOn(0, 0);
     }
+    // 这些都是为了能够滚轮缩放和右键移动
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event);
     void resizeEvent(QResizeEvent *event);

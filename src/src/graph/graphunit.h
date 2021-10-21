@@ -26,8 +26,9 @@ class GraphUnit : public QGraphicsObject {
     QMetaObject::Connection mConnection2;  // 和 l
 
     QTimer *timer;
-    GraphUnit(UnitStatus *status, const QPointF = QPoint(0, 0))
-        : QGraphicsObject(), m_status(status), m_unitDialog(nullptr),
+    GraphUnit(UnitStatus *   status, const QPointF = QPoint(0, 0),
+              QGraphicsItem *parent = nullptr)
+        : QGraphicsObject(parent), m_status(status), m_unitDialog(nullptr),
           m_bloodBar(nullptr), dialogWidget(nullptr), timer(nullptr) {
         this->setZValue(GraphInfo::unitZValue);
         m_unitDialog = new UnitDialog(status, nullptr);
@@ -35,7 +36,6 @@ class GraphUnit : public QGraphicsObject {
         m_bloodBar =
             new BloodBar(-GraphInfo::blockSize, GraphInfo::blockSize, 20, this);
         m_bloodBar->setPercentage(this->m_status->m_HPnow);
-        // this->scene()
         this->setPos(getBlockCenter(nowCoord()));
         this->setFlag(ItemIsSelectable, true);
         this->setAcceptHoverEvents(true);
@@ -43,7 +43,8 @@ class GraphUnit : public QGraphicsObject {
         setMovie(m_status->m_info->m_unitMovie, m_status->m_info->m_loopMovie);
         connect(m_status, &UnitStatus::unitStateChanged, this,
                 [=]() { this->update(this->boundingRect()); });
-        // according to https://stackoverflow.com/questions/43826317/how-to-optimize-qgraphicsviews-performance
+        // gif according to
+        // https://stackoverflow.com/questions/43826317/how-to-optimize-qgraphicsviews-performance
         path.addEllipse({0, 0}, GraphInfo::unitSize, GraphInfo::unitSize);
     }
     ~GraphUnit() {

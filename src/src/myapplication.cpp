@@ -14,7 +14,7 @@ MyApplication::MyApplication(int &argc, char *argv[])
 }
 
 void MyApplication::createStartWindow() {
-    startWindow = new StartWindow;
+    startWindow = new StartWindow(nullptr);
     startWindow->show();
     connect(startWindow, &StartWindow::userChooseLevel, this,
             &MyApplication::changeToMainWindow);
@@ -27,7 +27,7 @@ void MyApplication::changeToMainWindow(qint32 gameLevel) {
         mainWindow->hide();
         mainWindow->deleteLater();
     }
-    mainWindow = new Mainwindow(gameLevel);
+    mainWindow = new Mainwindow(gameLevel,nullptr);
     mainWindow->show();
     startWindow->hide();
     connect(mainWindow, Mainwindow::mainWindowClosed, this, [=]() {

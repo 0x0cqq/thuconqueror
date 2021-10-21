@@ -12,6 +12,9 @@ namespace Ui {
 class UnitDialog;
 }
 
+
+// 跟显示Unit 信息有关的对话框
+
 class UnitDialog : public QDialog {
     Q_OBJECT
   public:
@@ -19,7 +22,7 @@ class UnitDialog : public QDialog {
     const UnitStatus *m_status;
     QMovie *          m_movie;
     int               showTimes;
-    UnitDialog(const UnitStatus *unitStatus, QWidget *parent = nullptr);
+    UnitDialog(const UnitStatus *unitStatus, QWidget *parent);
     void show();
     void hide();
     void updateInfo();
@@ -29,8 +32,8 @@ class AttackLabel : public QLabel {
     Q_OBJECT
   public:
     QTimer *timer;
-    AttackLabel(qreal delta);
-    ~AttackLabel() { delete timer; }
+    AttackLabel(qreal delta, QWidget *parent);
+    ~AttackLabel() {}
     void show();
 };
 

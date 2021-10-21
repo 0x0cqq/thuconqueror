@@ -15,6 +15,7 @@
 
 ChooseFileDialog::ChooseFileDialog(QStringList filelist, QWidget *parent)
     : QDialog(parent), ui(nullptr) {
+    this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
     ui = new Ui::ChooseFileDialog();
     ui->setupUi(this);
     ui->comboBox->addItems(filelist);
@@ -29,7 +30,7 @@ MenuDialog::MenuDialog(Game *game, QWidget *parent)
 
 // 第 i 关采用 `level1-202001012059.json` 的形式存储
 QStringList getFileNames(int i, const QString &path) {
-    QDir        dir(path);
+    QDir        dir(QApplication::applicationDirPath() + "/" + path);
     QStringList nameFilters;
     qDebug() << i << " path" << path;
     nameFilters << "level" + QString::number(i) + "-*.json";
@@ -41,41 +42,32 @@ QStringList getFileNames(int i, const QString &path) {
     return files;
 }
 
-PauseMenuDialog::PauseMenuDialog(Game *game, QWidget *parent)
+PauseMenuDialog::PauseMenuDialog(Game *game, QString &string, QWidget *parent)
     : MenuDialog(game, parent), ui(nullptr) {
     ui = new Ui::PauseDialog;
     ui->setupUi(this);
-    connect(this->ui->readButton, &QPushButton::clicked, this, [=]() {
+    connect(this->ui->readButton, &QPushButton::clicked, this, [&]() {
         ChooseFileDialog *dia = new ChooseFileDialog(
-            getFileNames(game->m_gameInfo.level,
-                         QApplication::applicationDirPath() + "/json"),
-            this);
+            getFileNames(game->m_gameInfo.level, "json"), this);
         int t = dia->exec();
+        if(t == -1) {
+            return;
+        }
         qDebug() << "actually opened" << t << " "
-                 << getFileNames(game->m_gameInfo.level,
-                                 QApplication::applicationDirPath() +
-                                     "/json")[t];
-        QJsonObject json;
-        openJsonAbsPath(
-            getFileNames(game->m_gameInfo.level,
-                         QApplication::applicationDirPath() + "/json")[t],
-            json);
-        game->clearConnection();
-        game->clearMemory();
-        game->read(json);
-        game->init();
+                 << getFileNames(game->m_gameInfo.level, "json")[t];
+        string = getFileNames(game->m_gameInfo.level, "json")[t];
         QMessageBox::information(this, "yes!", "加载成功！");
         dia->deleteLater();
-        done(0);
+        done(2);  // 重新加载
     });
     connect(this->ui->saveButton, &QPushButton::clicked, this, [=]() {
         save();
         QMessageBox::information(this, "yes!", "保存成功！");
 
-        done(0);
+        done(0);  // 没有反应
     });
     connect(this->ui->exitButton, &QPushButton::clicked, this,
-            [=] { done(1); });
+            [=] { done(1); });  // 退出
 }
 
 bool PauseMenuDialog::save() {
@@ -114,7 +106,7 @@ NewUnitDialog::NewUnitDialog(Game *game, QWidget *parent)
         }
         QMovie *movie = new QMovie(it.value().image, QByteArray(), this);
         movie->start();
-        SingleUnitInfo *widget = new SingleUnitInfo;
+        SingleUnitInfo *widget = new SingleUnitInfo(this);
         widget->ui->image->setMovie(movie);
         widget->ui->name->setText(it.value().name);
         widget->ui->description->setText(it.value().description);

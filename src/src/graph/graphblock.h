@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <QPixmap>
 
+// 地图上的 格子
 class GraphBlock : public QGraphicsObject {
     Q_OBJECT
   public:
@@ -20,8 +21,8 @@ class GraphBlock : public QGraphicsObject {
     QMetaObject::Connection mConnection;
     QPainterPath            path;
     // GraphBlock() : QGraphicsObject() {}
-    GraphBlock(BlockStatus *status, QPointF pos)
-        : QGraphicsObject(), m_fire_movie(nullptr), m_blockCampBlood(nullptr),
+    GraphBlock(BlockStatus *status, QPointF pos, QGraphicsItem *parent = nullptr)
+        : QGraphicsObject(parent), m_fire_movie(nullptr), m_blockCampBlood(nullptr),
           m_status(status), m_isChecked(false), m_isMoveRange(false) {
         this->setZValue(GraphInfo::blockZValue);
 

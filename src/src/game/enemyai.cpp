@@ -5,7 +5,8 @@
 #include <QEventLoop>
 #include <QRandomGenerator>
 
-EnemyAI::EnemyAI(Game *game, qint32 player) : m_game(game), m_player(player) {}
+EnemyAI::EnemyAI(Game *game, qint32 player, QObject *parent)
+    : QObject(parent), m_game(game), m_player(player) {}
 
 void EnemyAI::play() {
     Q_ASSERT(m_player == m_game->m_gameInfo.nowPlayer);

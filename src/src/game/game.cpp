@@ -1,6 +1,7 @@
 #include "game.h"
 #include "../graph/menudialog.h"
 #include "enemyai.h"
+#include "graphview.h"
 #include <QApplication>
 #include <QFile>
 #include <QJsonArray>
@@ -13,49 +14,8 @@
 #include <QWindow>
 
 
-// 这个函数目前不用了
-// Game::Game(QPoint map_size, QObject *parent) : QObject(parent) {
-//     m_gameInfo.m_turnNumber = 0, m_gameInfo.map_size = map_size,
-//     m_gameInfo.nowPlayer = 0, m_gameInfo.playerNumbers = 2;
-//     nextTurnButtonWidget = nullptr, newUnitButtonWidget = nullptr,
-//     pauseButtonWidget = nullptr, policyTreeButtonWidget = nullptr;
-//     m_blocks.resize(width() + 2);
-
-//     m_unitTypeInfo[studentUnit] = UnitInfo("学生", "学生", 15, 1, 4);
-//     m_unitTypeInfo[teacherUnit] = UnitInfo("教师", "教师", 20, 2, 3);
-//     m_unitTypeInfo[childUnit]   = UnitInfo("孩子", "孩子", 10, 3, 2);
-//     m_unitTypeInfo[alphaUnit]   = UnitInfo("Alpha 病毒", "Alpha", 5, 2, 2);
-//     m_unitTypeInfo[deltaUnit]   = UnitInfo("Delta 病毒", "Delta", 5, 1, 5);
-//     m_unitTypeInfo[zetaUnit]    = UnitInfo("Zeta 病毒", "Boss", 15, 3, 3);
-
-//     m_blockTypeInfo[plainBlock]    = BlockInfo("平地", "平地", "", 0, 2);
-//     m_blockTypeInfo[obstacleBlock] = BlockInfo("障碍", "障碍", "", 0, 10000);
-//     m_blockTypeInfo[roadBlock]     = BlockInfo("平地", "平地", "", 0, 1);
-//     m_blockTypeInfo[dampBlock]     = BlockInfo("泥地", "平地", "", 0, 3);
-//     m_blockTypeInfo[virusCampBlock] = BlockInfo("人类营地", "平地", "", 30,
-//     2); m_blockTypeInfo[peopleCampBlock] = BlockInfo("病毒营地", "平地", "",
-//     30, 2);
-
-//     for(int i = 1; i <= width(); i++) {
-//         m_blocks[i].resize(height() + 2);
-//         for(int j = 1; j <= height(); j++) {
-//             int t = QRandomGenerator::global()->generate() % 4;
-//             m_blocks[i][j] =
-//                 new BlockStatus(t ? plainBlock : obstacleBlock,
-//                                 t ? &m_blockTypeInfo[plainBlock] :
-//                                     &m_blockTypeInfo[obstacleBlock],
-//                                 QPoint(i, j));
-//         }
-//     }
-//     m_field = new Field(m_gameInfo, m_blocks, m_units);
-//     m_graph = new GraphField(m_gameInfo, m_blocks, m_units);
-//     m_view  = new GraphView;
-//     m_view->setScene(m_graph);
-
-//     usernextTurn();
-// }
-
 Game::~Game() {
+    clearConnection();
     clearMemory();
 }
 
@@ -72,31 +32,34 @@ void Game::clearMemory() {
             delete m_blocks[i][j];
         }
     }
-    m_blocks.clear();
     for(int i = 0; i < m_units.size(); i++) {
         delete m_units[i];
     }
-    m_units.clear();
-    enemy->deleteLater();
-    m_view->deleteLater();
-    m_field->deleteLater();
     m_graph->deleteLater();
+    m_field->deleteLater();
+    enemy->deleteLater();
+    m_blocks.clear();
+    m_units.clear();
 }
 
-Game::Game(const QString &filename, QObject *parent)
-    : Game([](const QString &filename) -> QJsonObject {
-          QJsonObject json;
-          openJson(filename, json);
-          return json;
-      }(filename),parent) {}
+Game::Game(const QString &filename, QWidget *parent)
+    : Game(
+          [](const QString &filename) -> QJsonObject {
+              QJsonObject json;
+              openJson(filename, json);
+              return json;
+          }(filename),
+          parent) {}
 
-Game::Game(const qint32 &level, QObject *parent)
-    : Game([](qint32 level) -> QString {
-          return "json/level" + QString::number(level) + ".json";
-      }(level),parent) {}
+Game::Game(const qint32 &level, QWidget *parent)
+    : Game(
+          [](qint32 level) -> QString {
+              return "json/level" + QString::number(level) + ".json";
+          }(level),
+          parent) {}
 
-Game::Game(const QJsonObject &json, QObject *parent)
-    : QObject(parent), policyTreeButtonWidget(nullptr) {
+Game::Game(const QJsonObject &json, QWidget *parent)
+    : GraphView(parent), policyTreeButtonWidget(nullptr) {
     read(json);
 }
 
@@ -129,8 +92,7 @@ void Game::read(const QJsonObject &json) {
         for(int i = 1; i <= width(); i++) {
             m_blocks[i].resize(height() + 2);
             for(int j = 1; j <= height(); j++) {
-                m_blocks[i][j] = new BlockStatus();
-                m_blocks[i][j]->read(blocks[cnt].toObject());
+                m_blocks[i][j] = new BlockStatus(blocks[cnt].toObject(), this);
                 m_blocks[i][j]->m_info =
                     &m_blockTypeInfo[m_blocks[i][j]->m_type];
                 cnt++;
@@ -142,16 +104,13 @@ void Game::read(const QJsonObject &json) {
         m_units.clear();
         m_units.resize(units.size());
         for(int i = 0; i < units.size(); i++) {
-            m_units[i] = new UnitStatus();
-            m_units[i]->read(units[i].toObject());
+            m_units[i]         = new UnitStatus(units[i].toObject(), this);
             m_units[i]->m_info = &m_unitTypeInfo[m_units[i]->m_type];
         }
     }
-    m_field = new Field(m_gameInfo, m_blocks, m_units);
-    m_graph = new GraphField(m_gameInfo, m_blocks, m_units);
-    m_view  = new GraphView;
-    m_view->setScene(m_graph);
-    enemy = new EnemyAI(this, 2);
+    m_field = new Field(m_gameInfo, m_blocks, m_units, this);
+    m_graph = new GraphField(m_gameInfo, m_blocks, m_units, this);
+    enemy   = new EnemyAI(this, 2, this);
 }
 
 void Game::write(QJsonObject &json) {
@@ -217,10 +176,16 @@ void Game::updateGameStatus(QLabel *gameStatusLabel) {
     gameStatusLabel->setText(
         "  || 回合数：" + QString::number(m_gameInfo.m_turnNumber) +
         " || 我方存留 " + QString::number(m_gameInfo.m_campNumbers[0]) +
-        " || 敌方存留 " + QString::number(m_gameInfo.m_campNumbers[1]) + " ||  ");
+        " || 敌方存留 " + QString::number(m_gameInfo.m_campNumbers[1]) +
+        " ||  ");
 }
 
 void Game::setFixedWidgetPos() {
+    if(m_graph->views().length() == 0)
+        return;
+    GraphView *m_view = dynamic_cast<GraphView *>(m_graph->views().first());
+    if(m_view == nullptr)
+        return;
     if(nextTurnButtonWidget != nullptr) {
         nextTurnButtonWidget->setPos(m_view->mapToScene(
             QPoint(m_view->size().width(), m_view->height()) -
@@ -254,15 +219,19 @@ void Game::setFixedWidgetPos() {
     }
 }
 
+void Game::setView() {
+    this->setScene(m_graph);
+    connection.append(connect(this, &GraphView::finishPainting, this,
+                              &Game::setFixedWidgetPos));
+}
+
 void Game::init() {
     setNewUnitButton();
     setNextTurnButton();
     setPolicyTreeButton();
     setPauseButton();
     setgameStatusLabel();
-    connection.append(connect(m_view, &GraphView::finishPainting, this,
-                              &Game::setFixedWidgetPos));
-
+    setView();
     connection.append(
         connect(m_graph, &GraphField::checkStateChange, this,
                 [=](QPoint coord, bool state) {
@@ -393,7 +362,7 @@ void Game::setNextTurnButton() {
 void Game::usernextTurn() {
     QJsonObject json;
     write(json);
-    writeJson("3.json", json);
+    // writeJson("3.json", json);
 restart:
     if(m_gameInfo.playerNumbers == m_gameInfo.nowPlayer) {
         m_gameInfo.nowPlayer = 1;
@@ -439,13 +408,15 @@ void Game::setPauseButton() {
 }
 
 void Game::userPause() {
-    PauseMenuDialog *window = new PauseMenuDialog(this);
+    QString          fileName;
+    PauseMenuDialog *window = new PauseMenuDialog(this, fileName, this);
     int              t      = window->exec();
     if(t == 1) {
         // theoritically 应该退出
     }
-    else {
-        // 正常
+    else if(t == 2) {
+        emit loadGame(fileName);
+        // 读档
     }
     window->deleteLater();
     // window->show();
@@ -465,7 +436,7 @@ void Game::setNewUnitButton() {
 
     connection.append(
         connect(newUnitButton, &QPushButton::clicked, this, [=]() {
-            NewUnitDialog *newunit     = new NewUnitDialog(this);
+            NewUnitDialog *newunit     = new NewUnitDialog(this, this);
             int            newUnitType = newunit->exec();
             delete newunit;
             if(newUnitType == 0)
@@ -486,7 +457,7 @@ void Game::usernewUnit(QPoint coord, UnitType newUnitType) {
     Q_ASSERT(block->m_unitOnBlock == -1);
     UnitStatus *unitStatus = new UnitStatus(m_units.size(), newUnitType,
                                             &m_unitTypeInfo[newUnitType],
-                                            m_gameInfo.nowPlayer, coord);
+                                            m_gameInfo.nowPlayer, coord, this);
     m_units.push_back(unitStatus);
     unitStatus->setAttackState(false);
     unitStatus->setMoveState(false);

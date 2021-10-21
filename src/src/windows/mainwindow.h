@@ -13,18 +13,19 @@ class Mainwindow : public QMainWindow {
     Q_OBJECT
 
   public:
-    Mainwindow(qint32 gamelevel, QWidget *parent = nullptr);
+    Mainwindow(qint32 gamelevel, QWidget *parent);
     ~Mainwindow();
     QHBoxLayout *   hBox;
     QVBoxLayout *   hvBox;
     QLabel *        gameStatusLabel;
     QLabel *        detailLabel;
     QLabel *        policyTreeLabel;
-    GraphView *     graphView;
     QMediaPlayer *  play_music;
     QMediaPlaylist *playlist;
     Game *          game;
+    void            addGame(QString fileName);
     void            addGame(int gameLevel);
+    void addGameLose();
     void            addMusic();
     void            closeEvent(QCloseEvent *event) override;
   signals:

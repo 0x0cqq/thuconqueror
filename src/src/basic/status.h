@@ -139,10 +139,10 @@ class BlockStatus : public QObject {
     qreal      getHP() const { return m_info->HPfull * m_HPnow; }
     qint32     MPneed() const { return m_info->MPneed; }
     bool       changeHP(qreal delta);
-
-    BlockStatus() {}
-    BlockStatus(BlockType type, BlockInfo *blockInfo, QPoint coord)
-        : m_type(type), m_info(blockInfo), m_coord(coord), m_unitOnBlock(-1),
+    BlockStatus(const QJsonObject &json, QObject *parent);
+    BlockStatus(BlockType type, BlockInfo *blockInfo, QPoint coord,
+                QObject *parent)
+        : QObject(parent), m_type(type), m_info(blockInfo), m_coord(coord), m_unitOnBlock(-1),
           m_HPnow(1) {}
     ~BlockStatus() {}
 };
@@ -159,7 +159,7 @@ class UnitInfo {
     qint32 CEfull;
     qreal  CEratio;
     // movePoint
-    qint32  MPfull;
+    qint32 MPfull;
     // 周围那个代表行动和攻击能力的框的 gif
     QMovie *m_loopMovie;
     // 自己本来的 gif
@@ -264,9 +264,9 @@ class UnitStatus : public QObject {
     bool  canAttack() const { return m_canAttack; }
     void  read(const QJsonObject &json);
     void  write(QJsonObject &json) const;
-    UnitStatus();
+    UnitStatus(QJsonObject json, QObject *parent);
     UnitStatus(const int &uid, const UnitType type, UnitInfo *uInfo,
-               qint32 player, QPoint coord);
+               qint32 player, QPoint coord, QObject *parent);
 
   public:
     void setMoveState(bool state);

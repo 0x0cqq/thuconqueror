@@ -38,10 +38,11 @@ void UnitDialog::hide() {
     }
 }
 
-AttackLabel::AttackLabel(qreal delta) : QLabel(), timer(nullptr) {
+AttackLabel::AttackLabel(qreal delta, QWidget *parent)
+    : QLabel(parent), timer(nullptr) {
     this->setText("-" + QString::number(delta));
     this->setFont(QFont("微软雅黑", 15, 3));
-    timer = new QTimer;
+    timer = new QTimer(this);
 }
 
 void AttackLabel::show() {
